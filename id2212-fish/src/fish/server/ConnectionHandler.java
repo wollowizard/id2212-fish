@@ -59,6 +59,7 @@ public class ConnectionHandler extends Thread {
 
                 for (String s : toAdd) {
                     client.addFile(s);
+                    
                 }
 
                 for (String s : toRemove) {
@@ -68,13 +69,30 @@ public class ConnectionHandler extends Thread {
                 System.out.println("\n\n" + client.printSummary() + "\n\n");
 
             } catch (IOException ex) {
-                Logger.getLogger(ConnectionHandler.class.getName()).log(Level.SEVERE, null, ex);
+                
+                running=false;
+                
+                System.out.println("Client " + client.getNetResources().getSocket().getInetAddress()  + "disconnected");
+                client.clearFiles();
+                fs.clients.remove(client);
+                
+                
+                
             } catch (ClassNotFoundException ex) {
                 Logger.getLogger(ConnectionHandler.class.getName()).log(Level.SEVERE, null, ex);
             }
-
-
+       
         }
+         //client disconnects
+            try {
+                out.close();
+                in.close();
+                socket.close();
+            } catch (IOException e) {
+                System.out.println("Error while closing the connection");
+                e.printStackTrace();
+            }
+        
 
     }
 }

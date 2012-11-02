@@ -4,6 +4,7 @@
  */
 package fish.packets;
 
+import java.io.File;
 import java.io.Serializable;
 import java.util.ArrayList;
 
@@ -12,13 +13,19 @@ import java.util.ArrayList;
  * @author alfredo
  */
 public class FileListPacket implements Serializable {
-    private ArrayList<String> filesToAdd;
-    private ArrayList<String> filesToRemove;
+    private ArrayList<String> filesToAdd=new ArrayList<>();
+    private ArrayList<String> filesToRemove=new ArrayList<>();
     
-    public FileListPacket(ArrayList<String> add, ArrayList<String> remove){
-        this.filesToAdd=add;
-        this.filesToRemove=remove;
+    public FileListPacket(ArrayList<File> add, ArrayList<File> remove){
+        for(File f : add){
+            filesToAdd.add(f.getPath());
+        }
+        for(File f : remove){
+            filesToRemove.add(f.getPath());
+        }
     }
+
+
 
     public ArrayList<String> getFilesToAdd() {
         return filesToAdd;

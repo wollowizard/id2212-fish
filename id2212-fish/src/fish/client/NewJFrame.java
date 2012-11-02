@@ -6,7 +6,6 @@ package fish.client;
 
 import fish.client.dirWatch.DirWatcher;
 import java.io.File;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -80,15 +79,15 @@ public class NewJFrame extends javax.swing.JFrame {
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
 
-        c = new Client();
-        c.connect("localhost", 1234);
-        String path = "c:/temp"; 
- 
-        
-        File folder = new File(path);
+       c = new Client();
+       c.connect("localhost", 1234);
+
+       
+
+        File folder = new File("c:\\temp");
         File[] listOfFiles = folder.listFiles();
-        for(File f : listOfFiles){
-            c.filesToAdd.add(f.getPath());
+        for (File f : listOfFiles) {
+            c.addFile(f);
             c.sendFileList();
         }
 
@@ -98,9 +97,9 @@ public class NewJFrame extends javax.swing.JFrame {
 
 
                 if (action.equals("add")) {
-                    c.filesToAdd.add(file.getPath());
+                    c.addFile(file);
                 } else if (action.equals("delete")) {
-                    c.filesToRemove.add(file.getPath());
+                    c.removeFile(file);
                 }
                 c.sendFileList();
                 System.out.println("File " + file.getName() + " action: " + action);
@@ -108,7 +107,7 @@ public class NewJFrame extends javax.swing.JFrame {
         };
 
         Timer timer = new Timer();
-        timer.schedule(task, new Date(), 1000);
+        timer.schedule(task, new Date(), 1000);   
 
         
 

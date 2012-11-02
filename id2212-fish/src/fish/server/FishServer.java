@@ -5,6 +5,7 @@
 package fish.server;
 
 import java.util.ArrayList;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  *
@@ -12,6 +13,7 @@ import java.util.ArrayList;
  */
 class FishServer {
     public ArrayList<Client> clients;
+   
     
     
     public FishServer(){

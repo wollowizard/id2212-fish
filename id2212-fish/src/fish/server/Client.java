@@ -4,7 +4,7 @@
  */
 package fish.server;
 
-import java.util.ArrayList;
+import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -20,7 +20,7 @@ public class Client {
         this.netResources=nr;
     }
     
-    private ArrayList<String> files=new ArrayList<>();
+    private Vector<String> files=new Vector<>();
     
     
     public ClientNetworkResources getNetResources() {

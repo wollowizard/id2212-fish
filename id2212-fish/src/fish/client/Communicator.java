@@ -32,25 +32,28 @@ public class Communicator extends Thread {
 
     @Override
     public void run() {
-        synchronized (this.client) {
-            try {
 
+
+        try {
+            synchronized (client) {
+
+                System.out.println("\n\nCOMMUNICATOR!!\n\n");
                 System.out.println("Sending: ");
                 System.out.println(this.packet.printSummary() + "\n\n");
+
+                out.toString();
 
                 out.writeObject(this.packet);
                 out.flush();
                 out.reset();//important!!!!!!!! we always send the same obj, but fields are changed
 
-
-
-
                 client.filesToAdd.clear();
                 client.filesToRemove.clear();
-
-            } catch (IOException ex) {
-                Logger.getLogger(Communicator.class.getName()).log(Level.SEVERE, null, ex);
+                
             }
+
+        } catch (IOException ex) {
+            Logger.getLogger(Communicator.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 }
