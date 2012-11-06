@@ -42,27 +42,30 @@ public class Receiver extends Thread {
                 System.out.println("\n\nRECEIVER!!\n\n");
                 FishPacket fp = (FishPacket) in.readObject();
                 if (packet.getHeader().getType() == PacketType.SEARCH) {
-
-                    if (fp.getHeader().getType() == PacketType.FILENOTFOUND) {
-                        System.out.println("FILE NOT FOUND!!!!!");
-                    } else if (fp.getHeader().getType() == PacketType.FILEFOUND) {
-                        System.out.print("FILE FOUND !!!!! ");
-                        SearchResult results = (SearchResult) fp.getPayload();
-                        System.out.println(results.printSummary());
-
-                    } else if (fp.getHeader().getType() == PacketType.FILEFOUNDBUTYOUOWNIT) {
-                        System.out.println("FILE FOUND but it's already yours!!!!!");
-                        SearchResult results = (SearchResult) fp.getPayload();
-                        System.out.println(results.printSummary());
-                    }
-
+                    this.manageSearchResponse(fp);
                 }
+                
             }
-
         } catch (ClassNotFoundException ex) {
             Logger.getLogger(Receiver.class.getName()).log(Level.SEVERE, null, ex);
         } catch (IOException ex) {
             Logger.getLogger(Sender.class.getName()).log(Level.SEVERE, null, ex);
         }
+    }
+    
+    
+    private void manageSearchResponse(FishPacket received){
+        if (received.getHeader().getType() == PacketType.FILENOTFOUND) {
+                        System.out.println("FILE NOT FOUND!!!!!");
+                    } else if (received.getHeader().getType() == PacketType.FILEFOUND) {
+                        System.out.print("FILE FOUND !!!!! ");
+                        SearchResult results = (SearchResult) received.getPayload();
+                        System.out.println(results.printSummary());
+
+                    } else if (received.getHeader().getType() == PacketType.FILEFOUNDBUTYOUOWNIT) {
+                        System.out.println("FILE FOUND but it's already yours!!!!!");
+                        SearchResult results = (SearchResult) received.getPayload();
+                        System.out.println(results.printSummary());
+                    }
     }
 }

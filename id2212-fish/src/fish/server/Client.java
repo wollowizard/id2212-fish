@@ -14,7 +14,7 @@ import java.util.logging.Logger;
  */
 public class Client {
     private ClientNetworkResources netResources;
-    private ArrayList<String> files=new ArrayList<>();    
+    private ArrayList<FishFile> files=new ArrayList<>();    
     
     
     private static final String FILEALREADYINCLIENTLIST="File already in client list!";
@@ -32,7 +32,7 @@ public class Client {
         return netResources;
     }
     
-    public void addFile(String s){
+    public void addFile(FishFile s){
         if(!this.files.contains(s)){
             this.files.add(s);
         }
@@ -41,7 +41,7 @@ public class Client {
         }
     }
     
-    public void removeFile(String s){
+    public void removeFile(FishFile s){
         if(this.files.contains(s)){
             this.files.remove(s);
         }
@@ -57,10 +57,11 @@ public class Client {
     
     public String printSummary(){
         String res="";
-        res+="Client " + netResources.getSocket().getInetAddress().getCanonicalHostName() + "\n";
+        res+="Client " + netResources.getSocket().getRemoteSocketAddress() + "\n";
         res+="Files: \n";
-        for(String s : files){
-            res+=s + ", ";
+        for(FishFile s : files){
+            res+=s.getFilename() + " in client " + this.getNetResources().getSocket().getRemoteSocketAddress()+"\n";
+            
         }
         return res;
         

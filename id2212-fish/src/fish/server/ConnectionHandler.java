@@ -6,8 +6,6 @@ package fish.server;
 
 import fish.packets.FileList;
 import fish.packets.FishPacket;
-import fish.packets.Header;
-import fish.packets.Payload;
 import fish.packets.PacketType;
 import fish.packets.ParameterToSearch;
 import java.io.IOException;
@@ -15,7 +13,6 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -60,7 +57,11 @@ public class ConnectionHandler extends Thread {
 
                 if (fp.getHeader().getType() == PacketType.ADDFILE) {
                     FileList fl = (FileList) fp.getPayload();
-                    fs.addFilesOfClient(fl, client);
+                    ArrayList<FishFile> listOfFishFilesToAdd = fl.getListOfFishFilesToAdd(client);
+                    ArrayList<FishFile> listOfFishFilesToRemove = fl.getListOfFishFilesToRemove(client);
+                    
+                    
+                    fs.updateFilesOfClient(listOfFishFilesToAdd,listOfFishFilesToRemove, client);
                     
                     
 

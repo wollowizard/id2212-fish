@@ -4,15 +4,15 @@
  */
 package fish.server;
 
-import fish.packets.FileList;
+import fish.packets.FilenameAndAddress;
 import fish.packets.FishPacket;
 import fish.packets.Header;
 import fish.packets.PacketType;
 import fish.packets.SearchResult;
-import java.net.SocketAddress;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  *
@@ -49,20 +49,20 @@ class FishServer {
         clients.remove(client);
     }
 
-    public void addFilesOfClient(FileList fp, Client client) {
+    public void updateFilesOfClient(ArrayList<FishFile> add, ArrayList<FishFile> remove, Client client) {
         System.out.println((new Date()).toString() + " Received packet: ");
-        System.out.println(fp.printSummary());
+        //System.out.println(fp.printSummary());
 
-        ArrayList<String> toAdd = fp.getFilesToAdd();
-        ArrayList<String> toRemove = fp.getFilesToRemove();
 
-        for (String s : toAdd) {
-            client.addFile(s);
-            addFile(client, s);
+        for (FishFile s : add) {
+            
+            if(addFile(client, s)){
+                client.addFile(s);
+            }
 
         }
 
-        for (String s : toRemove) {
+        for (FishFile s : remove) {
             client.removeFile(s);
             removeFile(client, s);
         }
@@ -75,33 +75,39 @@ class FishServer {
     public FishPacket search(Client c, String parameter) {
         
         Header header=null; 
-        ArrayList<Client> clientswithfile=new ArrayList<>();
+       // ArrayList<Client> clientswithfile=new ArrayList<>();
+       Map <Client,FilenameAndAddress> clients=new HashMap<>();
         
         for (int i = 0; i < files.size(); i++) {
             FishFile f = files.get(i);
             if (f.getFilename().contains(parameter)) {
-                if(!clientswithfile.contains(f.getOwner())){
-                    clientswithfile.add(f.getOwner());
+                //if(!clientswithfile.contains(f.getOwner())){
+                if(clients.get(f.getOwner())==null){//-------------------------------
+                   //clientswithfile.add(f.getOwner());
+                   clients.put(f.getOwner(), new FilenameAndAddress(f.getFilename(), f.getOwnerRemoteAddress()));
                 }
-                
             }
         }
         
-        clientswithfile.remove(c);
         
-        if(clientswithfile.size()==0){
+        clients.remove(c);
+        //clientswithfile.remove(c);
+        
+       // if(clientswithfile.size()==0){
+         if(clients.isEmpty()){
             header = new Header(PacketType.FILENOTFOUND);
         }
-        else if(clientswithfile.size()>=1){
+        else{
             header = new Header(PacketType.FILEFOUND);
         }
         
-        
-        
        
         SearchResult sr = new SearchResult();
-        for(Client i : clientswithfile){
-            sr.addAddress(i.getNetResources().getSocket().getRemoteSocketAddress());
+        //for(Client i : clientswithfile){
+        
+        for (Map.Entry<Client, FilenameAndAddress> i : clients.entrySet()){
+            FilenameAndAddress fr=new FilenameAndAddress(i.getValue().getFilename(), i.getKey().getNetResources().getSocket().getRemoteSocketAddress());
+            sr.addFileResource(fr);
         }
         
         FishPacket fp=new FishPacket(header, sr);
@@ -109,9 +115,18 @@ class FishServer {
 
     }
 
-    private void addFile(Client c, String filename) {
-
-        this.files.add(new FishFile(filename, c));
+    private boolean addFile(Client c, FishFile file) {
+        boolean found=false;
+        for(int i=0;i<this.files.size() && !found;i++){
+            if( file.getFilename().compareTo(files.get(i).getFilename())==0
+                    && c==files.get(i).getOwner() ){
+                found=true;
+            }
+        }
+        if(!found){
+            this.files.add(file);
+        }
+        return !found;
 
     }
 
@@ -119,9 +134,9 @@ class FishServer {
         this.clients.remove(c);
     }
 
-    private void removeFile(Client c, String filename) {
+    private void removeFile(Client c, FishFile file) {
 
-        this.files.remove(new FishFile(filename, c));
+        this.files.remove(file);
 
     }
 

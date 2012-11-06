@@ -4,13 +4,16 @@
  */
 package fish.server;
 
+import java.net.SocketAddress;
+
 /**
  *
  * @author alfredo
  */
-class FishFile {
+public class FishFile {
     private String filename;
     private Client owner;
+    
 
     public FishFile(String filename, Client owner) {
         this.filename = filename;
@@ -33,6 +36,9 @@ class FishFile {
         this.owner = owner;
     }
     
+    public SocketAddress getOwnerRemoteAddress(){
     
+        return this.owner.getNetResources().getSocket().getRemoteSocketAddress();
+    }
     
 }

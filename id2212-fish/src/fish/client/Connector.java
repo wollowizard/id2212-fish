@@ -49,7 +49,7 @@ public class Connector extends Thread {
                 objOut.toString();
                 
                 
-                client.submitInitialFileList();
+                client.submitInitialFileList("c:\\temp");
                 
                 
                 

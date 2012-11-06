@@ -35,7 +35,6 @@ public class Sender extends Thread {
     @Override
     public void run() {
 
-
         try {
             synchronized (client) {
 
@@ -52,7 +51,11 @@ public class Sender extends Thread {
                 if (packet.getHeader().getType() == PacketType.ADDFILE) {
                     client.filesToAdd.clear();
                     client.filesToRemove.clear();
+                    
+                    
                 } else if (packet.getHeader().getType() == PacketType.SEARCH) {
+                    //if it was a search, we should wait for a resonse
+                    
                     Receiver recThread = new Receiver(packet, in, out, client);
                     recThread.start();
                 }

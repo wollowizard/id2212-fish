@@ -30,6 +30,7 @@ public class Client {
     public ObjectOutputStream out;
     public ArrayList<File> filesToAdd = new ArrayList<>();
     public ArrayList<File> filesToRemove = new ArrayList<>();
+    
 
     public void setSocket(Socket s) {
         this.s = s;
@@ -65,20 +66,23 @@ public class Client {
 
         this.filesToRemove.clear();
 
+    }
+
+    public void submitInitialFileList(String path) {
+
+        FileWalker fw=new FileWalker(this);
+        fw.walk(path);
+        
 
     }
 
-    public void submitInitialFileList() {
+    public void connect(String ip, Integer port) {
+        Connector c = new Connector(ip, port, this);
+        c.start();
+    }
 
-
-        File folder = new File("c:\\temp");
-        File[] listOfFiles = folder.listFiles();
-        for (File f : listOfFiles) {
-            addFile(f);
-            sendFileList();
-        }
-
-        TimerTask task = new DirWatcher("c:/temp", "*") {
+    public void addWatcher(String folderPath) {
+        TimerTask task = new DirWatcher(folderPath, "*") {
             @Override
             protected void onChange(File file, String action) {
 
@@ -95,14 +99,10 @@ public class Client {
 
         Timer timer = new Timer();
         timer.schedule(task, new Date(), 1000);
+
     }
 
-    public void connect(String ip, Integer port) {
-        Connector c = new Connector(ip, port, this);
-        c.start();
-    }
-
-    private void sendFileList() {
+    public void sendFileList() {
 
 
         Header h = new Header(PacketType.ADDFILE);

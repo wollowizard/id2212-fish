@@ -14,10 +14,10 @@ import java.util.ArrayList;
  */
 public class SearchResult extends Payload  implements Serializable{
     
-    public ArrayList<SocketAddress> addresses=new ArrayList<>();
+    public ArrayList<FilenameAndAddress> addresses=new ArrayList<>();
 
-    public void addAddress(SocketAddress sa){
-        addresses.add(sa);
+    public void addFileResource(FilenameAndAddress fr){
+        addresses.add(fr);
     }
     
    
@@ -25,8 +25,8 @@ public class SearchResult extends Payload  implements Serializable{
     @Override
     public String printSummary() {
         String res="File Found in client(s): ";
-        for(SocketAddress sa : addresses){
-            res+=sa.toString() + " ";
+        for(FilenameAndAddress sa : addresses){
+            res+=sa.getAddress().toString() + " " + "File: " + sa.getFilename();
         }
         return res;
     }

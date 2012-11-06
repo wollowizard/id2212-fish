@@ -4,12 +4,10 @@
  */
 package fish.server;
 
-import fish.packets.FishPacket;
-import fish.packets.Header;
-import fish.packets.PacketType;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -18,10 +16,13 @@ import java.net.Socket;
 public class Main {
 
     public static void main(String[] args) throws IOException {
+        
+            
+                
         boolean listening = true;
         ServerSocket serverSocket = null;
 
-        FishServer fs = new FishServer();
+        final FishServer fs = new FishServer();
 
         try {
             serverSocket = new ServerSocket(1234);
@@ -29,6 +30,13 @@ public class Main {
             System.err.println("Could not listen on port: 1234.");
             System.exit(1);
         }
+        
+        java.awt.EventQueue.invokeLater(new Runnable() {
+            public void run() {
+                new ServerFrame(fs).setVisible(true);
+            }
+        });
+        
         while (listening) {
 
             Socket clientSocket = serverSocket.accept();
@@ -48,5 +56,8 @@ public class Main {
 
         }
         serverSocket.close();
+        
+        
     }
 }
+
