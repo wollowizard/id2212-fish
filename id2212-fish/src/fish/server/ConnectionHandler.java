@@ -4,7 +4,12 @@
  */
 package fish.server;
 
-import fish.packets.FileListPacket;
+import fish.packets.FileList;
+import fish.packets.FishPacket;
+import fish.packets.Header;
+import fish.packets.Payload;
+import fish.packets.PacketType;
+import fish.packets.ParameterToSearch;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -39,60 +44,83 @@ public class ConnectionHandler extends Thread {
 
     @Override
     public void run() {
-        fs.clients.add(client);
+
         System.out.println("Summary:\n");
         System.out.println(fs.printSummary());
-
+        
+        
+        
         while (running) {
 
 
             try {
 
 
-                FileListPacket fp = (FileListPacket) in.readObject();
+                FishPacket fp = (FishPacket) in.readObject();
 
-                System.out.println((new Date()).toString() + " Received packet: ");
-                System.out.println(fp.printSummary());
-
-                ArrayList<String> toAdd = fp.getFilesToAdd();
-                ArrayList<String> toRemove = fp.getFilesToRemove();
-
-                for (String s : toAdd) {
-                    client.addFile(s);
+                if (fp.getHeader().getType() == PacketType.ADDFILE) {
+                    FileList fl = (FileList) fp.getPayload();
+                    fs.addFilesOfClient(fl, client);
                     
-                }
+                    
 
-                for (String s : toRemove) {
-                    client.removeFile(s);
                 }
-
-                System.out.println("\n\n" + client.printSummary() + "\n\n");
+                else if(fp.getHeader().getType() == PacketType.SEARCH){
+                    
+                    ParameterToSearch par=(ParameterToSearch) fp.getPayload();
+                    System.out.println(fp.getPayload().printSummary());
+                    FishPacket search = fs.search(client, par.getParameter());
+                    sendSearchResult(search);
+                
+                }
 
             } catch (IOException ex) {
-                
-                running=false;
-                
-                System.out.println("Client " + client.getNetResources().getSocket().getInetAddress()  + "disconnected");
-                client.clearFiles();
-                fs.clients.remove(client);
-                
-                
-                
+
+                running = false;
+                System.out.println("Client " + client.getNetResources().getSocket().getInetAddress() + "disconnected");
+                fs.clientDisconnected(client);
+
+
             } catch (ClassNotFoundException ex) {
                 Logger.getLogger(ConnectionHandler.class.getName()).log(Level.SEVERE, null, ex);
             }
-       
+
         }
-         //client disconnects
-            try {
-                out.close();
-                in.close();
-                socket.close();
-            } catch (IOException e) {
-                System.out.println("Error while closing the connection");
-                e.printStackTrace();
-            }
+        //client disconnects
+        try {
+            closeConnection();
+        } catch (IOException e) {
+            System.out.println("Error while closing the connection");
+            e.printStackTrace();
+        }
+
+    }
+
+    private void closeConnection() throws IOException {
+        out.close();
+        in.close();
+        socket.close();
+
+    }
+
+    private void sendSearchResult(FishPacket response) {
         
+        
+        try {
+            out.writeObject(response);
+            
+            
+        } catch (IOException ex) {
+            //client connection was not ok
+            System.out.println(ex.getMessage());
+            fs.clientDisconnected(client);
+            try {
+                closeConnection();
+            } catch (IOException ex1) {
+                System.out.println(ex1.getMessage());
+                
+            }
+        }
 
     }
 }

@@ -4,7 +4,7 @@
  */
 package fish.server;
 
-import java.util.Vector;
+import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -14,13 +14,18 @@ import java.util.logging.Logger;
  */
 public class Client {
     private ClientNetworkResources netResources;
+    private ArrayList<String> files=new ArrayList<>();    
+    
+    
     private static final String FILEALREADYINCLIENTLIST="File already in client list!";
     private static final String FILENOTINCLIENTLIST="File not in client list!";
+    
+    
     public Client(ClientNetworkResources nr){
         this.netResources=nr;
     }
     
-    private Vector<String> files=new Vector<>();
+    
     
     
     public ClientNetworkResources getNetResources() {

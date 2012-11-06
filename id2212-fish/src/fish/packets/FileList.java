@@ -12,11 +12,11 @@ import java.util.ArrayList;
  *
  * @author alfredo
  */
-public class FileListPacket implements Serializable {
+public class FileList extends Payload  implements Serializable {
     private ArrayList<String> filesToAdd=new ArrayList<>();
     private ArrayList<String> filesToRemove=new ArrayList<>();
     
-    public FileListPacket(ArrayList<File> add, ArrayList<File> remove){
+    public FileList(ArrayList<File> add, ArrayList<File> remove){
         for(File f : add){
             filesToAdd.add(f.getPath());
         }

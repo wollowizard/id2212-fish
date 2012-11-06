@@ -4,6 +4,9 @@
  */
 package fish.server;
 
+import fish.packets.FishPacket;
+import fish.packets.Header;
+import fish.packets.PacketType;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -13,15 +16,13 @@ import java.net.Socket;
  * @author Marcel
  */
 public class Main {
-    
-    
 
     public static void main(String[] args) throws IOException {
         boolean listening = true;
         ServerSocket serverSocket = null;
-        
-        FishServer fs=new FishServer();
-        
+
+        FishServer fs = new FishServer();
+
         try {
             serverSocket = new ServerSocket(1234);
         } catch (IOException e) {
@@ -29,20 +30,20 @@ public class Main {
             System.exit(1);
         }
         while (listening) {
-            
+
             Socket clientSocket = serverSocket.accept();
+
+
+
+            System.out.println("accepted");
+
+            Client cd;
+            cd = new Client(new ClientNetworkResources(clientSocket));
+            fs.newClientConnected(cd);
             
+            (new ConnectionHandler(fs, cd)).start();
 
-                
-                System.out.println("accepted");
-                
-                Client cd;
-                cd = new Client(new ClientNetworkResources(clientSocket));
-                
-                
-                (new ConnectionHandler(fs,cd)).start();
 
-          
 
 
         }

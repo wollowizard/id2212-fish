@@ -4,12 +4,6 @@
  */
 package fish.client;
 
-import fish.client.dirWatch.DirWatcher;
-import java.io.File;
-import java.util.Date;
-import java.util.Timer;
-import java.util.TimerTask;
-
 /**
  *
  * @author alfredo
@@ -46,7 +40,7 @@ public class NewJFrame extends javax.swing.JFrame {
             }
         });
 
-        jButton2.setText("send");
+        jButton2.setText("SEARCH");
         jButton2.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton2ActionPerformed(evt);
@@ -62,7 +56,7 @@ public class NewJFrame extends javax.swing.JFrame {
                 .addComponent(jButton1)
                 .addGap(69, 69, 69)
                 .addComponent(jButton2)
-                .addContainerGap(117, Short.MAX_VALUE))
+                .addContainerGap(99, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -82,39 +76,12 @@ public class NewJFrame extends javax.swing.JFrame {
        c = new Client();
        c.connect("localhost", 1234);
 
-       
-
-        File folder = new File("c:\\temp");
-        File[] listOfFiles = folder.listFiles();
-        for (File f : listOfFiles) {
-            c.addFile(f);
-            c.sendFileList();
-        }
-
-        TimerTask task = new DirWatcher("c:/temp", "*") {
-            @Override
-            protected void onChange(File file, String action) {
-
-
-                if (action.equals("add")) {
-                    c.addFile(file);
-                } else if (action.equals("delete")) {
-                    c.removeFile(file);
-                }
-                c.sendFileList();
-                System.out.println("File " + file.getName() + " action: " + action);
-            }
-        };
-
-        Timer timer = new Timer();
-        timer.schedule(task, new Date(), 1000);   
-
-        
+      
 
     }//GEN-LAST:event_jButton1ActionPerformed
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
 
-        c.sendFileList();
+        c.search("a.txt");
     }//GEN-LAST:event_jButton2ActionPerformed
 
     /**

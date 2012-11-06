@@ -4,7 +4,11 @@
  */
 package fish.client;
 
-import fish.packets.FileListPacket;
+import fish.packets.FileList;
+import fish.packets.FishPacket;
+import fish.packets.PacketType;
+import fish.packets.Payload;
+import fish.packets.SearchResult;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -17,12 +21,12 @@ import java.util.logging.Logger;
  */
 public class Communicator extends Thread {
 
-    private FileListPacket packet;
+    private FishPacket packet;
     private ObjectInputStream in;
     private ObjectOutputStream out;
     private Client client;
 
-    public Communicator(FileListPacket p, ObjectInputStream in, ObjectOutputStream out, Client client) {
+    public Communicator(FishPacket p, ObjectInputStream in, ObjectOutputStream out, Client client) {
 
         this.packet = p;
         this.in = in;
@@ -39,16 +43,45 @@ public class Communicator extends Thread {
 
                 System.out.println("\n\nCOMMUNICATOR!!\n\n");
                 System.out.println("Sending: ");
-                System.out.println(this.packet.printSummary() + "\n\n");
+                System.out.println(this.packet.getPayload().printSummary() + "\n\n");
 
                 out.toString();
 
                 out.writeObject(this.packet);
                 out.flush();
                 out.reset();//important!!!!!!!! we always send the same obj, but fields are changed
-
-                client.filesToAdd.clear();
-                client.filesToRemove.clear();
+                
+                if(packet.getHeader().getType()==PacketType.ADDFILE){
+                    client.filesToAdd.clear();
+                    client.filesToRemove.clear();
+                }
+                
+                
+                else if(packet.getHeader().getType()==PacketType.SEARCH){
+                    try {
+                        FishPacket fp=(FishPacket)in.readObject();
+                        if(fp.getHeader().getType()==PacketType.FILENOTFOUND){
+                            System.out.println("FILE NOT FOUND!!!!!");
+                        }
+                        else if(fp.getHeader().getType()==PacketType.FILEFOUND){
+                            System.out.print("FILE FOUND !!!!! ");
+                            SearchResult results = (SearchResult) fp.getPayload();
+                            System.out.println(results.printSummary());
+                            
+                        }
+                        else if(fp.getHeader().getType()==PacketType.FILEFOUNDBUTYOUOWNIT){
+                            System.out.println("FILE FOUND but it's already yours!!!!!");
+                            SearchResult results = (SearchResult) fp.getPayload();
+                            System.out.println(results.printSummary());
+                        }
+                        
+                    } catch (ClassNotFoundException ex) {
+                        Logger.getLogger(Communicator.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                    
+                    
+                
+                }
                 
             }
 

@@ -47,11 +47,11 @@ public class Connector extends Thread {
                 
                 objIn.toString();
                 objOut.toString();
-                try {
-                    Thread.sleep(1000);
-                } catch (InterruptedException ex) {
-                    Logger.getLogger(Connector.class.getName()).log(Level.SEVERE, null, ex);
-                }
+                
+                
+                client.submitInitialFileList();
+                
+                
                 
             }
             
