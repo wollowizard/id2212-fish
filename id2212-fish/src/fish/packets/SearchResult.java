@@ -4,6 +4,7 @@
  */
 package fish.packets;
 
+import java.io.Serializable;
 import java.net.SocketAddress;
 import java.util.ArrayList;
 
@@ -11,7 +12,7 @@ import java.util.ArrayList;
  *
  * @author alfredo
  */
-public class SearchResult extends Payload{
+public class SearchResult extends Payload  implements Serializable{
     
     public ArrayList<SocketAddress> addresses=new ArrayList<>();
 

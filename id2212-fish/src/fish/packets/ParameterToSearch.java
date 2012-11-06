@@ -4,11 +4,13 @@
  */
 package fish.packets;
 
+import java.io.Serializable;
+
 /**
  *
  * @author alfredo
  */
-public class ParameterToSearch extends Payload{
+public class ParameterToSearch extends Payload implements Serializable{
 
     private String parameter;
 

@@ -2,6 +2,8 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
+
+/*
 package fish.client;
 
 import fish.client.dirWatch.DirWatcher;
@@ -15,6 +17,8 @@ import java.util.TimerTask;
  *
  * @author alfredo
  */
+
+/*
 public class Main {
 
     static Client c;
@@ -99,3 +103,4 @@ public class Main {
         throw new UnsupportedOperationException("Not yet implemented");
     }
 }
+*/

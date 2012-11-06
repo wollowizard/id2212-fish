@@ -4,11 +4,13 @@
  */
 package fish.packets;
 
+import java.io.Serializable;
+
 /**
  *
  * @author alfredo
  */
-public enum PacketType {
+public enum PacketType  implements Serializable{
     ADDFILE, SEARCH, FILENOTFOUND, FILEFOUND, FILEFOUNDBUTYOUOWNIT
 
 }

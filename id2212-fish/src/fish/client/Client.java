@@ -109,7 +109,7 @@ public class Client {
 
         FileList fl = new FileList(filesToAdd, filesToRemove);
         FishPacket packet = new FishPacket(h, fl);
-        Communicator c = new Communicator(packet, in, out, this);
+        Sender c = new Sender(packet, in, out, this);
 
         c.start();
     }
@@ -120,7 +120,7 @@ public class Client {
         ParameterToSearch par = new ParameterToSearch(file);
 
         FishPacket packet = new FishPacket(h, par);
-        Communicator c = new Communicator(packet, in, out, this);
+        Sender c = new Sender(packet, in, out, this);
 
         c.start();
 

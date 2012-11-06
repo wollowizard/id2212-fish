@@ -4,11 +4,13 @@
  */
 package fish.packets;
 
+import java.io.Serializable;
+
 /**
  *
  * @author alfredo
  */
-public abstract class Payload {
+public abstract class Payload  implements Serializable{
     
     public abstract String printSummary();
     
