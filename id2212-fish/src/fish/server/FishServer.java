@@ -10,9 +10,10 @@ import fish.packets.Header;
 import fish.packets.PacketType;
 import fish.packets.SearchResult;
 import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  *
@@ -20,14 +21,13 @@ import java.util.Map;
  */
 class FishServer {
 
-    public ArrayList<Client> clients;
-    public ArrayList<FishFile> files;
+    //public ArrayList<Client> clients;
+    //public ArrayList<FishFile> files;
+    
+    Map<FishFile,Client> filesMap=new ConcurrentHashMap<>();
+    List clients = Collections.synchronizedList(new ArrayList()); 
 
-    public FishServer() {
-        clients = new ArrayList<Client>();
-        files = new ArrayList<FishFile>();
-    }
-
+  
     public void newClientConnected(Client c) {
         if (!clients.contains(c)) {
             this.clients.add(c);
@@ -35,31 +35,31 @@ class FishServer {
     }
 
     public void clientDisconnected(Client client) {
-        ArrayList<FishFile> toberemoved=new ArrayList<>();
-        for(FishFile f : files){
-            if(f.getOwner().equals(client)){
-                toberemoved.add(f);
+        ArrayList<Map.Entry<FishFile,Client>> toberemoved=new ArrayList<>();
+        
+        for (Map.Entry<FishFile,Client> entry : filesMap.entrySet()){
+            if(entry.getValue().equals(client)){
+                toberemoved.add(entry);
             }
         }
-        for(FishFile f : toberemoved){
-            files.remove(f);
+                
+        for(Map.Entry<FishFile,Client> f : toberemoved){
+            filesMap.remove(f.getKey());
         }
         
         client.clearFiles();
         clients.remove(client);
     }
-
+    
+   
+    
     public void updateFilesOfClient(ArrayList<FishFile> add, ArrayList<FishFile> remove, Client client) {
-        System.out.println((new Date()).toString() + " Received packet: ");
-        //System.out.println(fp.printSummary());
-
 
         for (FishFile s : add) {
-            
+       
             if(addFile(client, s)){
                 client.addFile(s);
             }
-
         }
 
         for (FishFile s : remove) {
@@ -67,34 +67,22 @@ class FishServer {
             removeFile(client, s);
         }
 
-
-
-        System.out.println("\n\n" + client.printSummary() + "\n\n");
     }
 
     public FishPacket search(Client c, String parameter) {
         
-        Header header=null; 
-       // ArrayList<Client> clientswithfile=new ArrayList<>();
-       Map <Client,FilenameAndAddress> clients=new HashMap<>();
+        ArrayList<Map.Entry<FishFile,Client>> results=new ArrayList<>();
         
-        for (int i = 0; i < files.size(); i++) {
-            FishFile f = files.get(i);
-            if (f.getFilename().contains(parameter)) {
-                //if(!clientswithfile.contains(f.getOwner())){
-                if(clients.get(f.getOwner())==null){//-------------------------------
-                   //clientswithfile.add(f.getOwner());
-                   clients.put(f.getOwner(), new FilenameAndAddress(f.getFilename(), f.getOwnerRemoteAddress()));
-                }
+        for (Map.Entry<FishFile,Client> entry : filesMap.entrySet()){
+            if(entry.getKey().getFilename().contains(parameter) && 
+                    (!entry.getValue().equals(c))){
+                results.add(entry);
             }
         }
+       
+        Header header=null;
         
-        
-        clients.remove(c);
-        //clientswithfile.remove(c);
-        
-       // if(clientswithfile.size()==0){
-         if(clients.isEmpty()){
+         if(results.isEmpty()){
             header = new Header(PacketType.FILENOTFOUND);
         }
         else{
@@ -103,10 +91,10 @@ class FishServer {
         
        
         SearchResult sr = new SearchResult();
-        //for(Client i : clientswithfile){
         
-        for (Map.Entry<Client, FilenameAndAddress> i : clients.entrySet()){
-            FilenameAndAddress fr=new FilenameAndAddress(i.getValue().getFilename(), i.getKey().getNetResources().getSocket().getRemoteSocketAddress());
+        
+        for (Map.Entry<FishFile, Client> i : results){
+            FilenameAndAddress fr=new FilenameAndAddress(i.getKey().getFilename(), i.getValue().getNetResources().getSocket().getRemoteSocketAddress());
             sr.addFileResource(fr);
         }
         
@@ -117,14 +105,20 @@ class FishServer {
 
     private boolean addFile(Client c, FishFile file) {
         boolean found=false;
-        for(int i=0;i<this.files.size() && !found;i++){
-            if( file.getFilename().compareTo(files.get(i).getFilename())==0
-                    && c==files.get(i).getOwner() ){
+        
+        for (Map.Entry<FishFile,Client> entry : filesMap.entrySet()){
+            if(found){
+                break;
+            }
+            FishFile fileInMap=entry.getKey();
+            if((fileInMap.getFilename().compareTo(file.getFilename())==0)&&
+                    fileInMap.getOwner().equals(c)){
                 found=true;
             }
         }
+        
         if(!found){
-            this.files.add(file);
+            this.filesMap.put(file,c);
         }
         return !found;
 
@@ -136,13 +130,14 @@ class FishServer {
 
     private void removeFile(Client c, FishFile file) {
 
-        this.files.remove(file);
+        this.filesMap.remove(file);
 
     }
 
     public String printSummary() {
         String res = "";
-        for (Client c : clients) {
+        for (Object o : clients) {
+            Client c = (Client)o;
             res += c.printSummary() + "\n\n\n";
         }
         return res;

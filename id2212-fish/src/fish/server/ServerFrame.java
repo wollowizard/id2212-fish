@@ -90,7 +90,7 @@ public class ServerFrame extends javax.swing.JFrame {
         if(command.compareTo("summary")==0){
             jTextArea2.setText(fs.printSummary());
         }
-        jTextArea1.setText("");
+        
         
     }//GEN-LAST:event_jToggleButton1ActionPerformed
 

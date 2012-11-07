@@ -6,30 +6,38 @@ package fish.client;
 
 import fish.client.dirWatch.DirWatcher;
 import fish.packets.FileList;
+import fish.packets.FilenameAndAddress;
 import fish.packets.FishPacket;
 import fish.packets.Header;
 import fish.packets.PacketType;
 import fish.packets.ParameterToSearch;
+import fish.packets.SearchResult;
 import java.io.File;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Observable;
 import java.util.Timer;
 import java.util.TimerTask;
+import javax.swing.SwingUtilities;
 
 /**
  *
  * @author alfredo
  */
-public class Client {
+public class Client extends Observable{
 
-    public Socket s;
-    public ObjectInputStream in;
-    public ObjectOutputStream out;
-    public ArrayList<File> filesToAdd = new ArrayList<>();
-    public ArrayList<File> filesToRemove = new ArrayList<>();
+    private Socket s;
+    private ObjectInputStream in;
+    private ObjectOutputStream out;
+    private ArrayList<File> filesToAdd = new ArrayList<>();
+    private ArrayList<File> filesToRemove = new ArrayList<>();
+    
+    private boolean connected=false;
+    private ArrayList<FilenameAndAddress> lastresult;
+    
     
 
     public void setSocket(Socket s) {
@@ -43,6 +51,41 @@ public class Client {
     public void setOutStream(ObjectOutputStream out) {
         this.out = out;
     }
+
+    public boolean isConnected() {
+        return connected;
+    }
+
+    public void setConnected(boolean connected) {
+        this.connected = connected;
+        this.setChanged();
+        
+        
+        SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
+                notifyObservers(EventEnum.CONNECTED);
+            }
+        });
+    }
+
+    public ArrayList<FilenameAndAddress> getLastresult() {
+        return lastresult;
+    }
+
+    public void setLastresult(ArrayList<FilenameAndAddress> lastresult) {
+        
+        
+        this.lastresult = lastresult;
+        this.setChanged();
+        SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
+                notifyObservers(EventEnum.NEWRESULT);
+            }
+        });
+    }
+    
+    
+    
 
     public void addFile(File f) {
 
@@ -59,7 +102,6 @@ public class Client {
     public void clearFilesToAdd() {
 
         this.filesToAdd.clear();
-
     }
 
     public void clearFilesToRemove() {
@@ -76,9 +118,13 @@ public class Client {
 
     }
 
-    public void connect(String ip, Integer port) {
+    public void share(String ip, Integer port) {
         Connector c = new Connector(ip, port, this);
         c.start();
+    }
+    
+    public void unshare(){
+        System.exit(1);
     }
 
     public void addWatcher(String folderPath) {

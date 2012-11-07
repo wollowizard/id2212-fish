@@ -41,4 +41,6 @@ public class FishFile {
         return this.owner.getNetResources().getSocket().getRemoteSocketAddress();
     }
     
+    
 }
+ 

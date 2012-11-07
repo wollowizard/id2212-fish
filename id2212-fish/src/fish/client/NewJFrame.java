@@ -4,19 +4,30 @@
  */
 package fish.client;
 
+import fish.packets.FilenameAndAddress;
+import java.awt.Component;
+import java.util.ArrayList;
+import java.util.Observable;
+import java.util.Observer;
+import javax.swing.table.DefaultTableModel;
+
 /**
  *
  * @author alfredo
  */
-public class NewJFrame extends javax.swing.JFrame {
+public class NewJFrame extends javax.swing.JFrame implements Observer {
 
-    Client c;
+    Client client;
 
     /**
      * Creates new form NewJFrame
      */
     public NewJFrame() {
+        client = new Client();
         initComponents();
+        this.disableConnectedPanel();
+        client.addObserver(this);
+
     }
 
     /**
@@ -28,61 +39,134 @@ public class NewJFrame extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jButton1 = new javax.swing.JButton();
-        jButton2 = new javax.swing.JButton();
+        ConnectButton = new javax.swing.JButton();
+        connectedPanel = new javax.swing.JPanel();
+        searchPanel = new javax.swing.JPanel();
+        jLabel1 = new javax.swing.JLabel();
+        searchTextField = new javax.swing.JTextField();
+        searchButton = new javax.swing.JButton();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        ResultTable = new javax.swing.JTable();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        jButton1.setText("connect");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
+        ConnectButton.setText("connect");
+        ConnectButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
+                ConnectButtonActionPerformed(evt);
             }
         });
 
-        jButton2.setText("SEARCH");
-        jButton2.addActionListener(new java.awt.event.ActionListener() {
+        jLabel1.setText("Parameter:");
+
+        searchButton.setText("SEARCH");
+        searchButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton2ActionPerformed(evt);
+                searchButtonActionPerformed(evt);
             }
         });
+
+        ResultTable.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+                "File Name", "Client Address"
+            }
+        ) {
+            boolean[] canEdit = new boolean [] {
+                false, false
+            };
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        jScrollPane1.setViewportView(ResultTable);
+
+        javax.swing.GroupLayout searchPanelLayout = new javax.swing.GroupLayout(searchPanel);
+        searchPanel.setLayout(searchPanelLayout);
+        searchPanelLayout.setHorizontalGroup(
+            searchPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(searchPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(searchPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(searchPanelLayout.createSequentialGroup()
+                        .addComponent(jLabel1)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(searchTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 181, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(searchButton))
+                    .addGroup(searchPanelLayout.createSequentialGroup()
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 375, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 0, Short.MAX_VALUE)))
+                .addContainerGap())
+        );
+        searchPanelLayout.setVerticalGroup(
+            searchPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(searchPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(searchPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel1)
+                    .addComponent(searchTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(searchButton))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 303, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
+        javax.swing.GroupLayout connectedPanelLayout = new javax.swing.GroupLayout(connectedPanel);
+        connectedPanel.setLayout(connectedPanelLayout);
+        connectedPanelLayout.setHorizontalGroup(
+            connectedPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(connectedPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(searchPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+        connectedPanelLayout.setVerticalGroup(
+            connectedPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(connectedPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(searchPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(60, Short.MAX_VALUE))
+        );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(88, 88, 88)
-                .addComponent(jButton1)
-                .addGap(69, 69, 69)
-                .addComponent(jButton2)
-                .addContainerGap(99, Short.MAX_VALUE))
+                .addContainerGap()
+                .addComponent(ConnectButton)
+                .addContainerGap())
+            .addComponent(connectedPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(113, 113, 113)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButton1)
-                    .addComponent(jButton2))
-                .addContainerGap(164, Short.MAX_VALUE))
+                .addContainerGap()
+                .addComponent(ConnectButton)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(connectedPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+    private void ConnectButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ConnectButtonActionPerformed
 
-       c = new Client();
-       c.connect("localhost", 1234);
 
-      
+        client.share("localhost", 1234);
 
-    }//GEN-LAST:event_jButton1ActionPerformed
-    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
 
-        c.search("a.txt");
-    }//GEN-LAST:event_jButton2ActionPerformed
+
+    }//GEN-LAST:event_ConnectButtonActionPerformed
+    private void searchButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchButtonActionPerformed
+
+        client.search(this.searchTextField.getText());
+    }//GEN-LAST:event_searchButtonActionPerformed
 
     /**
      * @param args the command line arguments
@@ -125,7 +209,56 @@ public class NewJFrame extends javax.swing.JFrame {
         });
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
+    private javax.swing.JButton ConnectButton;
+    private javax.swing.JTable ResultTable;
+    private javax.swing.JPanel connectedPanel;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JButton searchButton;
+    private javax.swing.JPanel searchPanel;
+    private javax.swing.JTextField searchTextField;
     // End of variables declaration//GEN-END:variables
+
+    @Override
+    public void update(Observable o, Object arg) {
+
+        EventEnum event = (EventEnum) arg;
+        if (event == EventEnum.CONNECTED) {
+            this.ConnectButton.setEnabled(false);
+            this.enableConnectedPanel();
+        } else if (event == EventEnum.NEWRESULT) {
+            
+            DefaultTableModel model = (DefaultTableModel) this.ResultTable.getModel();
+            while (model.getRowCount() > 0) {
+                model.removeRow(0);
+            }
+
+            ArrayList<FilenameAndAddress> files = client.getLastresult();
+            if (files.isEmpty()) {
+
+                model.addRow(new Object[]{"FILE", "NOT FOUND"});
+            }
+            else{
+                for(FilenameAndAddress f : files){
+                    model.addRow(new Object[]{f.getFilename(), f.getAddress()});
+                }
+            
+            }
+
+        }
+    }
+
+    public void enableConnectedPanel() {
+        Component[] components = this.searchPanel.getComponents();
+        for (Component c : components) {
+            c.setEnabled(true);
+        }
+    }
+
+    public void disableConnectedPanel() {
+        Component[] components = this.searchPanel.getComponents();
+        for (Component c : components) {
+            c.setEnabled(false);
+        }
+    }
 }

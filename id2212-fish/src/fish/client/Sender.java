@@ -49,8 +49,8 @@ public class Sender extends Thread {
                 out.reset();//important!!!!!!!! we always send the same obj, but fields are changed
 
                 if (packet.getHeader().getType() == PacketType.ADDFILE) {
-                    client.filesToAdd.clear();
-                    client.filesToRemove.clear();
+                    client.clearFilesToAdd();
+                    client.clearFilesToRemove();
                     
                     
                 } else if (packet.getHeader().getType() == PacketType.SEARCH) {

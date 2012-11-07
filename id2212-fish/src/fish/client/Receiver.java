@@ -4,12 +4,14 @@
  */
 package fish.client;
 
+import fish.packets.FilenameAndAddress;
 import fish.packets.FishPacket;
 import fish.packets.PacketType;
 import fish.packets.SearchResult;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -44,7 +46,7 @@ public class Receiver extends Thread {
                 if (packet.getHeader().getType() == PacketType.SEARCH) {
                     this.manageSearchResponse(fp);
                 }
-                
+
             }
         } catch (ClassNotFoundException ex) {
             Logger.getLogger(Receiver.class.getName()).log(Level.SEVERE, null, ex);
@@ -52,20 +54,19 @@ public class Receiver extends Thread {
             Logger.getLogger(Sender.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
-    
-    private void manageSearchResponse(FishPacket received){
-        if (received.getHeader().getType() == PacketType.FILENOTFOUND) {
-                        System.out.println("FILE NOT FOUND!!!!!");
-                    } else if (received.getHeader().getType() == PacketType.FILEFOUND) {
-                        System.out.print("FILE FOUND !!!!! ");
-                        SearchResult results = (SearchResult) received.getPayload();
-                        System.out.println(results.printSummary());
 
-                    } else if (received.getHeader().getType() == PacketType.FILEFOUNDBUTYOUOWNIT) {
-                        System.out.println("FILE FOUND but it's already yours!!!!!");
-                        SearchResult results = (SearchResult) received.getPayload();
-                        System.out.println(results.printSummary());
-                    }
+    private void manageSearchResponse(FishPacket received) {
+        if (received.getHeader().getType() == PacketType.FILENOTFOUND) {
+            System.out.println("FILE NOT FOUND!!!!!");
+
+            this.client.setLastresult(new ArrayList<FilenameAndAddress>());
+
+
+        } else if (received.getHeader().getType() == PacketType.FILEFOUND) {
+            System.out.print("FILE FOUND !!!!! ");
+            SearchResult results = (SearchResult) received.getPayload();
+            this.client.setLastresult(results.getFileNamesandAddresses());
+
+        }
     }
 }
