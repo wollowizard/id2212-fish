@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.StringTokenizer;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -72,11 +73,16 @@ class FishServer {
     public synchronized FishPacket search(Client c, String parameter) {
         
         ArrayList<Map.Entry<FishFile,Client>> results=new ArrayList<>();
-        
+        ArrayList<String> word = new ArrayList<>();
+        StringTokenizer st = new StringTokenizer(parameter);
+        while (st.hasMoreTokens())
+            word.add(st.nextToken());
         for (Map.Entry<FishFile,Client> entry : filesMap.entrySet()){
-            if(entry.getKey().getFilename().contains(parameter) && 
-                    (!entry.getValue().equals(c))){
-                results.add(entry);
+            for (String it: word) {
+                if(entry.getKey().getFilename().contains(it) && 
+                        (!entry.getValue().equals(c)) && !results.contains(entry)){
+                    results.add(entry);
+                }
             }
         }
        
