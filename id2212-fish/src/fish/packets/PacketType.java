@@ -11,6 +11,6 @@ import java.io.Serializable;
  * @author alfredo
  */
 public enum PacketType  implements Serializable{
-    ADDFILE, SEARCH, FILENOTFOUND, FILEFOUND, FILEFOUNDBUTYOUOWNIT
+    ADDFILE, SEARCH, SEARCHFILENOTFOUND, FILEFOUND, DOWNLOAD,FILENOTFOUND
 
 }

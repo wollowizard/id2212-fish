@@ -54,10 +54,11 @@ public class Sender extends Thread {
                     
                     
                 } else if (packet.getHeader().getType() == PacketType.SEARCH) {
-                    //if it was a search, we should wait for a resonse
+                    //if it was a search, we should wait for a response
+                    //the receiver thread will get it;
                     
-                    Receiver recThread = new Receiver(packet, in, out, client);
-                    recThread.start();
+                    //Receiver recThread = new Receiver(packet, in, out, client);
+                    //recThread.start();
                 }
             }
 

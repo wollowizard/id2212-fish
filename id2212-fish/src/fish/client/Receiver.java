@@ -21,14 +21,15 @@ import java.util.logging.Logger;
  */
 public class Receiver extends Thread {
 
-    private FishPacket packet;
+    //private FishPacket packet;
     private ObjectInputStream in;
     private ObjectOutputStream out;
     private Client client;
+    private Boolean running = true;
 
-    public Receiver(FishPacket p, ObjectInputStream in, ObjectOutputStream out, Client client) {
+    public Receiver(ObjectInputStream in, ObjectOutputStream out, Client client) {
 
-        this.packet = p;
+        //this.packet = p;
         this.in = in;
         this.out = out;
         this.client = client;
@@ -39,13 +40,16 @@ public class Receiver extends Thread {
 
 
         try {
-            synchronized (client) {
 
-                System.out.println("\n\nRECEIVER!!\n\n");
+
+            System.out.println("\n\nRECEIVER!!\n\n");
+            while (running) {
                 FishPacket fp = (FishPacket) in.readObject();
-                if (packet.getHeader().getType() == PacketType.SEARCH) {
-                    this.manageSearchResponse(fp);
-                }
+               // synchronized (client) {
+
+                   this.manageSearchResponse(fp);
+
+                //}
 
             }
         } catch (ClassNotFoundException ex) {
@@ -67,6 +71,10 @@ public class Receiver extends Thread {
             SearchResult results = (SearchResult) received.getPayload();
             this.client.setLastresult(results.getFileNamesandAddresses());
 
+        }
+        else if(received.getHeader().getType() == PacketType.DOWNLOAD){
+            
+        
         }
     }
 }

@@ -170,4 +170,8 @@ public class Client extends Observable{
         c.start();
 
     }
+
+    void startReceiverThread() {
+        new Receiver(in, out, this).start();
+    }
 }
