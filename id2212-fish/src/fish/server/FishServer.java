@@ -10,9 +10,12 @@ import fish.packets.Header;
 import fish.packets.PacketType;
 import fish.packets.SearchResult;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.StringTokenizer;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -27,7 +30,7 @@ class FishServer {
     
     Map<FishFile,Client> filesMap=new ConcurrentHashMap<>();
     List clients = Collections.synchronizedList(new ArrayList()); 
-
+    String KeywordToSearch="";
   
     public void newClientConnected(Client c) {
         if (!clients.contains(c)) {
@@ -69,11 +72,56 @@ class FishServer {
         }
 
     }
+    
+    public static int getDifference(String a, String b) {
+        // Minimize the amount of storage needed:
+        if (a.length() > b.length()) {
+            // Swap:
+            String x = a;
+            a = b;
+            b = x;
+        }
+
+        // Store only two rows of the matrix, instead of a big one
+        int[] mat1 = new int[a.length() + 1];
+        int[] mat2 = new int[a.length() + 1];
+
+        int i;
+        int j;
+
+        for (i = 1; i <= a.length(); i++) {
+            mat1[i] = i;
+        }
+
+        mat2[0] = 1;
+
+        for (j = 1; j <= b.length(); j++) {
+            for (i = 1; i <= a.length(); i++) {
+                int c = (a.charAt(i - 1) == b.charAt(j - 1) ? 0 : 1);
+
+                mat2[i] =
+                        Math.min(mat1[i - 1] + c,
+                        Math.min(mat1[i] + 1, mat2[i - 1] + 1));
+            }
+
+            // Swap:
+            int[] x = mat1;
+            mat1 = mat2;
+            mat2 = x;
+
+            mat2[0] = mat1[0] + 1;
+        }
+
+        // It's row #1 because we swap rows at the end of each outer loop,
+        // as we are to return the last number on the lowest row
+        return mat1[a.length()];
+    }
 
     public synchronized FishPacket search(Client c, String parameter) {
-        
+        this.KeywordToSearch=parameter;
         ArrayList<Map.Entry<FishFile,Client>> results=new ArrayList<>();
         ArrayList<String> word = new ArrayList<>();
+        ArrayList<Integer> tmp = new ArrayList<> ();
         StringTokenizer st = new StringTokenizer(parameter);
         while (st.hasMoreTokens())
             word.add(st.nextToken());
@@ -85,7 +133,7 @@ class FishServer {
                 }
             }
         }
-       
+        Collections.sort(results, new SortByName());
         Header header=null;
         
          if(results.isEmpty()){
@@ -148,5 +196,16 @@ class FishServer {
         }
         return res;
 
+    }
+    
+    public class SortByName implements Comparator<Map.Entry<FishFile,Client>> {
+
+        @Override
+        public int compare(Entry<FishFile, Client> t, Entry<FishFile, Client> t1) {
+            int s1 = getDifference(t.getKey().getFilename().toString(),KeywordToSearch);
+            int s2 = getDifference(t1.getKey().getFilename().toString(),KeywordToSearch);
+            return s1-s2;
+        }
+        
     }
 }
