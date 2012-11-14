@@ -29,7 +29,10 @@ class FishServer {
     //public ArrayList<FishFile> files;
     
     Map<FishFile,Client> filesMap=new ConcurrentHashMap<>();
+    
     List clients = Collections.synchronizedList(new ArrayList()); 
+    
+            
     String KeywordToSearch="";
   
     public void newClientConnected(Client c) {

@@ -8,6 +8,7 @@ import fish.packets.FilenameAndAddress;
 import fish.packets.FishPacket;
 import fish.packets.PacketType;
 import fish.packets.SearchResult;
+import java.io.File;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -45,11 +46,11 @@ public class Receiver extends Thread {
             System.out.println("\n\nRECEIVER!!\n\n");
             while (running) {
                 FishPacket fp = (FishPacket) in.readObject();
-               // synchronized (client) {
+                synchronized (client) {
 
-                   this.manageSearchResponse(fp);
+                    this.manageSearchResponse(fp);
 
-                //}
+                }
 
             }
         } catch (ClassNotFoundException ex) {
@@ -71,10 +72,12 @@ public class Receiver extends Thread {
             SearchResult results = (SearchResult) received.getPayload();
             this.client.setLastresult(results.getFileNamesandAddresses());
 
-        }
-        else if(received.getHeader().getType() == PacketType.DOWNLOAD){
+        } else if (received.getHeader().getType() == PacketType.DOWNLOAD) {
+            File f=new File("a.txt");
+            //f.get
             
-        
+            
+            
         }
     }
 }

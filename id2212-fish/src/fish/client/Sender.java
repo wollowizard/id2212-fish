@@ -51,14 +51,6 @@ public class Sender extends Thread {
                 if (packet.getHeader().getType() == PacketType.ADDFILE) {
                     client.clearFilesToAdd();
                     client.clearFilesToRemove();
-                    
-                    
-                } else if (packet.getHeader().getType() == PacketType.SEARCH) {
-                    //if it was a search, we should wait for a response
-                    //the receiver thread will get it;
-                    
-                    //Receiver recThread = new Receiver(packet, in, out, client);
-                    //recThread.start();
                 }
             }
 
