@@ -25,14 +25,11 @@ public class Client {
         this.netResources=nr;
     }
     
-    
-    
-    
-    public ClientNetworkResources getNetResources() {
+    public synchronized ClientNetworkResources getNetResources() {
         return netResources;
     }
     
-    public void addFile(FishFile s){
+    public synchronized void addFile(FishFile s){
         if(!this.files.contains(s)){
             this.files.add(s);
         }
@@ -41,7 +38,7 @@ public class Client {
         }
     }
     
-    public void removeFile(FishFile s){
+    public synchronized void removeFile(FishFile s){
         if(this.files.contains(s)){
             this.files.remove(s);
         }
@@ -51,11 +48,11 @@ public class Client {
     
     }
 
-    public void clearFiles() {
+    public synchronized  void clearFiles() {
         this.files.clear();
     }
     
-    public String printSummary(){
+    public synchronized String printSummary(){
         String res="";
         res+="Client " + netResources.getSocket().getRemoteSocketAddress() + "\n";
         res+="Files: \n";

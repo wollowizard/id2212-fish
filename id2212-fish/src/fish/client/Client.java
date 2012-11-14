@@ -11,7 +11,6 @@ import fish.packets.FishPacket;
 import fish.packets.Header;
 import fish.packets.PacketType;
 import fish.packets.ParameterToSearch;
-import fish.packets.SearchResult;
 import java.io.File;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;

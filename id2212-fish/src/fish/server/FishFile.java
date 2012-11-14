@@ -20,23 +20,23 @@ public class FishFile {
         this.owner = owner;
     }
 
-    public String getFilename() {
+    public synchronized String getFilename() {
         return filename;
     }
 
-    public Client getOwner() {
+    public synchronized Client getOwner() {
         return owner;
     }
 
-    public void setFilename(String filename) {
+    public synchronized void setFilename(String filename) {
         this.filename = filename;
     }
 
-    public void setOwner(Client owner) {
+    public synchronized void setOwner(Client owner) {
         this.owner = owner;
     }
     
-    public SocketAddress getOwnerRemoteAddress(){
+    public synchronized SocketAddress getOwnerRemoteAddress(){
     
         return this.owner.getNetResources().getSocket().getRemoteSocketAddress();
     }

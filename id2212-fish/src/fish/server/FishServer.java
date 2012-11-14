@@ -34,7 +34,7 @@ class FishServer {
         }
     }
 
-    public void clientDisconnected(Client client) {
+    public synchronized void clientDisconnected(Client client) {
         ArrayList<Map.Entry<FishFile,Client>> toberemoved=new ArrayList<>();
         
         for (Map.Entry<FishFile,Client> entry : filesMap.entrySet()){
@@ -53,7 +53,7 @@ class FishServer {
     
    
     
-    public void updateFilesOfClient(ArrayList<FishFile> add, ArrayList<FishFile> remove, Client client) {
+    public synchronized void updateFilesOfClient(ArrayList<FishFile> add, ArrayList<FishFile> remove, Client client) {
 
         for (FishFile s : add) {
        
@@ -69,7 +69,7 @@ class FishServer {
 
     }
 
-    public FishPacket search(Client c, String parameter) {
+    public synchronized FishPacket search(Client c, String parameter) {
         
         ArrayList<Map.Entry<FishFile,Client>> results=new ArrayList<>();
         
@@ -103,7 +103,7 @@ class FishServer {
 
     }
 
-    private boolean addFile(Client c, FishFile file) {
+    private synchronized boolean addFile(Client c, FishFile file) {
         boolean found=false;
         
         for (Map.Entry<FishFile,Client> entry : filesMap.entrySet()){
@@ -124,17 +124,17 @@ class FishServer {
 
     }
 
-    private void removeClient(Client c) {
+    private synchronized void removeClient(Client c) {
         this.clients.remove(c);
     }
 
-    private void removeFile(Client c, FishFile file) {
+    private synchronized  void removeFile(Client c, FishFile file) {
 
         this.filesMap.remove(file);
 
     }
 
-    public String printSummary() {
+    public synchronized String printSummary() {
         String res = "";
         for (Object o : clients) {
             Client c = (Client)o;

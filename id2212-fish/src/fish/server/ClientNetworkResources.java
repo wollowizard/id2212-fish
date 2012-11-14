@@ -25,27 +25,27 @@ public class ClientNetworkResources {
     }
 
     
-    public Socket getSocket() {
+    public synchronized Socket getSocket() {
         return socket;
     }
 
-    public ObjectInputStream getInStream() {
+    public synchronized ObjectInputStream getInStream() {
         return in;
     }
 
-    public ObjectOutputStream getOutStream() {
+    public synchronized ObjectOutputStream getOutStream() {
         return out;
     }
 
-    public void setSocket(Socket socket) {
+    public synchronized void setSocket(Socket socket) {
         this.socket = socket;
     }
 
-    public void setIn(ObjectInputStream in) {
+    public synchronized void setIn(ObjectInputStream in) {
         this.in = in;
     }
 
-    public void setOut(ObjectOutputStream out) {
+    public synchronized void setOut(ObjectOutputStream out) {
         this.out = out;
     }
     

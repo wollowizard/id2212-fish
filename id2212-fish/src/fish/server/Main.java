@@ -7,7 +7,6 @@ package fish.server;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
-import javax.swing.JOptionPane;
 
 /**
  *
@@ -16,8 +15,6 @@ import javax.swing.JOptionPane;
 public class Main {
 
     public static void main(String[] args) throws IOException {
-        
-            
                 
         boolean listening = true;
         ServerSocket serverSocket = null;
@@ -40,19 +37,12 @@ public class Main {
         while (listening) {
 
             Socket clientSocket = serverSocket.accept();
-
-
-
-            System.out.println("accepted");
-
+            
             Client cd;
             cd = new Client(new ClientNetworkResources(clientSocket));
             fs.newClientConnected(cd);
             
             (new ConnectionHandler(fs, cd)).start();
-
-
-
 
         }
         serverSocket.close();
