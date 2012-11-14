@@ -11,6 +11,7 @@ import fish.packets.FishPacket;
 import fish.packets.Header;
 import fish.packets.PacketType;
 import fish.packets.ParameterToSearch;
+import fish.packets.ServerStatistics;
 import java.io.File;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -33,7 +34,8 @@ public class Client extends Observable{
     private ObjectOutputStream out;
     private ArrayList<File> filesToAdd = new ArrayList<>();
     private ArrayList<File> filesToRemove = new ArrayList<>();
-    
+    private int numClients;
+    private int numFiles;
     private boolean connected=false;
     private ArrayList<FilenameAndAddress> lastresult;
     
@@ -170,8 +172,39 @@ public class Client extends Observable{
         c.start();
 
     }
+    
+    void getStatistics() {
+        Header h = new Header(PacketType.STATISTICS);
+
+        ServerStatistics sts = new ServerStatistics(0,0);
+
+        FishPacket packet = new FishPacket(h, sts);
+        Sender c = new Sender(packet, in, out, this);
+
+        c.start();
+    }
 
     void startReceiverThread() {
         new Receiver(in, out, this).start();
+    }
+
+    void setStatistics(int numClients, int numFiles) {
+        this.numClients=numClients;
+        this.numFiles=numFiles;
+        this.setChanged();
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                notifyObservers(EventEnum.NEWSTATISTICS);
+            }
+        });
+    }
+    
+    public int getNumClients() {
+        return this.numClients;
+    }
+    
+    public int getNumFiles() {
+        return this.numFiles;
     }
 }

@@ -8,6 +8,7 @@ import fish.packets.FilenameAndAddress;
 import fish.packets.FishPacket;
 import fish.packets.PacketType;
 import fish.packets.SearchResult;
+import fish.packets.ServerStatistics;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -47,7 +48,7 @@ public class Receiver extends Thread {
                 FishPacket fp = (FishPacket) in.readObject();
                // synchronized (client) {
 
-                   this.manageSearchResponse(fp);
+                   this.manageResponse(fp);
 
                 //}
 
@@ -59,22 +60,25 @@ public class Receiver extends Thread {
         }
     }
 
-    private void manageSearchResponse(FishPacket received) {
-        if (received.getHeader().getType() == PacketType.FILENOTFOUND) {
-            System.out.println("FILE NOT FOUND!!!!!");
-
-            this.client.setLastresult(new ArrayList<FilenameAndAddress>());
-
-
-        } else if (received.getHeader().getType() == PacketType.FILEFOUND) {
-            System.out.print("FILE FOUND !!!!! ");
-            SearchResult results = (SearchResult) received.getPayload();
-            this.client.setLastresult(results.getFileNamesandAddresses());
-
-        }
-        else if(received.getHeader().getType() == PacketType.DOWNLOAD){
-            
-        
+    private void manageResponse(FishPacket received) {
+        switch (received.getHeader().getType()) {
+            case FILENOTFOUND:
+                System.out.println("FILE NOT FOUND!!!!!");
+                this.client.setLastresult(new ArrayList<FilenameAndAddress>());
+                break;
+            case FILEFOUND:
+                System.out.print("FILE FOUND !!!!! ");
+                SearchResult results = (SearchResult) received.getPayload();
+                this.client.setLastresult(results.getFileNamesandAddresses());
+                break;
+            case DOWNLOAD:
+                break;
+            case STATISTICS:
+                ServerStatistics ss = (ServerStatistics) received.getPayload();
+                this.client.setStatistics(ss.getNumClients(),ss.getNumFiles());
+                break;
+            default:
+                break;
         }
     }
 }

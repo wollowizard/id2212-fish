@@ -47,6 +47,8 @@ public class NewJFrame extends javax.swing.JFrame implements Observer {
         searchButton = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         ResultTable = new javax.swing.JTable();
+        numFiles = new javax.swing.JToggleButton();
+        statisticsTxt = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -115,13 +117,29 @@ public class NewJFrame extends javax.swing.JFrame implements Observer {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
+        numFiles.setText("Get server statistics");
+        numFiles.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                numFilesActionPerformed(evt);
+            }
+        });
+
+        statisticsTxt.setText("...");
+
         javax.swing.GroupLayout connectedPanelLayout = new javax.swing.GroupLayout(connectedPanel);
         connectedPanel.setLayout(connectedPanelLayout);
         connectedPanelLayout.setHorizontalGroup(
             connectedPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(connectedPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(searchPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(connectedPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(searchPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(connectedPanelLayout.createSequentialGroup()
+                        .addGap(10, 10, 10)
+                        .addComponent(numFiles)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(statisticsTxt, javax.swing.GroupLayout.PREFERRED_SIZE, 235, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         connectedPanelLayout.setVerticalGroup(
@@ -129,7 +147,11 @@ public class NewJFrame extends javax.swing.JFrame implements Observer {
             .addGroup(connectedPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(searchPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(60, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(connectedPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(numFiles, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(statisticsTxt, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(31, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -167,6 +189,11 @@ public class NewJFrame extends javax.swing.JFrame implements Observer {
 
         client.search(this.searchTextField.getText());
     }//GEN-LAST:event_searchButtonActionPerformed
+
+    private void numFilesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_numFilesActionPerformed
+        // TODO add your handling code here:
+        client.getStatistics();
+    }//GEN-LAST:event_numFilesActionPerformed
 
     /**
      * @param args the command line arguments
@@ -214,9 +241,11 @@ public class NewJFrame extends javax.swing.JFrame implements Observer {
     private javax.swing.JPanel connectedPanel;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JToggleButton numFiles;
     private javax.swing.JButton searchButton;
     private javax.swing.JPanel searchPanel;
     private javax.swing.JTextField searchTextField;
+    private javax.swing.JLabel statisticsTxt;
     // End of variables declaration//GEN-END:variables
 
     @Override
@@ -245,6 +274,9 @@ public class NewJFrame extends javax.swing.JFrame implements Observer {
             
             }
 
+        } else if (event == EventEnum.NEWSTATISTICS) {
+            this.statisticsTxt.setText("Num Clients: "+client.getNumClients()+ 
+                    " Num Files: "+client.getNumFiles());
         }
     }
 
