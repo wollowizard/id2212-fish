@@ -39,9 +39,21 @@ public class Client {
     }
     
     public synchronized void removeFile(FishFile s){
-        if(this.files.contains(s)){
-            this.files.remove(s);
+        FishFile toremove=null;
+        for(FishFile ff : this.files){
+            if(ff.getFilename().compareTo(s.getFilename())==0){
+                if(ff.getOwner()==s.getOwner()){
+                    
+                    toremove=ff;
+                    break;
+                    
+                }
+            }
         }
+        if(toremove!=null){
+            this.files.remove(toremove);
+        }
+        
         else{
             Logger.getLogger(Client.class.getName()).log(Level.SEVERE, FILENOTINCLIENTLIST);
         }
