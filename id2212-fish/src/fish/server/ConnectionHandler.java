@@ -8,6 +8,7 @@ import fish.packets.FileList;
 import fish.packets.FishPacket;
 import fish.packets.PacketType;
 import fish.packets.ParameterToSearch;
+import fish.packets.ServerStatistics;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -71,8 +72,13 @@ public class ConnectionHandler extends Thread {
                     ParameterToSearch par=(ParameterToSearch) fp.getPayload();
                     System.out.println(fp.getPayload().printSummary());
                     FishPacket search = fs.search(client, par.getParameter());
-                    sendSearchResult(search);
+                    sendResult(search);
                 
+                }
+                else if (fp.getHeader().getType()==PacketType.STATISTICS) {
+                    ServerStatistics sts = (ServerStatistics) fp.getPayload();
+                    FishPacket result = fs.getStatistics(client);
+                    sendResult(result);
                 }
 
             } catch (IOException ex) {
@@ -104,7 +110,7 @@ public class ConnectionHandler extends Thread {
 
     }
 
-    private void sendSearchResult(FishPacket response) {
+    private void sendResult(FishPacket response) {
         
         
         try {

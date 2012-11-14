@@ -9,6 +9,7 @@ import fish.packets.FishPacket;
 import fish.packets.Header;
 import fish.packets.PacketType;
 import fish.packets.SearchResult;
+import fish.packets.ServerStatistics;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -200,6 +201,11 @@ class FishServer {
         return res;
 
     }
+
+    public synchronized FishPacket getStatistics(Client client) {
+        return new FishPacket(new Header(PacketType.STATISTICS), 
+                new ServerStatistics(clients.size(),filesMap.size()));
+    }
     
     public class SortByName implements Comparator<Map.Entry<FishFile,Client>> {
 
@@ -209,6 +215,5 @@ class FishServer {
             int s2 = getDifference(t1.getKey().getFilename().toString(),KeywordToSearch);
             return s1-s2;
         }
-        
     }
 }
