@@ -27,6 +27,7 @@ public class FishMainPanel extends javax.swing.JPanel {
     public FishMainPanel(Client c) {
         initComponents();
         client = c;
+       
     }
 
     /**
@@ -191,9 +192,12 @@ public class FishMainPanel extends javax.swing.JPanel {
         EventEnum event = (EventEnum) arg;
 
         if (event == EventEnum.CONNECTED) {
-
+            
             this.enableConnectedPanel();
-        } else if (event == EventEnum.NEWRESULT) {
+        } else if(event == EventEnum.DISCONNECT){
+            this.disableConnectedPanel();
+        
+        }else if (event == EventEnum.NEWRESULT) {
 
             DefaultTableModel model = (DefaultTableModel) this.ResultTable.getModel();
             while (model.getRowCount() > 0) {

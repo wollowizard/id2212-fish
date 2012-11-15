@@ -67,9 +67,9 @@ public class Client extends Observable {
         }
     }
 
-    public void setConnected(boolean connected) {
+    public void setConnected() {
         synchronized (this) {
-            this.connected = connected;
+            this.connected = true;
             this.setChanged();
         }
 
@@ -78,6 +78,21 @@ public class Client extends Observable {
             @Override
             public void run() {
                 notifyObservers(EventEnum.CONNECTED);
+            }
+        });
+    }
+    
+    public void setDisconnected() {
+        synchronized (this) {
+            this.connected = false;
+            this.setChanged();
+        }
+
+
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                notifyObservers(EventEnum.DISCONNECT);
             }
         });
     }

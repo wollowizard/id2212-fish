@@ -54,7 +54,7 @@ public class Receiver extends Thread {
         } catch (ClassNotFoundException ex) {
             Logger.getLogger(Receiver.class.getName()).log(Level.SEVERE, null, ex);
         } catch (IOException ex) {
-            Logger.getLogger(Sender.class.getName()).log(Level.SEVERE, null, ex);
+            this.client.setDisconnected();
         }
     }
 

@@ -54,7 +54,8 @@ public class Sender extends Thread {
             }
 
         } catch (IOException ex) {
-            Logger.getLogger(Sender.class.getName()).log(Level.SEVERE, null, ex);
+            client.setDisconnected();
+            
         }
     }
 }

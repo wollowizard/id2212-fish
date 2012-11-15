@@ -19,7 +19,7 @@ public class FishSettings {
     private final static String INVALIDREFRESHVALUE = "Invalid value: you must digit a number greater than 1000";
     private final static String INVALIDFOLDER = "Invalid folder";
     private final static String INVALIDPORT = "Invalid port number";
-    private String folder = "------invalid-------";
+    private String folder = "C:\\temp";
     private Integer port = 1234;
     private String ipAddress = "localhost";
     private Integer connectionTimeout=1000;

@@ -5,6 +5,7 @@
 package fish.client.view;
 
 import fish.client.Client;
+import fish.client.EventEnum;
 import java.util.Observable;
 import java.util.Observer;
 import javax.swing.JOptionPane;
@@ -33,6 +34,7 @@ public class FishMainFrame extends javax.swing.JFrame implements Observer {
         this.setResizable(false);
 
         this.setContentPane(panel);
+        this.disconnectMenuItem.setEnabled(false);
         this.validate();
 
     }
@@ -48,7 +50,8 @@ public class FishMainFrame extends javax.swing.JFrame implements Observer {
 
         jMenuBar1 = new javax.swing.JMenuBar();
         ConnectMenu = new javax.swing.JMenu();
-        jMenuItem1 = new javax.swing.JMenuItem();
+        ConnectMenuItem = new javax.swing.JMenuItem();
+        disconnectMenuItem = new javax.swing.JMenuItem();
         jMenu2 = new javax.swing.JMenu();
         PreferencesMenuItem = new javax.swing.JMenuItem();
 
@@ -56,13 +59,21 @@ public class FishMainFrame extends javax.swing.JFrame implements Observer {
 
         ConnectMenu.setText("File");
 
-        jMenuItem1.setText("Connect");
-        jMenuItem1.addActionListener(new java.awt.event.ActionListener() {
+        ConnectMenuItem.setText("Connect");
+        ConnectMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jMenuItem1ActionPerformed(evt);
+                ConnectMenuItemActionPerformed(evt);
             }
         });
-        ConnectMenu.add(jMenuItem1);
+        ConnectMenu.add(ConnectMenuItem);
+
+        disconnectMenuItem.setText("Disconnect");
+        disconnectMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                disconnectMenuItemActionPerformed(evt);
+            }
+        });
+        ConnectMenu.add(disconnectMenuItem);
 
         jMenuBar1.add(ConnectMenu);
 
@@ -100,7 +111,7 @@ public class FishMainFrame extends javax.swing.JFrame implements Observer {
 
     }//GEN-LAST:event_PreferencesMenuItemActionPerformed
 
-    private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem1ActionPerformed
+    private void ConnectMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ConnectMenuItemActionPerformed
         try {
             // TODO add your handling code here:
             this.client.getSettings().validateSettings();
@@ -108,7 +119,12 @@ public class FishMainFrame extends javax.swing.JFrame implements Observer {
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(this, ex.getMessage());
         }
-    }//GEN-LAST:event_jMenuItem1ActionPerformed
+    }//GEN-LAST:event_ConnectMenuItemActionPerformed
+
+    private void disconnectMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_disconnectMenuItemActionPerformed
+        
+        client.unshare();
+    }//GEN-LAST:event_disconnectMenuItemActionPerformed
 
     /**
      * @param args the command line arguments
@@ -152,15 +168,25 @@ public class FishMainFrame extends javax.swing.JFrame implements Observer {
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JMenu ConnectMenu;
+    private javax.swing.JMenuItem ConnectMenuItem;
     private javax.swing.JMenuItem PreferencesMenuItem;
+    private javax.swing.JMenuItem disconnectMenuItem;
     private javax.swing.JMenu jMenu2;
     private javax.swing.JMenuBar jMenuBar1;
-    private javax.swing.JMenuItem jMenuItem1;
     // End of variables declaration//GEN-END:variables
 
     @Override
     public void update(Observable o, Object arg) {
+        EventEnum event = (EventEnum) arg;
 
+        if (event == EventEnum.CONNECTED) {
+            this.ConnectMenuItem.setEnabled(false);
+            this.disconnectMenuItem.setEnabled(true);
+        }
+        else if(event == EventEnum.DISCONNECT){
+            this.ConnectMenuItem.setEnabled(true);
+            this.disconnectMenuItem.setEnabled(false);
+        }
         this.panel.update(o, arg);
 
 

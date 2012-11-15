@@ -44,7 +44,7 @@ public class Connector extends Thread {
 
                 client.setInStream(objIn);
                 client.setOutStream(objOut);
-                client.setConnected(true);
+                client.setConnected();
                 client.startReceiverThread();
 
 
