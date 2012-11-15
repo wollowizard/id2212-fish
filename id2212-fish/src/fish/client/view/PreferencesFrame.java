@@ -2,8 +2,9 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package fish.client;
+package fish.client.view;
 
+import fish.client.Client;
 import java.io.File;
 import java.nio.file.NotDirectoryException;
 import javax.swing.JFileChooser;
@@ -23,9 +24,9 @@ public class PreferencesFrame extends javax.swing.JFrame {
     public PreferencesFrame(Client c) {
         initComponents();
         client = c;
-        this.FolderLabel.setText(c.getFolder());
-        this.PortTextField.setText(c.getPort().toString());
-        this.IpAddressTextField.setText(c.getIpAddress().toString());
+        this.FolderLabel.setText(c.getSettings().getFolder());
+        this.PortTextField.setText(c.getSettings().getPort().toString());
+        this.IpAddressTextField.setText(c.getSettings().getIpAddress().toString());
     }
 
     /**
@@ -159,10 +160,10 @@ public class PreferencesFrame extends javax.swing.JFrame {
     private void SaveButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_SaveButtonActionPerformed
         // TODO add your handling code here:
         try {
-            client.setRefreshInterval(intervalTextField.getText());
-            client.setFolder(this.FolderLabel.getText());
-            client.setIpAddress(this.IpAddressTextField.getText());
-            client.setPort(this.PortTextField.getText());
+            client.getSettings().setRefreshInterval(intervalTextField.getText());
+            client.getSettings().setFolder(this.FolderLabel.getText());
+            client.getSettings().setIpAddress(this.IpAddressTextField.getText());
+            client.getSettings().setPort(this.PortTextField.getText());
             
             this.dispose();
         } catch (NotDirectoryException ex) {

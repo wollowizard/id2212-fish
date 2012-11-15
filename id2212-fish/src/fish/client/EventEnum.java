@@ -10,6 +10,6 @@ package fish.client;
  */
 public enum EventEnum {
     
-    CONNECTED,NEWRESULT,NEWSTATISTICS
+    CONNECTED,NEWRESULT,NEWSTATISTICS,DISCONNECT, NEWERRORMESSAGE
     
 }

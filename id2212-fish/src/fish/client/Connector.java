@@ -52,22 +52,17 @@ public class Connector extends Thread {
                 objIn.toString();
                 objOut.toString();
 
-                
+
                 client.submitInitialFileList();
                 //Create a file chooser
-                
+
                 client.startStatisticsThread();
 
             }
-        } catch(NotDirectoryException ex){
-            client.notifyObservers(ex);
-            
-        }catch (UnknownHostException ex) {
-            
-            client.notifyObservers(ex);
-        } catch (IOException ex) {
-            
-            client.notifyObservers(ex);
+        } catch ( IOException ex) {
+            client.setErrorMessage(ex.getMessage());
+            client.notifyObservers(EventEnum.NEWERRORMESSAGE);
+
         }
     }
 }

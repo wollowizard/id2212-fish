@@ -13,6 +13,7 @@ import fish.packets.PacketType;
 import fish.packets.ParameterToSearch;
 import fish.packets.ServerStatistics;
 import java.io.File;
+import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
@@ -22,6 +23,8 @@ import java.util.Date;
 import java.util.Observable;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.SwingUtilities;
 
 /**
@@ -39,78 +42,11 @@ public class Client extends Observable {
     private int numFiles;
     private boolean connected = false;
     private ArrayList<FilenameAndAddress> lastresult;
-    private Integer refreshInterval = 5000;
-    private final static Integer MINREFRESHINTERVAL = 1000;
-    private final static String MINVALUEERROR = "Minimum value: " + MINREFRESHINTERVAL.toString();
-    private final static String INVALIDREFRESHVALUE = "Invalid value: you must digit a number greater than 1000";
-    private final static String INVALIDFOLDER = "Invalid folder";
-    private final static String INVALIDPORT = "Invalid port number";
-    private String folder;
-    private Integer port = 1234;
-    private String ipAddress = "localhost";
+    private FishSettings settings;
+    private String lastError = "";
 
-    public void setRefreshInterval(String s) throws NumberFormatException {
-        try {
-            Integer refrInt = Integer.parseInt(s);
-            if (refrInt < MINREFRESHINTERVAL) {
-                throw new NumberFormatException(MINVALUEERROR);
-            }
-            refreshInterval = refrInt;
-
-
-        } catch (NumberFormatException e) {
-            String msg = MINVALUEERROR;
-            if (e.getMessage().compareTo(msg) != 0) {
-                msg = INVALIDREFRESHVALUE;
-
-            }
-            throw new NumberFormatException(msg);
-        }
-    }
-
-    void setIpAddress(String text) {
-        this.ipAddress = text;
-    }
-
-    void setPort(String text) {
-        try {
-            Integer p = Integer.parseInt(text);
-            if (p < 1024 || p > 65535) {
-                throw new NumberFormatException(INVALIDPORT);
-            }
-            port = p;
-
-
-        } catch (NumberFormatException e) {
-
-            throw new NumberFormatException(INVALIDPORT);
-        }
-    }
-
-    Integer getPort() {
-        return this.port;
-    }
-
-    String getIpAddress() {
-        return this.ipAddress;
-    }
-
-    public void setFolder(String text) throws NotDirectoryException {
-        try {
-            File f = new File(text);
-            if (!f.isDirectory()) {
-                throw new NotDirectoryException(INVALIDFOLDER);
-            } else {
-                this.folder = text;
-            }
-        } catch (Exception ex) {
-            throw new NotDirectoryException(INVALIDFOLDER);
-        }
-
-    }
-
-    public String getFolder() {
-        return this.folder;
+    public Client() {
+        this.settings = new FishSettings(this);
     }
 
     public void setSocket(Socket s) {
@@ -139,6 +75,7 @@ public class Client extends Observable {
 
 
         SwingUtilities.invokeLater(new Runnable() {
+            @Override
             public void run() {
                 notifyObservers(EventEnum.CONNECTED);
             }
@@ -187,18 +124,24 @@ public class Client extends Observable {
     public void submitInitialFileList() throws NotDirectoryException {
 
         FileWalker fw = new FileWalker(this);
-        fw.walk(this.folder);
+        fw.walk(this.settings.getFolder());
 
 
     }
 
     public void share(String ip, Integer port) {
+        
         Connector c = new Connector(ip, port, this);
         c.start();
     }
 
     public void unshare() {
-        System.exit(1);
+        try {
+            this.socket.close();
+            this.notifyObservers(EventEnum.DISCONNECT);
+        } catch (IOException ex) {
+            Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     public void addWatcher(String folderPath) {
@@ -234,7 +177,7 @@ public class Client extends Observable {
         c.start();
     }
 
-    void search(String file) {
+    public void search(String file) {
         Header h = new Header(PacketType.SEARCH);
 
         ParameterToSearch par = new ParameterToSearch(file);
@@ -247,7 +190,7 @@ public class Client extends Observable {
     }
 
     void startStatisticsThread() {
-        StatThread st = new StatThread(this, refreshInterval);
+        StatThread st = new StatThread(this, this.settings.getRefreshInterval());
         st.start();
 
     }
@@ -285,5 +228,17 @@ public class Client extends Observable {
 
     public int getNumFiles() {
         return this.numFiles;
+    }
+
+    public void setErrorMessage(String message) {
+        this.lastError = message;
+    }
+
+    public String getLastErrorMessage() {
+        return this.lastError;
+    }
+
+    public FishSettings getSettings() {
+        return this.settings;
     }
 }
