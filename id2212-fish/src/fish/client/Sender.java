@@ -6,7 +6,6 @@ package fish.client;
 
 import fish.packets.FishPacket;
 import fish.packets.PacketType;
-import fish.packets.SearchResult;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;

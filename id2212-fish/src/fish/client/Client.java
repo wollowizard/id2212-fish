@@ -92,6 +92,7 @@ public class Client extends Observable {
         this.lastresult = lastresult;
         this.setChanged();
         SwingUtilities.invokeLater(new Runnable() {
+            @Override
             public void run() {
                 notifyObservers(EventEnum.NEWRESULT);
             }
@@ -129,9 +130,9 @@ public class Client extends Observable {
 
     }
 
-    public void share(String ip, Integer port) {
+    public void share() {
         
-        Connector c = new Connector(ip, port, this);
+        Connector c = new Connector(this);
         c.start();
     }
 
@@ -148,12 +149,13 @@ public class Client extends Observable {
         TimerTask task = new DirWatcher(folderPath, "*") {
             @Override
             protected void onChange(File file, String action) {
-
-
-                if (action.equals("add")) {
-                    addFile(file);
-                } else if (action.equals("delete")) {
-                    removeFile(file);
+                switch (action) {
+                    case "add":
+                        addFile(file);
+                        break;
+                    case "delete":
+                        removeFile(file);
+                        break;
                 }
                 sendFileList();
                 System.out.println("File " + file.getName() + " action: " + action);

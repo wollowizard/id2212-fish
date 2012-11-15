@@ -11,17 +11,19 @@ import java.util.logging.Logger;
  *
  * @author alfredo
  */
-public class StatThread extends Thread{
+public class StatThread extends Thread {
+
     Client client;
     Integer refreshInterval;
-    public StatThread(Client c,Integer refreshInterval){
-        client=c;
-        this.refreshInterval=refreshInterval;
+
+    public StatThread(Client c, Integer refreshInterval) {
+        client = c;
+        this.refreshInterval = refreshInterval;
     }
-    
-    public void run(){
+
+    public void run() {
         boolean running = client.isConnected();
-        while(running){
+        while (running) {
             try {
                 Thread.sleep(refreshInterval);
                 client.getStatistics();
@@ -30,7 +32,6 @@ public class StatThread extends Thread{
                 Logger.getLogger(StatThread.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
-    
+
     }
-    
 }

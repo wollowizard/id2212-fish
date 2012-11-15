@@ -8,10 +8,6 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
-import java.net.UnknownHostException;
-import java.nio.file.NotDirectoryException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *
@@ -23,10 +19,11 @@ public class Connector extends Thread {
     Integer port;
     Client client;
 
-    public Connector(String ip, Integer port, Client c) {
-        this.ip = ip;
-        this.port = port;
+    public Connector(Client c) {
+        
         this.client = c;
+        this.port = c.getSettings().getPort();
+        this.ip = c.getSettings().getIpAddress();
 
     }
 

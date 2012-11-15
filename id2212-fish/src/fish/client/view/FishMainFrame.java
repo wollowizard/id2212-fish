@@ -7,8 +7,6 @@ package fish.client.view;
 import fish.client.Client;
 import java.util.Observable;
 import java.util.Observer;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 
 /**
@@ -106,7 +104,7 @@ public class FishMainFrame extends javax.swing.JFrame implements Observer {
         try {
             // TODO add your handling code here:
             this.client.getSettings().validateSettings();
-            client.share("localhost", 1234);
+            client.share();
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(this, ex.getMessage());
         }
