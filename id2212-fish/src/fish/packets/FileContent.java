@@ -12,10 +12,25 @@ import java.io.Serializable;
  */
 public class FileContent extends Payload implements Serializable{
 
+    private byte[] content;
+    
+    public FileContent(byte [] c){
+        content=c;
+    }
+
+    public byte[] getContent() {
+        return content;
+    }
+
+    public void setContent(byte[] content) {
+        this.content = content;
+    }
+    
+    
     
     @Override
     public String printSummary() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return "File : " + this.content.length + "bytes";
     }
     
 }

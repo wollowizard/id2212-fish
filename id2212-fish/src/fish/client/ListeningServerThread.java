@@ -6,6 +6,7 @@ package fish.client;
 
 import fish.client.dir.FileWalker;
 import fish.packets.DownloadRequest;
+import fish.packets.FileContent;
 import fish.packets.FishPacket;
 import fish.packets.Header;
 import fish.packets.PacketType;
@@ -112,13 +113,10 @@ public class ListeningServerThread extends Thread {
         RandomAccessFile f = new RandomAccessFile(file.getAbsolutePath(), "r");
         byte[] b = new byte[(int) f.length()];
         f.read(b);
-        
-        
-        
-
+        FileContent fc = new FileContent(b);
+        Header h = new Header(PacketType.FILECONTENT);
 
         FishPacket fp;
-        Header h = new Header(PacketType.FILENOLONGERAVAILABLE);
         fp = new FishPacket(h, null);
         out.writeObject(fp);
         out.flush();
