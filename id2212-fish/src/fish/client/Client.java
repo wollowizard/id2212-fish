@@ -22,8 +22,6 @@ import java.util.Date;
 import java.util.Observable;
 import java.util.Timer;
 import java.util.TimerTask;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.SwingUtilities;
 
 /**
@@ -32,7 +30,7 @@ import javax.swing.SwingUtilities;
  */
 public class Client extends Observable {
 
-    private Socket s;
+    private Socket socket;
     private ObjectInputStream in;
     private ObjectOutputStream out;
     private ArrayList<File> filesToAdd = new ArrayList<>();
@@ -116,7 +114,7 @@ public class Client extends Observable {
     }
 
     public void setSocket(Socket s) {
-        this.s = s;
+        this.socket = s;
     }
 
     public void setInStream(ObjectInputStream in) {
