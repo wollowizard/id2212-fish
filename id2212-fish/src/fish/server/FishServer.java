@@ -11,7 +11,6 @@ import fish.packets.PacketType;
 import fish.packets.SearchResult;
 import fish.packets.ServerStatistics;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -152,7 +151,7 @@ class FishServer {
         
         
         for (Map.Entry<FishFile, Client> i : results){
-            FilenameAndAddress fr=new FilenameAndAddress(i.getKey().getFilename(), i.getValue().getNetResources().getSocket().getRemoteSocketAddress());
+            FilenameAndAddress fr=new FilenameAndAddress(i.getKey().getFilename(), i.getValue().getNetResources().getSocket().getInetAddress().getHostAddress(), i.getValue().getListeningServerPort() );
             sr.addFileResource(fr);
         }
         

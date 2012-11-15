@@ -19,6 +19,7 @@ public class Client {
     
     private static final String FILEALREADYINCLIENTLIST="File already in client list!";
     private static final String FILENOTINCLIENTLIST="File not in client list!";
+    private Integer listeningServerPort=-1;
     
     
     public Client(ClientNetworkResources nr){
@@ -74,6 +75,14 @@ public class Client {
         }
         return res;
         
+    }
+
+    void setListeningServerPort(Integer port) {
+        this.listeningServerPort=port;
+    }
+
+    Integer getListeningServerPort() {
+        return this.listeningServerPort;
     }
     
     

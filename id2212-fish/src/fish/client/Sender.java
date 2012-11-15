@@ -19,14 +19,14 @@ import java.util.logging.Logger;
 public class Sender extends Thread {
 
     private FishPacket packet;
-    private ObjectInputStream in;
+    
     private ObjectOutputStream out;
     private Client client;
 
-    public Sender(FishPacket p, ObjectInputStream in, ObjectOutputStream out, Client client) {
+    public Sender(FishPacket p, ObjectOutputStream out, Client client) {
 
         this.packet = p;
-        this.in = in;
+        
         this.out = out;
         this.client = client;
     }
@@ -54,7 +54,8 @@ public class Sender extends Thread {
             }
 
         } catch (IOException ex) {
-            Logger.getLogger(Sender.class.getName()).log(Level.SEVERE, null, ex);
+            client.setDisconnected();
+            
         }
     }
 }

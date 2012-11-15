@@ -25,8 +25,9 @@ public class StatThread extends Thread {
         boolean running = client.isConnected();
         while (running) {
             try {
-                Thread.sleep(refreshInterval);
+
                 client.getStatistics();
+                Thread.sleep(refreshInterval);
                 running = client.isConnected();
             } catch (InterruptedException ex) {
                 Logger.getLogger(StatThread.class.getName()).log(Level.SEVERE, null, ex);

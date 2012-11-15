@@ -10,7 +10,6 @@ import fish.packets.SearchResult;
 import fish.packets.ServerStatistics;
 import java.io.IOException;
 import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -23,15 +22,13 @@ public class Receiver extends Thread {
 
     //private FishPacket packet;
     private ObjectInputStream in;
-    private ObjectOutputStream out;
     private Client client;
     private Boolean running = true;
 
-    public Receiver(ObjectInputStream in, ObjectOutputStream out, Client client) {
+    public Receiver(ObjectInputStream in, Client client) {
 
-        //this.packet = p;
+
         this.in = in;
-        this.out = out;
         this.client = client;
     }
 
@@ -46,7 +43,7 @@ public class Receiver extends Thread {
             while (running) {
                 FishPacket fp = (FishPacket) in.readObject();
                 synchronized (client) {
-                   this.manageResponse(fp);
+                    this.manageResponse(fp);
 
                 }
 
@@ -54,10 +51,9 @@ public class Receiver extends Thread {
         } catch (ClassNotFoundException ex) {
             Logger.getLogger(Receiver.class.getName()).log(Level.SEVERE, null, ex);
         } catch (IOException ex) {
-            Logger.getLogger(Sender.class.getName()).log(Level.SEVERE, null, ex);
+            this.client.setDisconnected();
         }
     }
-
 
     private void manageResponse(FishPacket received) {
         switch (received.getHeader().getType()) {
@@ -70,12 +66,13 @@ public class Receiver extends Thread {
                 SearchResult results = (SearchResult) received.getPayload();
                 this.client.setLastresult(results.getFileNamesandAddresses());
                 break;
-            case DOWNLOAD:
-                break;
+
             case STATISTICS:
                 ServerStatistics ss = (ServerStatistics) received.getPayload();
-                this.client.setStatistics(ss.getNumClients(),ss.getNumFiles());
+                this.client.setStatistics(ss.getNumClients(), ss.getNumFiles());
                 break;
+            case FILENOLONGERAVAILABLE:
+                System.out.println("FILE NO LONG AVAILABLE RESPONSE!!!");
             default:
                 break;
 

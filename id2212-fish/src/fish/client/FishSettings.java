@@ -19,9 +19,12 @@ public class FishSettings {
     private final static String INVALIDREFRESHVALUE = "Invalid value: you must digit a number greater than 1000";
     private final static String INVALIDFOLDER = "Invalid folder";
     private final static String INVALIDPORT = "Invalid port number";
-    private String folder = "------invalid-------";
+    private String folder = "C:\\temp";
     private Integer port = 1234;
     private String ipAddress = "localhost";
+    private Integer connectionTimeout=1000;
+    private Integer MINIMUMCONNECTIONTIMEOUT=1000;
+    private String INVALIDCONNECTIONTIMEOUT="Invalid Connection timeout. Minimum value: " + MINIMUMCONNECTIONTIMEOUT.toString();
 
     public FishSettings(Client aThis) {
     }
@@ -68,6 +71,25 @@ public class FishSettings {
         return this.port;
     }
 
+     public void setConnectionTimeout(String text) {
+        try {
+            Integer p = Integer.parseInt(text);
+            if (p < MINIMUMCONNECTIONTIMEOUT) {
+                throw new NumberFormatException(INVALIDCONNECTIONTIMEOUT);
+            }
+            connectionTimeout = p;
+
+
+        } catch (NumberFormatException e) {
+
+            throw new NumberFormatException(INVALIDCONNECTIONTIMEOUT);
+        }
+    }
+
+    public Integer getConnectionTimeout() {
+        return this.connectionTimeout;
+    }
+    
     public String getIpAddress() {
         return this.ipAddress;
     }
@@ -99,6 +121,6 @@ public class FishSettings {
         setFolder(this.folder);
         setIpAddress(ipAddress);
         setPort(getPort().toString());
-
+        setConnectionTimeout(connectionTimeout.toString());
     }
 }
