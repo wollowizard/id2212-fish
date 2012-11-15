@@ -9,9 +9,9 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.nio.file.NotDirectoryException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.SwingUtilities;
 
 /**
  *
@@ -46,20 +46,28 @@ public class Connector extends Thread {
                 client.setOutStream(objOut);
                 client.setConnected(true);
                 client.startReceiverThread();
-                
-                
+
+
 
                 objIn.toString();
                 objOut.toString();
 
-
-                client.submitInitialFileList("c:\\temp");
+                
+                client.submitInitialFileList();
+                //Create a file chooser
+                
+                client.startStatisticsThread();
 
             }
-        } catch (UnknownHostException ex) {
-            Logger.getLogger(Connector.class.getName()).log(Level.SEVERE, null, ex);
+        } catch(NotDirectoryException ex){
+            client.notifyObservers(ex);
+            
+        }catch (UnknownHostException ex) {
+            
+            client.notifyObservers(ex);
         } catch (IOException ex) {
-            Logger.getLogger(Connector.class.getName()).log(Level.SEVERE, null, ex);
+            
+            client.notifyObservers(ex);
         }
     }
 }
