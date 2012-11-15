@@ -7,6 +7,7 @@ package fish.client;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.net.InetSocketAddress;
 import java.net.Socket;
 
 /**
@@ -20,7 +21,7 @@ public class Connector extends Thread {
     Client client;
 
     public Connector(Client c) {
-        
+
         this.client = c;
         this.port = c.getSettings().getPort();
         this.ip = c.getSettings().getIpAddress();
@@ -33,7 +34,9 @@ public class Connector extends Thread {
         try {
             synchronized (client) {
                 System.out.println("\n\nCONNECTOR!!\n\n");
-                Socket sock = new Socket(ip, port);
+                Socket sock = new Socket();
+                sock.connect(new InetSocketAddress(ip, port), client.getSettings().getConnectionTimeout());
+                
                 client.setSocket(sock);
                 ObjectOutputStream objOut = new ObjectOutputStream(sock.getOutputStream());
 
@@ -56,7 +59,8 @@ public class Connector extends Thread {
                 client.startStatisticsThread();
 
             }
-        } catch ( IOException ex) {
+        } catch (IOException ex) {
+            
             client.setErrorMessage(ex.getMessage());
             client.notifyObservers(EventEnum.NEWERRORMESSAGE);
 

@@ -233,7 +233,9 @@ public class Client extends Observable {
     }
 
     public void setErrorMessage(String message) {
+        this.setChanged();
         this.lastError = message;
+        
     }
 
     public String getLastErrorMessage() {
