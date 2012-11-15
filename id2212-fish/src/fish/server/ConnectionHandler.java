@@ -6,6 +6,7 @@ package fish.server;
 
 import fish.packets.FileList;
 import fish.packets.FishPacket;
+import fish.packets.ListeningServerPortNumber;
 import fish.packets.PacketType;
 import fish.packets.ParameterToSearch;
 import fish.packets.ServerStatistics;
@@ -45,9 +46,9 @@ public class ConnectionHandler extends Thread {
 
         System.out.println("Summary:\n");
         System.out.println(fs.printSummary());
-        
-        
-        
+
+
+
         while (running) {
 
 
@@ -60,25 +61,26 @@ public class ConnectionHandler extends Thread {
                     FileList fl = (FileList) fp.getPayload();
                     ArrayList<FishFile> listOfFishFilesToAdd = fl.getListOfFishFilesToAdd(client);
                     ArrayList<FishFile> listOfFishFilesToRemove = fl.getListOfFishFilesToRemove(client);
-                    
-                    
-                    fs.updateFilesOfClient(listOfFishFilesToAdd,listOfFishFilesToRemove, client);
-                    
-                    
 
-                }
-                else if(fp.getHeader().getType() == PacketType.SEARCH){
-                    
-                    ParameterToSearch par=(ParameterToSearch) fp.getPayload();
+
+                    fs.updateFilesOfClient(listOfFishFilesToAdd, listOfFishFilesToRemove, client);
+                } else if (fp.getHeader().getType() == PacketType.SEARCH) {
+
+                    ParameterToSearch par = (ParameterToSearch) fp.getPayload();
                     System.out.println(fp.getPayload().printSummary());
                     FishPacket search = fs.search(client, par.getParameter());
                     sendResult(search);
-                
-                }
-                else if (fp.getHeader().getType()==PacketType.STATISTICS) {
+
+                } else if (fp.getHeader().getType() == PacketType.STATISTICS) {
                     ServerStatistics sts = (ServerStatistics) fp.getPayload();
                     FishPacket result = fs.getStatistics(client);
                     sendResult(result);
+                } else if (fp.getHeader().getType() == PacketType.LISTENINGSERVERPORT) {
+
+                    ListeningServerPortNumber pn = (ListeningServerPortNumber) fp.getPayload();
+                    System.out.println("Received: " + pn.printSummary());
+                    Integer port = pn.port;
+                    client.setListeningServerPort(port);
                 }
 
             } catch (IOException ex) {
@@ -111,12 +113,12 @@ public class ConnectionHandler extends Thread {
     }
 
     private void sendResult(FishPacket response) {
-        
-        
+
+
         try {
             out.writeObject(response);
-            
-            
+
+
         } catch (IOException ex) {
             //client connection was not ok
             System.out.println(ex.getMessage());
@@ -125,7 +127,7 @@ public class ConnectionHandler extends Thread {
                 closeConnection();
             } catch (IOException ex1) {
                 System.out.println(ex1.getMessage());
-                
+
             }
         }
 

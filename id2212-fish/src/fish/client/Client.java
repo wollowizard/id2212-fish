@@ -4,11 +4,14 @@
  */
 package fish.client;
 
-import fish.client.dirWatch.DirWatcher;
+import fish.client.dir.FileWalker;
+import fish.client.dir.DirWatcher;
+import fish.packets.DownloadRequest;
 import fish.packets.FileList;
 import fish.packets.FilenameAndAddress;
 import fish.packets.FishPacket;
 import fish.packets.Header;
+import fish.packets.ListeningServerPortNumber;
 import fish.packets.PacketType;
 import fish.packets.ParameterToSearch;
 import fish.packets.ServerStatistics;
@@ -17,6 +20,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.net.UnknownHostException;
 import java.nio.file.NotDirectoryException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -44,6 +48,15 @@ public class Client extends Observable {
     private ArrayList<FilenameAndAddress> lastresult;
     private FishSettings settings;
     private String lastError = "";
+    private Integer listeningThreadPort=-2;
+
+    public void setListeningThreadPort(Integer listeningThreadPort) {
+        this.listeningThreadPort = listeningThreadPort;
+    }
+
+    public Integer getListeningThreadPort() {
+        return listeningThreadPort;
+    }
 
     public Client() {
         this.settings = new FishSettings(this);
@@ -81,7 +94,7 @@ public class Client extends Observable {
             }
         });
     }
-    
+
     public void setDisconnected() {
         synchronized (this) {
             this.connected = false;
@@ -146,7 +159,7 @@ public class Client extends Observable {
     }
 
     public void share() {
-        
+
         Connector c = new Connector(this);
         c.start();
     }
@@ -181,6 +194,23 @@ public class Client extends Observable {
         timer.schedule(task, new Date(), 1000);
 
     }
+    
+    public void startListeningServerThread(){
+        ListeningServerThread thread=new ListeningServerThread(this);
+        thread.start();
+        
+    }
+
+    public void sendListeningServerPort() {
+        Header h = new Header(PacketType.LISTENINGSERVERPORT);
+
+        ListeningServerPortNumber pn = new ListeningServerPortNumber(this.listeningThreadPort);
+        FishPacket packet = new FishPacket(h, pn);
+        Sender c = new Sender(packet, out, this);
+
+        c.start();
+        
+    }
 
     public void sendFileList() {
 
@@ -189,7 +219,7 @@ public class Client extends Observable {
 
         FileList fl = new FileList(filesToAdd, filesToRemove);
         FishPacket packet = new FishPacket(h, fl);
-        Sender c = new Sender(packet, in, out, this);
+        Sender c = new Sender(packet, out, this);
 
         c.start();
     }
@@ -200,9 +230,38 @@ public class Client extends Observable {
         ParameterToSearch par = new ParameterToSearch(file);
 
         FishPacket packet = new FishPacket(h, par);
-        Sender c = new Sender(packet, in, out, this);
+        Sender c = new Sender(packet, out, this);
 
         c.start();
+
+    }
+
+    public void download(String port) {
+        Header h = new Header(PacketType.DOWNLOAD);
+        DownloadRequest p = new DownloadRequest("a.txt");
+
+
+        FishPacket packet = new FishPacket(h, p);
+        int ppp = Integer.parseInt(port);
+        try {
+            Socket sock = new Socket("localhost", ppp);
+            ObjectOutputStream out1 = new ObjectOutputStream(sock.getOutputStream());
+
+            Sender c = new Sender(packet, out1, this);
+
+            c.start();
+            ObjectInputStream in1 = new ObjectInputStream(sock.getInputStream());
+            Receiver rec=new Receiver(in1, this);
+            rec.start();
+
+
+        } catch (UnknownHostException ex) {
+            Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+
 
     }
 
@@ -218,13 +277,13 @@ public class Client extends Observable {
         ServerStatistics sts = new ServerStatistics(0, 0);
 
         FishPacket packet = new FishPacket(h, sts);
-        Sender c = new Sender(packet, in, out, this);
+        Sender c = new Sender(packet,  out, this);
 
         c.start();
     }
 
     void startReceiverThread() {
-        new Receiver(in, out, this).start();
+        new Receiver(in, this).start();
     }
 
     void setStatistics(int numClients, int numFiles) {
@@ -250,7 +309,7 @@ public class Client extends Observable {
     public void setErrorMessage(String message) {
         this.setChanged();
         this.lastError = message;
-        
+
     }
 
     public String getLastErrorMessage() {

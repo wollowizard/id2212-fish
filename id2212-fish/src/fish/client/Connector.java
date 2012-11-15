@@ -36,7 +36,7 @@ public class Connector extends Thread {
                 System.out.println("\n\nCONNECTOR!!\n\n");
                 Socket sock = new Socket();
                 sock.connect(new InetSocketAddress(ip, port), client.getSettings().getConnectionTimeout());
-                
+
                 client.setSocket(sock);
                 ObjectOutputStream objOut = new ObjectOutputStream(sock.getOutputStream());
 
@@ -52,15 +52,16 @@ public class Connector extends Thread {
                 objIn.toString();
                 objOut.toString();
 
-
+                client.startListeningServerThread();
                 client.submitInitialFileList();
                 //Create a file chooser
 
                 client.startStatisticsThread();
 
+
             }
         } catch (IOException ex) {
-            
+
             client.setErrorMessage(ex.getMessage());
             client.notifyObservers(EventEnum.NEWERRORMESSAGE);
 
