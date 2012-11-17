@@ -10,12 +10,15 @@ import java.io.Serializable;
  *
  * @author alfredo
  */
-public class FileContent extends Payload implements Serializable{
+public class FileContent extends Payload implements Serializable {
 
+    private String name;
     private byte[] content;
     
-    public FileContent(byte [] c){
-        content=c;
+
+    public FileContent(String filename, byte[] c) {
+        this.name = filename;
+        content = c;
     }
 
     public byte[] getContent() {
@@ -25,12 +28,17 @@ public class FileContent extends Payload implements Serializable{
     public void setContent(byte[] content) {
         this.content = content;
     }
-    
-    
-    
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
     @Override
     public String printSummary() {
-        return "File : " + this.content.length + "bytes";
+        return "File " + this.name + ": " + this.content.length + "bytes";
     }
-    
 }

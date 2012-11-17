@@ -4,9 +4,10 @@
  */
 package fish.client;
 
-import fish.client.dir.FileWalker;
 import fish.client.dir.DirWatcher;
+import fish.client.dir.FileWalker;
 import fish.packets.DownloadRequest;
+import fish.packets.FileContent;
 import fish.packets.FileList;
 import fish.packets.FilenameAndAddress;
 import fish.packets.FishPacket;
@@ -15,7 +16,9 @@ import fish.packets.ListeningServerPortNumber;
 import fish.packets.PacketType;
 import fish.packets.ParameterToSearch;
 import fish.packets.ServerStatistics;
+import java.io.BufferedOutputStream;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -49,7 +52,11 @@ public class Client extends Observable {
     private FishSettings settings;
     private String lastError = "";
     private Integer listeningThreadPort=-2;
-   
+    private ArrayList<String> downloadFolderContent = new ArrayList<>();
+    private long DOWNLOADFOLDERREFRESHTIME = 10000; //10 SECONDS
+    private long SHAREFOLDERREFRESHTIME = 2000; //2 SECONDS
+
+
     public void setListeningThreadPort(Integer listeningThreadPort) {
         this.listeningThreadPort = listeningThreadPort;
     }
@@ -80,19 +87,42 @@ public class Client extends Observable {
         }
     }
 
+    public void startConnection() {
+        try {
+            setConnected();
+            startReceiverThread();
+            startListeningServerThread();
+            submitInitialFileList();
+
+            startStatisticsThread();
+
+        } catch (IOException ex) {
+
+            setErrorMessage(ex.getMessage());
+            SwingUtilities.invokeLater(new Runnable() {
+                @Override
+                public void run() {
+                    notifyObservers(EventEnum.NEWERRORMESSAGE);
+                }
+            });
+        }
+    }
+
     public void setConnected() {
+
         synchronized (this) {
             this.connected = true;
-            this.setChanged();
-        }
 
+        }
 
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
+                setChanged();
                 notifyObservers(EventEnum.CONNECTED);
             }
         });
+
     }
 
     public void setDisconnected() {
@@ -152,6 +182,9 @@ public class Client extends Observable {
 
     public void submitInitialFileList() throws NotDirectoryException {
 
+
+        this.addWatcher(this.settings.getFolder());
+
         FileWalker fw = new FileWalker(this);
         fw.walk(this.settings.getFolder());
 
@@ -167,9 +200,18 @@ public class Client extends Observable {
     public void unshare() {
         try {
             this.socket.close();
-            this.notifyObservers(EventEnum.DISCONNECT);
+            SwingUtilities.invokeLater(new Runnable() {
+                @Override
+                public void run() {
+                    notifyObservers(EventEnum.DISCONNECT);
+                }
+            });
+
+
+
         } catch (IOException ex) {
-            Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(Client.class
+                    .getName()).log(Level.SEVERE, null, ex);
         }
     }
 
@@ -190,15 +232,16 @@ public class Client extends Observable {
             }
         };
 
+
         Timer timer = new Timer();
-        timer.schedule(task, new Date(), 1000);
+        timer.schedule(task, new Date(), SHAREFOLDERREFRESHTIME);
 
     }
-    
-    public void startListeningServerThread(){
-        ListeningServerThread thread=new ListeningServerThread(this);
+
+    public void startListeningServerThread() {
+        ListeningServerThread thread = new ListeningServerThread(this);
         thread.start();
-        
+
     }
 
     public void sendListeningServerPort() {
@@ -209,7 +252,7 @@ public class Client extends Observable {
         Sender c = new Sender(packet, out, this);
 
         c.start();
-        
+
     }
 
     public void sendFileList() {
@@ -236,36 +279,48 @@ public class Client extends Observable {
 
     }
 
-    public void download(String port) {
+    public void startDownloadThread(final String fname, final String address, final String port) {
+
+        Thread thread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                download(fname,address,port);
+            }
+        });
+        thread.start();
+    }
+
+    public void download(String fname, String address, String port) {
         Header h = new Header(PacketType.DOWNLOAD);
-        DownloadRequest p = new DownloadRequest("a.txt");
+        DownloadRequest p = new DownloadRequest(fname);
 
 
         FishPacket packet = new FishPacket(h, p);
         int ppp = Integer.parseInt(port);
         try {
-            Socket sock = new Socket("localhost", ppp);
+            Socket sock = new Socket(address, ppp);
             ObjectOutputStream out1 = new ObjectOutputStream(sock.getOutputStream());
 
             Sender c = new Sender(packet, out1, this);
 
             c.start();
             ObjectInputStream in1 = new ObjectInputStream(sock.getInputStream());
-            Receiver rec=new Receiver(in1, this);
-            rec.start();
+            FishPacket fp = (FishPacket) in1.readObject();
+            manageDownloadReceived(fp);
 
-
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(Client.class
+                    .getName()).log(Level.SEVERE, null, ex);
         } catch (UnknownHostException ex) {
-            Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(Client.class
+                    .getName()).log(Level.SEVERE, null, ex);
         } catch (IOException ex) {
-            Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(Client.class
+                    .getName()).log(Level.SEVERE, null, ex);
         }
-
-
-
     }
 
-    void startStatisticsThread() {
+    public void startStatisticsThread() {
         StatThread st = new StatThread(this, this.settings.getRefreshInterval());
         st.start();
 
@@ -277,7 +332,7 @@ public class Client extends Observable {
         ServerStatistics sts = new ServerStatistics(0, 0);
 
         FishPacket packet = new FishPacket(h, sts);
-        Sender c = new Sender(packet,  out, this);
+        Sender c = new Sender(packet, out, this);
 
         c.start();
     }
@@ -318,5 +373,81 @@ public class Client extends Observable {
 
     public FishSettings getSettings() {
         return this.settings;
+    }
+
+    public ArrayList<String> getDownloadedFiles() {
+        return this.downloadFolderContent;
+    }
+
+    public void manageDownloadReceived(FishPacket fp) {
+
+        if (fp.getHeader().getType() == PacketType.FILENOLONGERAVAILABLE) {
+            System.out.println("File no longer available");
+        } else if (fp.getHeader().getType() == PacketType.FILECONTENT) {
+
+            FileContent fc = (FileContent) fp.getPayload();
+            try {
+                byte[] bytes = fc.getContent();
+                String downFold = getSettings().getDownloadFolder();
+                String fname = downFold + fc.getName();
+
+                File file = new File(fname);
+                boolean created = file.createNewFile();
+                if (!created) {
+                    System.out.println("File already exists.");
+                } else {
+                    FileOutputStream fos = new FileOutputStream(file);
+                    //create an object of BufferedOutputStream
+                    BufferedOutputStream bos = new BufferedOutputStream(fos);
+                    bos.write(bytes);
+                    bos.flush();
+                    bos.close();
+                    downloadFolderContentChanged();
+
+                    System.out.println("file created");
+
+
+
+                }
+            } catch (IOException ex) {
+                Logger.getLogger(Client.class
+                        .getName()).log(Level.SEVERE, null, ex);
+            }
+        } else {
+            System.out.println("Unrecognized packet received as download");
+        }
+    }
+
+    void startDownloadFolderWatcher() {
+        this.downloadFolderContentChanged();
+        TimerTask task = new TimerTask() {
+            @Override
+            public void run() {
+                downloadFolderContentChanged();
+            }
+        };
+        Timer timer = new Timer();
+        timer.schedule(task, new Date(), DOWNLOADFOLDERREFRESHTIME);
+
+    }
+
+    private void downloadFolderContentChanged() {
+        File folder = new File(this.getSettings().getDownloadFolder());
+
+        File[] listOfFiles = folder.listFiles();
+        this.downloadFolderContent.clear();
+        for (File f : listOfFiles) {
+            this.downloadFolderContent.add(f.getAbsolutePath());
+        }
+
+        this.setChanged();
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+
+                notifyObservers(EventEnum.DOWNLOADFINISHED);
+            }
+        });
+
     }
 }

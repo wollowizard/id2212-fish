@@ -4,10 +4,16 @@
  */
 package fish.client;
 
+import fish.packets.FileContent;
 import fish.packets.FilenameAndAddress;
 import fish.packets.FishPacket;
 import fish.packets.SearchResult;
 import fish.packets.ServerStatistics;
+import java.io.BufferedOutputStream;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.util.ArrayList;
@@ -55,7 +61,7 @@ public class Receiver extends Thread {
         }
     }
 
-    private void manageResponse(FishPacket received) {
+    private void manageResponse(FishPacket received) throws IOException {
         switch (received.getHeader().getType()) {
             case FILENOTFOUND:
                 System.out.println("FILE NOT FOUND!!!!!");
@@ -73,6 +79,7 @@ public class Receiver extends Thread {
                 break;
             case FILENOLONGERAVAILABLE:
                 System.out.println("FILE NO LONG AVAILABLE RESPONSE!!!");
+                break;
             default:
                 break;
 

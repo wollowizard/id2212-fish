@@ -9,6 +9,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.InetSocketAddress;
 import java.net.Socket;
+import javax.swing.SwingUtilities;
 
 /**
  *
@@ -42,28 +43,29 @@ public class Connector extends Thread {
 
                 ObjectInputStream objIn = new ObjectInputStream(sock.getInputStream());
 
+
+                client.startDownloadFolderWatcher();
                 client.setInStream(objIn);
                 client.setOutStream(objOut);
-                client.setConnected();
-                client.startReceiverThread();
 
-
-
+                client.startConnection();
                 objIn.toString();
                 objOut.toString();
 
-                client.startListeningServerThread();
-                client.submitInitialFileList();
-                //Create a file chooser
-
-                client.startStatisticsThread();
 
 
             }
         } catch (IOException ex) {
 
             client.setErrorMessage(ex.getMessage());
-            client.notifyObservers(EventEnum.NEWERRORMESSAGE);
+            SwingUtilities.invokeLater(new Runnable() {
+                @Override
+                public void run() {
+                    
+                    client.notifyObservers(EventEnum.NEWERRORMESSAGE);
+                }
+            });
+
 
         }
     }
