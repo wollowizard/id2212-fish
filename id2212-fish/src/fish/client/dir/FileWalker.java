@@ -54,16 +54,18 @@ public class FileWalker {
             }
             File[] list = root.listFiles();
             for (File f : list) {
-                if (f.isDirectory()) {
-                    return findFile(filename, f.getAbsolutePath());
+                if (f.isDirectory() ) {
+                    File x = findFile(filename, f.getAbsolutePath());
+                    if( x!=null){
+                        return x;
+                    }
                     //System.out.println("Dir:" + f.getAbsoluteFile());
 
                 } else {
-                    //System.out.println("File:" + f.getAbsoluteFile());
+                    System.out.println("File:" + f.getAbsoluteFile());
                     if (filename.compareTo(f.getName()) == 0) {
-                        
+                        System.out.println("found ------------------:" + f.getAbsoluteFile());
                         return f;
-
                     }
 
                 }
