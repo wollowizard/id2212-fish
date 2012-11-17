@@ -30,6 +30,8 @@ public class DataBaseManager {
     private PreparedStatement updateStatement;
     private PreparedStatement selectStatement;
     private PreparedStatement deleteStatement;
+    private PreparedStatement selectClientStatement;
+    private PreparedStatement deleteClientStatement;
     
     public DataBaseManager(String user, String passwd, String datasource) {
         this.user = user;
@@ -44,7 +46,7 @@ public class DataBaseManager {
 	System.out.println("Connected to database..." + conn.toString());
     }
     
-    private void close() throws Exception {
+    public void close() throws Exception {
 	if (initialized) {
             conn.close();
         }
@@ -52,8 +54,8 @@ public class DataBaseManager {
         System.out.println("Connection closed...");
     }
     
-    public void createTable(String name, String fileName, String clientName, String addrss) throws Exception {
-        ResultSet result = conn.getMetaData().getTables(null, null, "ACCOUNT", null);
+    public void createTable() throws Exception {
+        ResultSet result = conn.getMetaData().getTables(null, null, "FILES", null);
         if (result.next()) {
             dropTable();
         }
@@ -68,12 +70,15 @@ public class DataBaseManager {
         //updateStatement = conn.prepareStatement("UPDATE ACCOUNT SET balance=? WHERE name=?");
         selectStatement = conn.prepareStatement(
                 "SELECT * FROM FILES WHERE filename=? AND clientName=?");
-        deleteStatement = conn.prepareStatement("DELETE FROM ACCOUNT WHERE filename=? AND clientName=?");
+        selectClientStatement = conn.prepareStatement(
+                "SELECT * FROM FILES WHERE clientName=?");
+        deleteStatement = conn.prepareStatement("DELETE FROM FILES WHERE filename=? AND clientName=?");
+        deleteClientStatement = conn.prepareStatement("DELETE FROM FILES WHERE clientName=?");
         System.out.println();
         System.out.println("table created...");
     }
     
-    private void insert(String filename, String clientname, String addrs) throws Exception {
+    public void insert(String filename, String clientname, String addrs) throws Exception {
         insertStatement.setString(1, filename);
         insertStatement.setString(2, clientname);
         insertStatement.setString(3, addrs);
@@ -101,16 +106,23 @@ public class DataBaseManager {
         System.out.println();
         System.out.println("data updated in " + noOfAffectedRows + " row(s)");
     }*/
+    
+    public void deleteClient(String clientName) throws SQLException {
+        deleteClientStatement.setString(1, clientName);
+        int noOfAffectedRows = deleteStatement.executeUpdate();
+        System.out.println();
+        System.out.println("client deleted from " + noOfAffectedRows + " row(s)");
+    }
 
-    private void delete(String filename, String clientname) throws Exception {
+    public void delete(String filename, String clientname) throws Exception {
         deleteStatement.setString(1, filename);
         deleteStatement.setString(2, clientname);
         int noOfAffectedRows = deleteStatement.executeUpdate();
         System.out.println();
-        System.out.println("data deleted from " + noOfAffectedRows + " row(s)");
+        System.out.println("file deleted from " + noOfAffectedRows + " row(s)");
     }
 
-    private void selectAll() throws Exception {
+    public void selectAll() throws Exception {
         ResultSet result = statement.executeQuery(
                 "SELECT * FROM ACCOUNT");
         System.out.println();
@@ -123,8 +135,8 @@ public class DataBaseManager {
         result.close();
     }
 
-    private void dropTable() throws Exception {
-        int NoOfAffectedRows = statement.executeUpdate("DROP TABLE ACCOUNT");
+    public void dropTable() throws Exception {
+        int NoOfAffectedRows = statement.executeUpdate("DROP TABLE FILES");
         System.out.println();
         System.out.println("Table dropped, " + NoOfAffectedRows + " row(s) affected");
     }

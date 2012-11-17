@@ -56,7 +56,7 @@ public class ConnectionHandler extends Thread {
 
 
                 FishPacket fp = (FishPacket) in.readObject();
-
+                System.out.println("FishPacket recived!"+fp.getHeader().getType());
                 if (fp.getHeader().getType() == PacketType.ADDFILE) {
                     FileList fl = (FileList) fp.getPayload();
                     ArrayList<FishFile> listOfFishFilesToAdd = fl.getListOfFishFilesToAdd(client);

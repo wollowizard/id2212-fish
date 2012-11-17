@@ -49,7 +49,7 @@ public class Client extends Observable {
     private FishSettings settings;
     private String lastError = "";
     private Integer listeningThreadPort=-2;
-
+   
     public void setListeningThreadPort(Integer listeningThreadPort) {
         this.listeningThreadPort = listeningThreadPort;
     }

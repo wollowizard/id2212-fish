@@ -4,9 +4,13 @@
  */
 package fish.server;
 
+import fish.database.DataBaseManager;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -14,13 +18,16 @@ import java.net.Socket;
  */
 public class Main {
 
+    private static String datasource = "fishdatabase";
+    private static String user = "root";
+    private static String passwd = "root";
+    
     public static void main(String[] args) throws IOException {
                 
         boolean listening = true;
         ServerSocket serverSocket = null;
-
         final FishServer fs = new FishServer();
-
+        fs.ConnectToDataBase();
         try {
             serverSocket = new ServerSocket(1234);
         } catch (IOException e) {
