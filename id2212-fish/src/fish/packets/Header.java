@@ -20,6 +20,10 @@ public class Header implements Serializable{
     public PacketType getType() {
         return type;
     }
+
+    String printSummary() {
+        return this.type.toString();
+    }
     
     
     

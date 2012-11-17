@@ -8,9 +8,13 @@ import fish.client.Client;
 import fish.client.EventEnum;
 import fish.packets.FilenameAndAddress;
 import java.awt.Component;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Observable;
+import javax.swing.DefaultListModel;
 import javax.swing.JOptionPane;
+import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 
 /**
@@ -20,6 +24,7 @@ import javax.swing.table.DefaultTableModel;
 public class FishMainPanel extends javax.swing.JPanel {
 
     private Client client;
+    private DefaultListModel listmodel = new DefaultListModel();
 
     /**
      * Creates new form FishMainPanel
@@ -27,7 +32,25 @@ public class FishMainPanel extends javax.swing.JPanel {
     public FishMainPanel(Client c) {
         initComponents();
         client = c;
-       
+
+        this.jList1.setModel(listmodel);
+
+        ResultTable.addMouseListener(new MouseAdapter() {
+            public void mouseClicked(MouseEvent e) {
+                if (e.getClickCount() == 2) {
+                    JTable target = (JTable) e.getSource();
+                    int row = target.getSelectedRow();
+                    int column = target.getSelectedColumn();
+                    String fname = (String) (ResultTable.getModel().getValueAt(row, 0)).toString();
+                    String address = (String) (ResultTable.getModel().getValueAt(row, 1)).toString();
+                    String port = (String) (ResultTable.getModel().getValueAt(row, 2)).toString();
+                    client.download(fname, address, port);
+
+                }
+            }
+        });
+
+
     }
 
     /**
@@ -54,8 +77,6 @@ public class FishMainPanel extends javax.swing.JPanel {
         jPanel5 = new javax.swing.JPanel();
         jScrollPane2 = new javax.swing.JScrollPane();
         jList1 = new javax.swing.JList();
-        jButton1 = new javax.swing.JButton();
-        ppp = new javax.swing.JTextField();
 
         searchButton.setText("SEARCH");
         searchButton.addActionListener(new java.awt.event.ActionListener() {
@@ -126,7 +147,7 @@ public class FishMainPanel extends javax.swing.JPanel {
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addComponent(searchPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 113, Short.MAX_VALUE))
+                .addGap(0, 18, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab("Search", jPanel1);
@@ -147,7 +168,7 @@ public class FishMainPanel extends javax.swing.JPanel {
             .addGroup(jPanel4Layout.createSequentialGroup()
                 .addGap(39, 39, 39)
                 .addComponent(statisticsTxt, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(356, Short.MAX_VALUE))
+                .addContainerGap(261, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
@@ -170,39 +191,20 @@ public class FishMainPanel extends javax.swing.JPanel {
         });
         jScrollPane2.setViewportView(jList1);
 
-        jButton1.setText("jButton1");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
-            }
-        });
-
-        ppp.setText("port");
-
         javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
         jPanel5.setLayout(jPanel5Layout);
         jPanel5Layout.setHorizontalGroup(
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel5Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 362, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(58, 58, 58)
-                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jButton1)
-                    .addComponent(ppp, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(85, Short.MAX_VALUE))
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 583, Short.MAX_VALUE)
+                .addContainerGap())
         );
         jPanel5Layout.setVerticalGroup(
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel5Layout.createSequentialGroup()
                 .addGap(19, 19, 19)
-                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 261, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(jPanel5Layout.createSequentialGroup()
-                        .addGap(13, 13, 13)
-                        .addComponent(ppp, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jButton1)))
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 261, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(49, Short.MAX_VALUE))
         );
 
@@ -218,7 +220,7 @@ public class FishMainPanel extends javax.swing.JPanel {
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 95, Short.MAX_VALUE))
+                .addGap(0, 0, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab("Downloads", jPanel2);
@@ -239,16 +241,8 @@ public class FishMainPanel extends javax.swing.JPanel {
 
         client.search(this.searchTextField.getText());
     }//GEN-LAST:event_searchButtonActionPerformed
-
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        
-        
-        client.download(ppp.getText());
-    }//GEN-LAST:event_jButton1ActionPerformed
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTable ResultTable;
-    private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JList jList1;
     private javax.swing.JPanel jPanel1;
@@ -259,7 +253,6 @@ public class FishMainPanel extends javax.swing.JPanel {
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JTabbedPane jTabbedPane1;
-    private javax.swing.JTextField ppp;
     private javax.swing.JButton searchButton;
     private javax.swing.JPanel searchPanel;
     private javax.swing.JTextField searchTextField;
@@ -271,12 +264,15 @@ public class FishMainPanel extends javax.swing.JPanel {
         EventEnum event = (EventEnum) arg;
 
         if (event == EventEnum.CONNECTED) {
-            
+
             this.enableConnectedPanel();
-        } else if(event == EventEnum.DISCONNECT){
+
+
+        } else if (event == EventEnum.DISCONNECT) {
+
             this.disableConnectedPanel();
-        
-        }else if (event == EventEnum.NEWRESULT) {
+
+        } else if (event == EventEnum.NEWRESULT) {
 
             DefaultTableModel model = (DefaultTableModel) this.ResultTable.getModel();
             while (model.getRowCount() > 0) {
@@ -289,7 +285,7 @@ public class FishMainPanel extends javax.swing.JPanel {
                 model.addRow(new Object[]{"FILE", "NOT FOUND"});
             } else {
                 for (FilenameAndAddress f : files) {
-                    model.addRow(new Object[]{f.getFilename(), f.getAddress(),f.getPort(), "aaa"});
+                    model.addRow(new Object[]{f.getFilename(), f.getAddress(), f.getPort(), "aaa"});
                 }
             }
 
@@ -299,8 +295,14 @@ public class FishMainPanel extends javax.swing.JPanel {
         } else if (event == EventEnum.DISCONNECT) {
             this.statisticsTxt.setText("Num Clients: " + client.getNumClients()
                     + " Num Files: " + client.getNumFiles());
-        }else if(event==EventEnum.NEWERRORMESSAGE){
+        } else if (event == EventEnum.NEWERRORMESSAGE) {
             JOptionPane.showMessageDialog(this, client.getLastErrorMessage());
+        } else if (event == EventEnum.DOWNLOADFINISHED) {
+            
+            this.listmodel.clear();
+            for (String s : client.getDownloadedFiles()) {
+                this.listmodel.addElement(s);
+            }
         }
 
     }
@@ -313,6 +315,7 @@ public class FishMainPanel extends javax.swing.JPanel {
     }
 
     public void disableConnectedPanel() {
+        
         Component[] components = this.searchPanel.getComponents();
         for (Component c : components) {
             c.setEnabled(false);

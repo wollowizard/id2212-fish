@@ -44,9 +44,9 @@ public class FileWalker {
             throw new NotDirectoryException("Invalid directory");
         }
     }
-    
-    public static File findFile(String filename, String rootDir)throws NotDirectoryException{
-        File toreturn=null;
+
+    public static File findFile(String filename, String rootDir) throws NotDirectoryException {
+
         try {
             File root = new File(rootDir);
             if (!root.isDirectory()) {
@@ -55,26 +55,23 @@ public class FileWalker {
             File[] list = root.listFiles();
             for (File f : list) {
                 if (f.isDirectory()) {
-                    findFile(filename,f.getAbsolutePath());
-                    System.out.println("Dir:" + f.getAbsoluteFile());
-                    
+                    return findFile(filename, f.getAbsolutePath());
+                    //System.out.println("Dir:" + f.getAbsoluteFile());
+
                 } else {
-                    System.out.println("File:" + f.getAbsoluteFile());
-                    if(filename.compareTo(f.getName())==0){
-                        System.out.println("found!!");
-                        toreturn=f;
-                        break;
+                    //System.out.println("File:" + f.getAbsoluteFile());
+                    if (filename.compareTo(f.getName()) == 0) {
+                        
+                        return f;
+
                     }
-                    
+
                 }
             }
-
-            
         } catch (Exception ex) {
             throw new NotDirectoryException("Invalid directory");
         }
-        return toreturn;
-        
-    
+        return null;
+
     }
 }

@@ -19,12 +19,13 @@ public class FishSettings {
     private final static String INVALIDREFRESHVALUE = "Invalid value: you must digit a number greater than 1000";
     private final static String INVALIDFOLDER = "Invalid folder";
     private final static String INVALIDPORT = "Invalid port number";
-    private String folder = "C:\\temp";
+    private String folder = "C:\\Users\\alfredo\\Documents\\test\\temp1\\";
     private Integer port = 1234;
     private String ipAddress = "localhost";
     private Integer connectionTimeout=1000;
     private Integer MINIMUMCONNECTIONTIMEOUT=1000;
     private String INVALIDCONNECTIONTIMEOUT="Invalid Connection timeout. Minimum value: " + MINIMUMCONNECTIONTIMEOUT.toString();
+    private String downloadFolder="C:\\Users\\alfredo\\Documents\\test\\download1\\";
 
     public FishSettings(Client aThis) {
     }
@@ -67,6 +68,7 @@ public class FishSettings {
         }
     }
 
+    
     public Integer getPort() {
         return this.port;
     }
@@ -101,6 +103,9 @@ public class FishSettings {
                 throw new NotDirectoryException(INVALIDFOLDER);
             } else {
                 this.folder = text;
+                if(!folder.endsWith("\\")){
+                    folder+="\\";
+                }
             }
         } catch (Exception ex) {
             throw new NotDirectoryException(INVALIDFOLDER);
@@ -111,6 +116,27 @@ public class FishSettings {
     public String getFolder() {
         return this.folder;
     }
+    
+     public void setDownloadFolder(String text) throws NotDirectoryException {
+        try {
+            File f = new File(text);
+            if (!f.isDirectory()) {
+                throw new NotDirectoryException(INVALIDFOLDER);
+            } else {
+                this.downloadFolder = text;
+                if(!downloadFolder.endsWith("\\")){
+                    downloadFolder+="\\";
+                }
+            }
+        } catch (Exception ex) {
+            throw new NotDirectoryException(INVALIDFOLDER);
+        }
+
+    }
+
+    public String getDownloadFolder() {
+        return this.downloadFolder;
+    }
 
     Integer getRefreshInterval() {
         return this.refreshInterval;
@@ -119,8 +145,11 @@ public class FishSettings {
     public void validateSettings() throws Exception {
         setRefreshInterval(refreshInterval.toString());
         setFolder(this.folder);
+        setDownloadFolder(this.downloadFolder);
         setIpAddress(ipAddress);
         setPort(getPort().toString());
         setConnectionTimeout(connectionTimeout.toString());
     }
+
+    
 }

@@ -34,6 +34,10 @@ public class FishPacket implements Serializable{
     public void setPayload(Payload payload) {
         this.payload = payload;
     }
+
+    public String printSummary() {
+        return "Header: " + this.header.printSummary()+ "\nPayload: " + this.payload.printSummary();
+    }
     
     
 }

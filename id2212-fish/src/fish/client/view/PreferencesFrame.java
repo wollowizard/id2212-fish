@@ -27,6 +27,7 @@ public class PreferencesFrame extends javax.swing.JFrame {
         this.FolderLabel.setText(c.getSettings().getFolder());
         this.PortTextField.setText(c.getSettings().getPort().toString());
         this.IpAddressTextField.setText(c.getSettings().getIpAddress().toString());
+        this.DestinationFolderLabel.setText(c.getSettings().getDownloadFolder().toString());
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
     }
 
@@ -52,12 +53,15 @@ public class PreferencesFrame extends javax.swing.JFrame {
         IpAddressTextField = new javax.swing.JTextField();
         jLabel5 = new javax.swing.JLabel();
         connectionTimeoutTextField = new javax.swing.JTextField();
+        jLabel6 = new javax.swing.JLabel();
+        DestinationFolderLabel = new javax.swing.JLabel();
+        ChangeDestinationFolderButton = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
         jLabel1.setText("Statistics refresh time (ms)");
 
-        intervalTextField.setText("1000");
+        intervalTextField.setText("5000");
 
         jLabel2.setText("Folder to share");
 
@@ -94,6 +98,15 @@ public class PreferencesFrame extends javax.swing.JFrame {
 
         connectionTimeoutTextField.setText("5000");
 
+        jLabel6.setText("Destination Folder");
+
+        ChangeDestinationFolderButton.setText("Change Destination");
+        ChangeDestinationFolderButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                ChangeDestinationFolderButtonActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -108,6 +121,12 @@ public class PreferencesFrame extends javax.swing.JFrame {
                     .addGroup(layout.createSequentialGroup()
                         .addGap(35, 35, 35)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jLabel6)
+                                    .addComponent(ChangeDestinationFolderButton))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(DestinationFolderLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(jLabel2)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -148,7 +167,16 @@ public class PreferencesFrame extends javax.swing.JFrame {
                     .addComponent(FolderLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(ChangeFolderButton)
-                .addGap(31, 31, 31)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel6)
+                            .addComponent(DestinationFolderLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(40, 40, 40))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addComponent(ChangeDestinationFolderButton)
+                        .addGap(18, 18, 18)))
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel3)
                     .addComponent(IpAddressTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -180,6 +208,7 @@ public class PreferencesFrame extends javax.swing.JFrame {
         try {
             client.getSettings().setRefreshInterval(intervalTextField.getText());
             client.getSettings().setFolder(this.FolderLabel.getText());
+            client.getSettings().setDownloadFolder(this.DestinationFolderLabel.getText());
             client.getSettings().setIpAddress(this.IpAddressTextField.getText());
             client.getSettings().setPort(this.PortTextField.getText());
             client.getSettings().setConnectionTimeout(connectionTimeoutTextField.getText());
@@ -209,9 +238,27 @@ public class PreferencesFrame extends javax.swing.JFrame {
 
     }//GEN-LAST:event_ChangeFolderButtonActionPerformed
 
+    private void ChangeDestinationFolderButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ChangeDestinationFolderButtonActionPerformed
+
+        final JFileChooser fc = new JFileChooser();
+
+        fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+
+        int returnVal = fc.showOpenDialog(this);
+        if (returnVal == JFileChooser.APPROVE_OPTION) {
+            File file = fc.getSelectedFile();
+            //This is where a real application would open the file.
+            DestinationFolderLabel.setText(file.getAbsolutePath());
+        } else {
+            //log.append("Open command cancelled by user." + newline);
+        }
+    }//GEN-LAST:event_ChangeDestinationFolderButtonActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton CancelButton;
+    private javax.swing.JButton ChangeDestinationFolderButton;
     private javax.swing.JButton ChangeFolderButton;
+    private javax.swing.JLabel DestinationFolderLabel;
     private javax.swing.JLabel FolderLabel;
     private javax.swing.JTextField IpAddressTextField;
     private javax.swing.JTextField PortTextField;
@@ -223,5 +270,6 @@ public class PreferencesFrame extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel6;
     // End of variables declaration//GEN-END:variables
 }
