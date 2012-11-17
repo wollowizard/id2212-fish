@@ -125,7 +125,7 @@ class FishServer {
         }
         for (Map.Entry<FishFile, Client> entry : filesMap.entrySet()) {
             for (String it : word) {
-                if (entry.getKey().getFilename().contains(it)
+                if (entry.getKey().getFilename().toLowerCase().contains(it.toLowerCase())
                         && (!entry.getValue().equals(c)) && !results.contains(entry)) {
                     results.add(entry);
                 }

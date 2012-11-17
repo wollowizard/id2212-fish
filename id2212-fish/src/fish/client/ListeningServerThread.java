@@ -118,14 +118,12 @@ public class ListeningServerThread extends Thread {
 
     private void sendFile(File file, ObjectOutputStream out) throws IOException {
         
-        System.out.println("abs path"  + file.getAbsolutePath());
+        //System.out.println("abs path"  + file.getAbsolutePath());
         
         Path path = Paths.get(file.getAbsolutePath());
         System.out.println("path" + path);
-        //byte[] b = Files.readAllBytes(path);
-        byte[] b = "ciao".getBytes();
+        byte[] b = Files.readAllBytes(path);
                 
-        System.out.println(new String(b,0));
         FileContent fc = new FileContent(file.getName(), b);
 
         Header h = new Header(PacketType.FILECONTENT);

@@ -44,7 +44,7 @@ public class FishMainPanel extends javax.swing.JPanel {
                     String fname = (String) (ResultTable.getModel().getValueAt(row, 0)).toString();
                     String address = (String) (ResultTable.getModel().getValueAt(row, 1)).toString();
                     String port = (String) (ResultTable.getModel().getValueAt(row, 2)).toString();
-                    client.download(fname, address, port);
+                    client.startDownloadThread(fname, address, port);
 
                 }
             }

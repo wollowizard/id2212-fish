@@ -43,21 +43,15 @@ public class Connector extends Thread {
 
                 ObjectInputStream objIn = new ObjectInputStream(sock.getInputStream());
 
+
                 client.startDownloadFolderWatcher();
                 client.setInStream(objIn);
                 client.setOutStream(objOut);
-                client.setConnected();
-                client.startReceiverThread();
 
-
-
+                client.startConnection();
                 objIn.toString();
                 objOut.toString();
 
-                client.startListeningServerThread();
-                client.submitInitialFileList();
-               
-                client.startStatisticsThread();
 
 
             }
@@ -65,13 +59,13 @@ public class Connector extends Thread {
 
             client.setErrorMessage(ex.getMessage());
             SwingUtilities.invokeLater(new Runnable() {
-
                 @Override
                 public void run() {
+                    
                     client.notifyObservers(EventEnum.NEWERRORMESSAGE);
                 }
             });
-            
+
 
         }
     }

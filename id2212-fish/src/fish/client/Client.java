@@ -86,6 +86,27 @@ public class Client extends Observable {
         }
     }
 
+    public void startConnection() {
+        try {
+            setConnected();
+            startReceiverThread();
+            startListeningServerThread();
+            submitInitialFileList();
+
+            startStatisticsThread();
+
+        } catch (IOException ex) {
+
+            setErrorMessage(ex.getMessage());
+            SwingUtilities.invokeLater(new Runnable() {
+                @Override
+                public void run() {
+                    notifyObservers(EventEnum.NEWERRORMESSAGE);
+                }
+            });
+        }
+    }
+
     public void setConnected() {
 
         synchronized (this) {
@@ -185,8 +206,11 @@ public class Client extends Observable {
                 }
             });
 
+
+
         } catch (IOException ex) {
-            Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(Client.class
+                    .getName()).log(Level.SEVERE, null, ex);
         }
     }
 
@@ -254,6 +278,17 @@ public class Client extends Observable {
 
     }
 
+    public void startDownloadThread(final String fname, final String address, final String port) {
+
+        Thread thread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                download(fname,address,port);
+            }
+        });
+        thread.start();
+    }
+
     public void download(String fname, String address, String port) {
         Header h = new Header(PacketType.DOWNLOAD);
         DownloadRequest p = new DownloadRequest(fname);
@@ -273,18 +308,18 @@ public class Client extends Observable {
             manageDownloadReceived(fp);
 
         } catch (ClassNotFoundException ex) {
-            Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(Client.class
+                    .getName()).log(Level.SEVERE, null, ex);
         } catch (UnknownHostException ex) {
-            Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(Client.class
+                    .getName()).log(Level.SEVERE, null, ex);
         } catch (IOException ex) {
-            Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(Client.class
+                    .getName()).log(Level.SEVERE, null, ex);
         }
-
-
-
     }
 
-    void startStatisticsThread() {
+    public void startStatisticsThread() {
         StatThread st = new StatThread(this, this.settings.getRefreshInterval());
         st.start();
 
@@ -370,12 +405,14 @@ public class Client extends Observable {
 
                     System.out.println("file created");
 
+
+
                 }
             } catch (IOException ex) {
-                Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(Client.class
+                        .getName()).log(Level.SEVERE, null, ex);
             }
-        }
-        else{
+        } else {
             System.out.println("Unrecognized packet received as download");
         }
     }
