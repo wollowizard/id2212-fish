@@ -7,6 +7,7 @@ package fish.server;
 import fish.packets.FileList;
 import fish.packets.FilenameAndAddress;
 import fish.packets.FishPacket;
+import fish.packets.Header;
 import fish.packets.ListeningServerPortNumber;
 import fish.packets.PacketType;
 import fish.packets.ParameterToSearch;
@@ -76,6 +77,7 @@ public class ConnectionHandler extends Thread {
                     System.out.println("Received: " + pn.printSummary());
                     Integer port = pn.port;
                     client.setListeningServerPort(port);
+                    sendListeningPortAck();
                 }
 
             } catch (IOException ex) {
@@ -113,6 +115,26 @@ public class ConnectionHandler extends Thread {
         try {
             out.writeObject(response);
 
+
+        } catch (IOException ex) {
+            //client connection was not ok
+            System.out.println(ex.getMessage());
+            fs.clientDisconnected(client);
+            try {
+                closeConnection();
+            } catch (IOException ex1) {
+                System.out.println(ex1.getMessage());
+
+            }
+        }
+
+    }
+    
+    private void sendListeningPortAck() {
+
+
+        try {
+            out.writeObject(new FishPacket(new Header(PacketType.LISTENINGSERVERPORTACK), new ListeningServerPortNumber(100)));
 
         } catch (IOException ex) {
             //client connection was not ok

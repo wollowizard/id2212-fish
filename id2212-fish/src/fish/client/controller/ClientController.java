@@ -25,6 +25,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
@@ -88,14 +89,12 @@ public class ClientController extends Observable {
     }
 
     public void startConnection() {
+        setConnected();
+        sendServerPortAndStartServer();
+        startReceiverThread();
         try {
-            setConnected();
-            startReceiverThread();
-            startListeningServerThread();
             submitInitialFileList();
-
             startStatisticsThread();
-
         } catch (NotDirectoryException ex) {
 
             setErrorMessage(ex.getMessage());
@@ -210,8 +209,6 @@ public class ClientController extends Observable {
                 }
             });
 
-
-
         } catch (IOException ex) {
             Logger.getLogger(ClientController.class
                     .getName()).log(Level.SEVERE, null, ex);
@@ -241,20 +238,9 @@ public class ClientController extends Observable {
 
     }
 
-    public void startListeningServerThread() {
-        ListeningServerThread thread = new ListeningServerThread(this);
+    public void startListeningServerThread(ServerSocket ss) {
+        ListeningServerThread thread = new ListeningServerThread(this, ss);
         thread.start();
-
-    }
-
-    public void sendListeningServerPort() {
-        Header h = new Header(PacketType.LISTENINGSERVERPORT);
-
-        ListeningServerPortNumber pn = new ListeningServerPortNumber(this.listeningThreadPort);
-        FishPacket packet = new FishPacket(h, pn);
-
-        SynchronousSender c = new SynchronousSender(packet, out, this);
-        c.send();
 
     }
 
@@ -452,5 +438,41 @@ public class ClientController extends Observable {
             }
         });
 
+    }
+
+    public void sendListeningServerPort() {
+        Header h = new Header(PacketType.LISTENINGSERVERPORT);
+
+        ListeningServerPortNumber pn = new ListeningServerPortNumber(this.listeningThreadPort);
+        FishPacket packet = new FishPacket(h, pn);
+
+        SynchronousSender c = new SynchronousSender(packet, out, this);
+        c.send();
+
+    }
+
+    void waitForListeningServerPortAck() throws IOException, ClassNotFoundException {
+        FishPacket fp = (FishPacket) in.readObject();
+        if (fp.getHeader().getType() != PacketType.LISTENINGSERVERPORTACK) {
+            throw new IOException("Listening ack not received");
+        }
+
+
+    }
+
+    private void sendServerPortAndStartServer() {
+        try {
+            ServerSocket serverSocket = null;
+            serverSocket = new ServerSocket(0);
+            setListeningThreadPort(serverSocket.getLocalPort());
+            sendListeningServerPort();
+            waitForListeningServerPortAck();
+            System.out.println("Listening on " + getListeningThreadPort());
+
+            startListeningServerThread(serverSocket);
+
+        } catch (ClassNotFoundException | IOException ex) {
+            Logger.getLogger(ListeningServerThread.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 }

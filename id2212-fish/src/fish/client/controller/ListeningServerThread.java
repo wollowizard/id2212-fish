@@ -27,25 +27,17 @@ import java.util.logging.Logger;
 public class ListeningServerThread extends Thread {
 
     private ClientController client;
-
-    public ListeningServerThread(ClientController c) {
+    private ServerSocket serverSocket;
+    public ListeningServerThread(ClientController c, ServerSocket ss) {
         client = c;
+        serverSocket=ss;
     }
 
     public void run() {
         try {
-            ServerSocket serverSocket = null;
+            
 
-            try {
-                serverSocket = new ServerSocket(0);
-                client.setListeningThreadPort(serverSocket.getLocalPort());
-                client.sendListeningServerPort();
-                System.out.println("Listening on " + client.getListeningThreadPort());
-
-
-            } catch (IOException e) {
-                System.err.println("Could not listen on port: 10007.");
-            }
+            
 
             Socket clientSocket = null;
             System.out.println("Waiting for connection.....");
