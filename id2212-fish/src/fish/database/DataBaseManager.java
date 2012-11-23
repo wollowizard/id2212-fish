@@ -76,10 +76,10 @@ public class DataBaseManager {
         insertFile = conn.prepareStatement("INSERT INTO FILES (filename,ip,port) VALUES (?, ?, ?)");
         //updateStatement = conn.prepareStatement("UPDATE ACCOUNT SET balance=? WHERE name=?");
         selectByName = conn.prepareStatement(
-                "SELECT * FROM FILES WHERE filename=?");
+                "SELECT * FROM FILES WHERE filename=? AND ip<>? AND port<>?");
         selectByAddress = conn.prepareStatement(
                 "SELECT * FROM FILES WHERE ip=? AND port=?");
-        deleteFile = conn.prepareStatement("DELETE FROM FILES WHERE filename=?");
+        deleteFile = conn.prepareStatement("DELETE FROM FILES WHERE filename=? AND ip=? AND port=?");
         deleteUser = conn.prepareStatement("DELETE FROM FILES WHERE ip=? AND port=?");
         updateUser = conn.prepareStatement("UPDATE FILES SET ip=? AND port=? WHERE ip=? AND port=?");
         
@@ -117,12 +117,36 @@ public class DataBaseManager {
         System.out.println("client deleted from " + noOfAffectedRows + " row(s)");
     }
 
-    public void delete(String filename, String clientname) throws Exception {
-        deleteStatement.setString(1, filename);
-        deleteStatement.setString(2, clientname);
-        int noOfAffectedRows = deleteStatement.executeUpdate();
+    public void deleteFile(String filename, String ip, int port) throws Exception {
+        deleteFile.setString(1, filename);
+        deleteFile.setString(2, ip);
+        deleteFile.setInt(3, port);
+        int noOfAffectedRows = deleteFile.executeUpdate();
         System.out.println();
         System.out.println("file deleted from " + noOfAffectedRows + " row(s)");
+    }
+    
+    public ArrayList<FilenameAndAddress> selectByAdrress(String ip, int port) throws SQLException {
+        selectByAddress.setString(1, ip);
+        selectByAddress.setInt(2, port);
+        ResultSet r = selectByAddress.executeQuery();
+        ArrayList<FilenameAndAddress> tmp = new ArrayList<>();
+        while (r.next()) {
+            tmp.add(new FilenameAndAddress(r.getString("filename"), r.getString("ip"), r.getInt("port")));
+        }
+        return tmp;
+    }
+    
+    public ArrayList<FilenameAndAddress> selectByName(String filename, String ip, int port) throws SQLException {
+        selectByName.setString(1, filename);
+        selectByName.setString(2, ip);
+        selectByName.setInt(3, port);
+        ResultSet r = selectByName.executeQuery();
+        ArrayList<FilenameAndAddress> tmp = new ArrayList<>();
+        while (r.next()) {
+            tmp.add(new FilenameAndAddress(r.getString("filename"), r.getString("ip"), r.getInt("port")));
+        }
+        return tmp;
     }
 
     public void selectAll() throws Exception {
