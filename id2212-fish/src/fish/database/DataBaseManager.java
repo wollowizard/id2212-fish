@@ -33,6 +33,12 @@ public class DataBaseManager {
     private PreparedStatement deleteStatement;
     private PreparedStatement selectClientStatement;
     private PreparedStatement deleteClientStatement;
+    private PreparedStatement insertFile;
+    private PreparedStatement selectByName;
+    private PreparedStatement selectByAddress;
+    private PreparedStatement deleteFile;
+    private PreparedStatement deleteUser;
+    private PreparedStatement updateUser;
     
     public DataBaseManager(String user, String passwd, String datasource) {
         this.user = user;
@@ -62,55 +68,51 @@ public class DataBaseManager {
         }
 
         statement.executeUpdate(
-                "CREATE TABLE FILES (id int NOT NULL AUTO_INCREMENT PRIMARY KEY, "
-                + "filename VARCHAR(255), "
-                + "owner VARCHAR(255), "
-                + "address VARCHAR(255))");
+                "CREATE TABLE FILES (filename VARCHAR(255), "
+                + "ip VARCHAR(255), "
+                + "port INTEGER, "
+                + "CONSTRAINT id PRIMARY KEY (filename,ip,port))");
         initialized = true;
-        insertStatement = conn.prepareStatement("INSERT INTO FILES (filename,owner,address) VALUES (?, ?, ?)");
+        insertFile = conn.prepareStatement("INSERT INTO FILES (filename,ip,port) VALUES (?, ?, ?)");
         //updateStatement = conn.prepareStatement("UPDATE ACCOUNT SET balance=? WHERE name=?");
-        selectStatement = conn.prepareStatement(
-                "SELECT * FROM FILES WHERE filename=? AND clientName=?");
-        selectClientStatement = conn.prepareStatement(
-                "SELECT * FROM FILES WHERE clientName=?");
-        deleteStatement = conn.prepareStatement("DELETE FROM FILES WHERE filename=? AND clientName=?");
-        deleteClientStatement = conn.prepareStatement("DELETE FROM FILES WHERE clientName=?");
+        selectByName = conn.prepareStatement(
+                "SELECT * FROM FILES WHERE filename=?");
+        selectByAddress = conn.prepareStatement(
+                "SELECT * FROM FILES WHERE ip=? AND port=?");
+        deleteFile = conn.prepareStatement("DELETE FROM FILES WHERE filename=?");
+        deleteUser = conn.prepareStatement("DELETE FROM FILES WHERE ip=? AND port=?");
+        updateUser = conn.prepareStatement("UPDATE FILES SET ip=? AND port=? WHERE ip=? AND port=?");
+        
         System.out.println();
         System.out.println("table created...");
     }
     
-    public void insert(String filename, String clientname, String addrs) throws Exception {
-        insertStatement.setString(1, filename);
-        insertStatement.setString(2, clientname);
-        insertStatement.setString(3, addrs);
+    public void insertFile(String filename, String ip, int port) throws Exception {
+        insertFile.setString(1, filename);
+        insertFile.setString(2, ip);
+        insertFile.setInt(3, port);
         
-        int noOfAffectedRows = insertStatement.executeUpdate();
+        int noOfAffectedRows = insertFile.executeUpdate();
         System.out.println();
         System.out.println("data inserted in " + noOfAffectedRows + " row(s).");
     }
 
-    /*private void update(String name, float amount) throws Exception {
-        float balance = 0;
-        selectStatement.setString(1, name);
-        ResultSet result = selectStatement.executeQuery();
-        if (result.next()) {
-            balance = result.getFloat("balance");
-        }
-        result.close();
-        if (amount + balance < 0) {
-            throw new Exception("Negative balance is not allowed");
-        }
-        balance += amount;
-        updateStatement.setDouble(1, balance);
-        updateStatement.setString(2, name);
-        int noOfAffectedRows = updateStatement.executeUpdate();
+    public void updateUser(String ip, int port) throws Exception {
+        updateUser.setString(1, ip);
+        updateUser.setInt(2, port);
+        updateUser.setString(3, ip);
+        updateUser.setInt(4, port);
+        int noOfAffectedRows = updateUser.executeUpdate();
+        if (noOfAffectedRows==0) throw new SQLException("Client not found");
         System.out.println();
         System.out.println("data updated in " + noOfAffectedRows + " row(s)");
-    }*/
+    }
     
-    public void deleteClient(String clientName) throws SQLException {
-        deleteClientStatement.setString(1, clientName);
-        int noOfAffectedRows = deleteStatement.executeUpdate();
+    public void deleteUser(String ip, int port) throws SQLException {
+        deleteUser.setString(1, ip);
+        deleteUser.setInt(2, port);
+        int noOfAffectedRows = deleteUser.executeUpdate();
+        if (noOfAffectedRows==0) throw new SQLException("Client not found");
         System.out.println();
         System.out.println("client deleted from " + noOfAffectedRows + " row(s)");
     }
