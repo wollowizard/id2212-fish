@@ -5,7 +5,6 @@
 package fish.database;
 
 import fish.packets.FilenameAndAddress;
-import fish.server.FishFile;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -27,12 +26,6 @@ public class DataBaseManager {
     private String user = "root";
     private String passwd = "root";
     private boolean initialized;
-    private PreparedStatement insertStatement;
-    private PreparedStatement updateStatement;
-    private PreparedStatement selectStatement;
-    private PreparedStatement deleteStatement;
-    private PreparedStatement selectClientStatement;
-    private PreparedStatement deleteClientStatement;
     private PreparedStatement insertFile;
     private PreparedStatement selectByName;
     private PreparedStatement selectByAddress;
@@ -50,6 +43,7 @@ public class DataBaseManager {
         Class.forName("com.mysql.jdbc.Driver");
         conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/" + datasource, user, passwd);
 	statement = conn.createStatement();
+        initialized = true;
 	System.out.println("Connected to database..." + conn.toString());
     }
     
@@ -63,16 +57,13 @@ public class DataBaseManager {
     
     public void createTable() throws Exception {
         ResultSet result = conn.getMetaData().getTables(null, null, "FILES", null);
-        if (result.next()) {
-            dropTable();
-        }
-
-        statement.executeUpdate(
+        if (!result.next()) {
+            statement.executeUpdate(
                 "CREATE TABLE FILES (filename VARCHAR(255), "
                 + "ip VARCHAR(255), "
                 + "port INTEGER, "
                 + "CONSTRAINT id PRIMARY KEY (filename,ip,port))");
-        initialized = true;
+        }
         insertFile = conn.prepareStatement("INSERT INTO FILES (filename,ip,port) VALUES (?, ?, ?)");
         //updateStatement = conn.prepareStatement("UPDATE ACCOUNT SET balance=? WHERE name=?");
         selectByName = conn.prepareStatement(
@@ -148,31 +139,39 @@ public class DataBaseManager {
         }
         return tmp;
     }
-
-    public void selectAll() throws Exception {
-        ResultSet result = statement.executeQuery(
-                "SELECT * FROM ACCOUNT");
-        System.out.println();
-        System.out.println("XXXXXXXXXXXXX Selecting data from table XXXXXXXXXXXXXX");
-        System.out.println("XXXXXXXX Query returned the following results XXXXXXXX");
-        for (int i = 1; result.next(); i++) {
-            System.out.println("row " + i + " - " + result.getString("name")
-                    + "\t\t\t" + result.getFloat("balance"));
+    
+    public int getGlobalStatistics() throws SQLException {
+        ResultSet res = statement.executeQuery("SELECT COUNT(*) FROM FILES");
+        int count = 0;
+        while (res.next()) {
+            count = res.getInt(1);
         }
-        result.close();
+        return count;
+    }
+    
+    public int getUserStatistics(String ip, int port) throws SQLException {
+        ResultSet res = statement.executeQuery("SELECT COUNT(*) FROM FILES WHERE ip="+ip+" AND port="+port);
+        int count = 0;
+        while (res.next()) {
+            count = res.getInt(1);
+        }
+        return count;
+    }
+
+    public ArrayList<FilenameAndAddress> selectAll() throws Exception {
+        ResultSet r = statement.executeQuery(
+                "SELECT * FROM FILES");
+        ArrayList<FilenameAndAddress> tmp = new ArrayList<>();
+        while (r.next()) {
+            tmp.add(new FilenameAndAddress(r.getString("filename"), r.getString("ip"), r.getInt("port")));
+        }
+        return tmp;
     }
 
     public void dropTable() throws Exception {
         int NoOfAffectedRows = statement.executeUpdate("DROP TABLE FILES");
         System.out.println();
         System.out.println("Table dropped, " + NoOfAffectedRows + " row(s) affected");
-    }
-
-    public ArrayList<FishFile> searchFiles(String clientName, String parameter) {
-        return null;
-        //returns all the files of matching the parameter (except the ones of the client itself)
-        
-        
     }
     
 }
