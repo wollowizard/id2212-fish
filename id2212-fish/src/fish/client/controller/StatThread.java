@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package fish.client;
+package fish.client.controller;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -13,10 +13,10 @@ import java.util.logging.Logger;
  */
 public class StatThread extends Thread {
 
-    Client client;
+    ClientController client;
     Integer refreshInterval;
 
-    public StatThread(Client c, Integer refreshInterval) {
+    public StatThread(ClientController c, Integer refreshInterval) {
         client = c;
         this.refreshInterval = refreshInterval;
     }

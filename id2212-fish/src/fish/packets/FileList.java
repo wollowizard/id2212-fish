@@ -4,8 +4,6 @@
  */
 package fish.packets;
 
-import fish.server.Client;
-import fish.server.FishFile;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -30,7 +28,7 @@ public class FileList extends Payload implements Serializable {
     public FileList(ArrayList<File> add, ArrayList<File> remove) {
         for (File f : add) {
 
-            filesToAdd.add(new String(f.getName()));
+            filesToAdd.add(f.getName());
         }
         for (File f : remove) {
             filesToRemove.add(f.getName());
@@ -45,6 +43,7 @@ public class FileList extends Payload implements Serializable {
         return filesToRemove;
     }
 
+    @Override
     public String printSummary() {
         String res = "Files to add: ";
         for (String s : filesToAdd) {
@@ -89,20 +88,4 @@ public class FileList extends Payload implements Serializable {
         return res;
     }
 
-    public ArrayList<FishFile> getListOfFishFilesToAdd(Client client) {
-        ArrayList<FishFile> ret=new ArrayList<>();
-        for(String fnwh : filesToAdd){
-            FishFile ff=new FishFile(fnwh, client);
-            ret.add(ff);
-        }
-        return ret;
-    }
-    public ArrayList<FishFile> getListOfFishFilesToRemove(Client client) {
-        ArrayList<FishFile> ret=new ArrayList<>();
-        for(String fnwh : filesToRemove){
-            FishFile ff=new FishFile(fnwh, client);
-            ret.add(ff);
-        }
-        return ret;
-    }
 }

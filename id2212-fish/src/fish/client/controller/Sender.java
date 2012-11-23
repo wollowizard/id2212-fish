@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package fish.client;
+package fish.client.controller;
 
 import fish.packets.FishPacket;
 import fish.packets.PacketType;
@@ -18,9 +18,9 @@ public class Sender extends Thread {
     private FishPacket packet;
     
     private ObjectOutputStream out;
-    private Client client;
+    private ClientController client;
 
-    public Sender(FishPacket p, ObjectOutputStream out, Client client) {
+    public Sender(FishPacket p, ObjectOutputStream out, ClientController client) {
 
         this.packet = p;
         

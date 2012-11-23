@@ -31,34 +31,32 @@ class FishServer {
 
     //public ArrayList<Client> clients;
     //public ArrayList<FishFile> files;
-    
-    Map<FishFile,Client> filesMap=new ConcurrentHashMap<>();
-    
-    List clients = Collections.synchronizedList(new ArrayList()); 
+    Map<FishFile, Client> filesMap = new ConcurrentHashMap<>();
+    List clients = Collections.synchronizedList(new ArrayList());
     private static String datasource = "fishdatabase";
     private static String user = "root";
     private static String passwd = "root";
     DataBaseManager dataBase;
-    private int numClient = 0;        
-    String KeywordToSearch="";
-  
+    private int numClient = 0;
+    String KeywordToSearch = "";
+
     public void newClientConnected(Client c) {
         if (!clients.contains(c)) {
-            c.setClientName("c"+numClient);
+            c.setClientName("c" + numClient);
             numClient++;
             this.clients.add(c);
         }
     }
 
     public synchronized void clientDisconnected(Client client) {
-        ArrayList<Map.Entry<FishFile,Client>> toberemoved=new ArrayList<>();
+        ArrayList<Map.Entry<FishFile, Client>> toberemoved = new ArrayList<>();
         try {
-            dataBase.deleteClient(filesMap.get(client).getClientName());
+            dataBase.deleteClient(client.getClientName());
         } catch (SQLException ex) {
             Logger.getLogger(FishServer.class.getName()).log(Level.SEVERE, null, ex);
         }
-        for (Map.Entry<FishFile,Client> entry : filesMap.entrySet()){
-            if(entry.getValue().equals(client)){
+        for (Map.Entry<FishFile, Client> entry : filesMap.entrySet()) {
+            if (entry.getValue().equals(client)) {
                 toberemoved.add(entry);
             }
         }
@@ -172,14 +170,14 @@ class FishServer {
     }
 
     private synchronized boolean addFile(Client c, FishFile file) {
-        boolean found=false;
+        boolean found = false;
         try {
             dataBase.insert(file.getFilename(), c.getClientName(), c.getNetResources().getSocket().getRemoteSocketAddress().toString());
         } catch (Exception ex) {
             Logger.getLogger(FishServer.class.getName()).log(Level.SEVERE, null, ex);
         }
-        for (Map.Entry<FishFile,Client> entry : filesMap.entrySet()){
-            if(found){
+        for (Map.Entry<FishFile, Client> entry : filesMap.entrySet()) {
+            if (found) {
                 break;
             }
             FishFile fileInMap = entry.getKey();
@@ -203,10 +201,10 @@ class FishServer {
             Logger.getLogger(FishServer.class.getName()).log(Level.SEVERE, null, ex);
         }
         this.clients.remove(c);
-        
+
     }
 
-    private synchronized  void removeFile(Client c, FishFile file) {
+    private synchronized void removeFile(Client c, FishFile file) {
         try {
             dataBase.delete(file.getFilename(), c.getClientName());
         } catch (Exception ex) {
@@ -230,10 +228,10 @@ class FishServer {
         return new FishPacket(new Header(PacketType.STATISTICS),
                 new ServerStatistics(clients.size(), filesMap.size()));
     }
-    
+
     public void ConnectToDataBase() {
         dataBase = new DataBaseManager(user, passwd, datasource);
-        
+
         try {
             dataBase.connectDatabase(user, passwd);
             try {
@@ -247,8 +245,8 @@ class FishServer {
             Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
-    public class SortByName implements Comparator<Map.Entry<FishFile,Client>> {
+
+    public class SortByName implements Comparator<Map.Entry<FishFile, Client>> {
 
         @Override
         public int compare(Entry<FishFile, Client> t, Entry<FishFile, Client> t1) {
@@ -257,6 +255,4 @@ class FishServer {
             return s1 - s2;
         }
     }
-    
-
 }

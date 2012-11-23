@@ -4,13 +4,9 @@
  */
 package fish.server;
 
-import fish.database.DataBaseManager;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.sql.SQLException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *

@@ -2,18 +2,12 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package fish.client;
+package fish.client.controller;
 
-import fish.packets.FileContent;
 import fish.packets.FilenameAndAddress;
 import fish.packets.FishPacket;
 import fish.packets.SearchResult;
 import fish.packets.ServerStatistics;
-import java.io.BufferedOutputStream;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.util.ArrayList;
@@ -28,10 +22,10 @@ public class Receiver extends Thread {
 
     //private FishPacket packet;
     private ObjectInputStream in;
-    private Client client;
+    private ClientController client;
     private Boolean running = true;
 
-    public Receiver(ObjectInputStream in, Client client) {
+    public Receiver(ObjectInputStream in, ClientController client) {
 
 
         this.in = in;

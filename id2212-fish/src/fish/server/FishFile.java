@@ -10,12 +10,10 @@ import java.net.SocketAddress;
  *
  * @author alfredo
  */
-
-
 public class FishFile {
+
     private String filename;
     private Client owner;
-    
 
     public FishFile(String filename, Client owner) {
         this.filename = filename;
@@ -37,12 +35,9 @@ public class FishFile {
     public synchronized void setOwner(Client owner) {
         this.owner = owner;
     }
-    
-    public synchronized SocketAddress getOwnerRemoteAddress(){
-    
+
+    public synchronized SocketAddress getOwnerRemoteAddress() {
+
         return this.owner.getNetResources().getSocket().getRemoteSocketAddress();
     }
-    
-    
 }
- 

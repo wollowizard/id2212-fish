@@ -5,7 +5,6 @@
 package fish.packets;
 
 import java.io.Serializable;
-import java.net.SocketAddress;
 
 /**
  *

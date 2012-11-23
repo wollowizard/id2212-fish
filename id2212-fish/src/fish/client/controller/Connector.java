@@ -2,14 +2,15 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package fish.client;
+package fish.client.controller;
 
+import fish.client.EventEnum;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.InetSocketAddress;
 import java.net.Socket;
-import javax.swing.SwingUtilities;
+
 
 /**
  *
@@ -19,9 +20,9 @@ public class Connector extends Thread {
 
     String ip;
     Integer port;
-    Client client;
+    ClientController client;
 
-    public Connector(Client c) {
+    public Connector(ClientController c) {
 
         this.client = c;
         this.port = c.getSettings().getPort();
@@ -58,7 +59,7 @@ public class Connector extends Thread {
         } catch (IOException ex) {
 
             client.setErrorMessage(ex.getMessage());
-            SwingUtilities.invokeLater(new Runnable() {
+            ViewNotifier.invokeLater(new Runnable() {
                 @Override
                 public void run() {
                     

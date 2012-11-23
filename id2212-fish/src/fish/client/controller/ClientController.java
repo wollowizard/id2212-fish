@@ -2,10 +2,13 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package fish.client;
+package fish.client.controller;
 
+import fish.client.EventEnum;
+import fish.client.FishSettings;
 import fish.client.dir.DirWatcher;
 import fish.client.dir.FileWalker;
+import fish.exceptions.NotDirectoryException;
 import fish.packets.DownloadRequest;
 import fish.packets.FileContent;
 import fish.packets.FileList;
@@ -24,7 +27,6 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.net.UnknownHostException;
-import java.nio.file.NotDirectoryException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Observable;
@@ -32,13 +34,13 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.SwingUtilities;
+
 
 /**
  *
  * @author alfredo
  */
-public class Client extends Observable {
+public class ClientController extends Observable {
 
     private Socket socket;
     private ObjectInputStream in;
@@ -51,11 +53,10 @@ public class Client extends Observable {
     private ArrayList<FilenameAndAddress> lastresult;
     private FishSettings settings;
     private String lastError = "";
-    private Integer listeningThreadPort=-2;
+    private Integer listeningThreadPort = -2;
     private ArrayList<String> downloadFolderContent = new ArrayList<>();
     private long DOWNLOADFOLDERREFRESHTIME = 10000; //10 SECONDS
     private long SHAREFOLDERREFRESHTIME = 2000; //2 SECONDS
-
 
     public void setListeningThreadPort(Integer listeningThreadPort) {
         this.listeningThreadPort = listeningThreadPort;
@@ -65,7 +66,7 @@ public class Client extends Observable {
         return listeningThreadPort;
     }
 
-    public Client() {
+    public ClientController() {
         this.settings = new FishSettings(this);
     }
 
@@ -96,15 +97,18 @@ public class Client extends Observable {
 
             startStatisticsThread();
 
-        } catch (IOException ex) {
+        } catch (NotDirectoryException ex) {
 
             setErrorMessage(ex.getMessage());
-            SwingUtilities.invokeLater(new Runnable() {
+            ViewNotifier.invokeLater(new Runnable() {
                 @Override
                 public void run() {
+                    setChanged();
                     notifyObservers(EventEnum.NEWERRORMESSAGE);
                 }
             });
+
+
         }
     }
 
@@ -115,7 +119,7 @@ public class Client extends Observable {
 
         }
 
-        SwingUtilities.invokeLater(new Runnable() {
+        ViewNotifier.invokeLater(new Runnable() {
             @Override
             public void run() {
                 setChanged();
@@ -132,7 +136,7 @@ public class Client extends Observable {
         }
 
 
-        SwingUtilities.invokeLater(new Runnable() {
+        ViewNotifier.invokeLater(new Runnable() {
             @Override
             public void run() {
                 notifyObservers(EventEnum.DISCONNECT);
@@ -149,7 +153,7 @@ public class Client extends Observable {
 
         this.lastresult = lastresult;
         this.setChanged();
-        SwingUtilities.invokeLater(new Runnable() {
+        ViewNotifier.invokeLater(new Runnable() {
             @Override
             public void run() {
                 notifyObservers(EventEnum.NEWRESULT);
@@ -200,7 +204,7 @@ public class Client extends Observable {
     public void unshare() {
         try {
             this.socket.close();
-            SwingUtilities.invokeLater(new Runnable() {
+            ViewNotifier.invokeLater(new Runnable() {
                 @Override
                 public void run() {
                     notifyObservers(EventEnum.DISCONNECT);
@@ -210,7 +214,7 @@ public class Client extends Observable {
 
 
         } catch (IOException ex) {
-            Logger.getLogger(Client.class
+            Logger.getLogger(ClientController.class
                     .getName()).log(Level.SEVERE, null, ex);
         }
     }
@@ -284,7 +288,7 @@ public class Client extends Observable {
         Thread thread = new Thread(new Runnable() {
             @Override
             public void run() {
-                download(fname,address,port);
+                download(fname, address, port);
             }
         });
         thread.start();
@@ -309,13 +313,13 @@ public class Client extends Observable {
             manageDownloadReceived(fp);
 
         } catch (ClassNotFoundException ex) {
-            Logger.getLogger(Client.class
+            Logger.getLogger(ClientController.class
                     .getName()).log(Level.SEVERE, null, ex);
         } catch (UnknownHostException ex) {
-            Logger.getLogger(Client.class
+            Logger.getLogger(ClientController.class
                     .getName()).log(Level.SEVERE, null, ex);
         } catch (IOException ex) {
-            Logger.getLogger(Client.class
+            Logger.getLogger(ClientController.class
                     .getName()).log(Level.SEVERE, null, ex);
         }
     }
@@ -326,7 +330,7 @@ public class Client extends Observable {
 
     }
 
-    void getStatistics() {
+    public void getStatistics() {
         Header h = new Header(PacketType.STATISTICS);
 
         ServerStatistics sts = new ServerStatistics(0, 0);
@@ -345,7 +349,7 @@ public class Client extends Observable {
         this.numClients = numClients;
         this.numFiles = numFiles;
         this.setChanged();
-        SwingUtilities.invokeLater(new Runnable() {
+        ViewNotifier.invokeLater(new Runnable() {
             @Override
             public void run() {
                 notifyObservers(EventEnum.NEWSTATISTICS);
@@ -410,7 +414,7 @@ public class Client extends Observable {
 
                 }
             } catch (IOException ex) {
-                Logger.getLogger(Client.class
+                Logger.getLogger(ClientController.class
                         .getName()).log(Level.SEVERE, null, ex);
             }
         } else {
@@ -441,7 +445,7 @@ public class Client extends Observable {
         }
 
         this.setChanged();
-        SwingUtilities.invokeLater(new Runnable() {
+        ViewNotifier.invokeLater(new Runnable() {
             @Override
             public void run() {
 

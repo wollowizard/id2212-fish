@@ -4,8 +4,10 @@
  */
 package fish.client;
 
+import fish.client.controller.ClientController;
+import fish.exceptions.NotDirectoryException;
+import fish.exceptions.WrongSettingException;
 import java.io.File;
-import java.nio.file.NotDirectoryException;
 
 /**
  *
@@ -27,7 +29,7 @@ public class FishSettings {
     private String INVALIDCONNECTIONTIMEOUT="Invalid Connection timeout. Minimum value: " + MINIMUMCONNECTIONTIMEOUT.toString();
     private String downloadFolder="C:\\Users\\alfredo\\Documents\\test\\download1\\";
 
-    public FishSettings(Client aThis) {
+    public FishSettings(ClientController aThis) {
     }
 
     public void setRefreshInterval(String s) throws NumberFormatException {
@@ -103,8 +105,9 @@ public class FishSettings {
                 throw new NotDirectoryException(INVALIDFOLDER);
             } else {
                 this.folder = text;
-                if(!folder.endsWith("\\")){
-                    folder+="\\";
+                String separator=System.getProperty("file.separator");
+                if(!folder.endsWith(separator)){
+                    folder+=separator;
                 }
             }
         } catch (Exception ex) {
@@ -124,8 +127,9 @@ public class FishSettings {
                 throw new NotDirectoryException(INVALIDFOLDER);
             } else {
                 this.downloadFolder = text;
-                if(!downloadFolder.endsWith("\\")){
-                    downloadFolder+="\\";
+                String separator=System.getProperty("file.separator");
+                if(!downloadFolder.endsWith(separator)){
+                    downloadFolder+=separator;
                 }
             }
         } catch (Exception ex) {
@@ -138,17 +142,21 @@ public class FishSettings {
         return this.downloadFolder;
     }
 
-    Integer getRefreshInterval() {
+    public Integer getRefreshInterval() {
         return this.refreshInterval;
     }
 
-    public void validateSettings() throws Exception {
-        setRefreshInterval(refreshInterval.toString());
-        setFolder(this.folder);
-        setDownloadFolder(this.downloadFolder);
-        setIpAddress(ipAddress);
-        setPort(getPort().toString());
-        setConnectionTimeout(connectionTimeout.toString());
+    public void validateSettings() throws WrongSettingException {
+        try {
+            setRefreshInterval(refreshInterval.toString());
+            setFolder(this.folder);
+            setDownloadFolder(this.downloadFolder);
+            setIpAddress(ipAddress);
+            setPort(getPort().toString());
+            setConnectionTimeout(connectionTimeout.toString());
+        } catch (NotDirectoryException ex) {
+            throw new WrongSettingException(ex.getMessage());
+        }
     }
 
     

@@ -4,9 +4,9 @@
  */
 package fish.client.view;
 
-import fish.client.Client;
+import fish.client.controller.ClientController;
+import fish.exceptions.NotDirectoryException;
 import java.io.File;
-import java.nio.file.NotDirectoryException;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 
@@ -16,12 +16,12 @@ import javax.swing.JOptionPane;
  */
 public class PreferencesFrame extends javax.swing.JFrame {
 
-    private Client client;
+    private ClientController client;
 
     /**
      * Creates new form PreferencesFrame
      */
-    public PreferencesFrame(Client c) {
+    public PreferencesFrame(ClientController c) {
         initComponents();
         client = c;
         this.FolderLabel.setText(c.getSettings().getFolder());

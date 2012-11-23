@@ -56,11 +56,11 @@ public class ConnectionHandler extends Thread {
 
 
                 FishPacket fp = (FishPacket) in.readObject();
-                System.out.println("FishPacket recived!"+fp.getHeader().getType());
+                System.out.println("FishPacket recived!" + fp.getHeader().getType());
                 if (fp.getHeader().getType() == PacketType.ADDFILE) {
                     FileList fl = (FileList) fp.getPayload();
-                    ArrayList<FishFile> listOfFishFilesToAdd = fl.getListOfFishFilesToAdd(client);
-                    ArrayList<FishFile> listOfFishFilesToRemove = fl.getListOfFishFilesToRemove(client);
+                    ArrayList<FishFile> listOfFishFilesToAdd = getListOfFishFilesToAdd(client,fl);
+                    ArrayList<FishFile> listOfFishFilesToRemove = getListOfFishFilesToRemove(client,fl);
 
 
                     fs.updateFilesOfClient(listOfFishFilesToAdd, listOfFishFilesToRemove, client);
@@ -131,5 +131,27 @@ public class ConnectionHandler extends Thread {
             }
         }
 
+    }
+
+    public ArrayList<FishFile> getListOfFishFilesToAdd(Client client, FileList fl) {
+        ArrayList<String> filesToAdd=fl.getFilesToAdd();
+        
+        ArrayList<FishFile> ret = new ArrayList<>();
+        for (String fnwh : filesToAdd) {
+            FishFile ff = new FishFile(fnwh, client);
+            ret.add(ff);
+        }
+        return ret;
+    }
+
+    public ArrayList<FishFile> getListOfFishFilesToRemove(Client client,FileList fl) {
+        
+        ArrayList<String> filesToRemove=fl.getFilesToRemove();
+        ArrayList<FishFile> ret = new ArrayList<>();
+        for (String fnwh : filesToRemove) {
+            FishFile ff = new FishFile(fnwh, client);
+            ret.add(ff);
+        }
+        return ret;
     }
 }

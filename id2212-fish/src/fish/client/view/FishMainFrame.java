@@ -4,10 +4,12 @@
  */
 package fish.client.view;
 
-import fish.client.Client;
 import fish.client.EventEnum;
+import fish.client.controller.ClientController;
+import fish.exceptions.WrongSettingException;
 import java.util.Observable;
 import java.util.Observer;
+import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
 /**
@@ -16,26 +18,28 @@ import javax.swing.JOptionPane;
  */
 public class FishMainFrame extends javax.swing.JFrame implements Observer {
 
-    Client client;
+    ClientController client;
     private FishMainPanel panel;
 
     /**
      * Creates new form NewJFrame
      */
     public FishMainFrame() {
-        client = new Client();
+        client = new ClientController();
         panel = new FishMainPanel(client);
 
 
         initComponents();
+        
         this.panel.disableConnectedPanel();
         client.addObserver(this);
 
-        this.setResizable(false);
+       
 
         this.setContentPane(panel);
         this.disconnectMenuItem.setEnabled(false);
         this.validate();
+        setExtendedState(this.getExtendedState() | JFrame.MAXIMIZED_BOTH);
 
     }
 
@@ -116,7 +120,7 @@ public class FishMainFrame extends javax.swing.JFrame implements Observer {
             // TODO add your handling code here:
             this.client.getSettings().validateSettings();
             client.share();
-        } catch (Exception ex) {
+        } catch (WrongSettingException ex) {
             JOptionPane.showMessageDialog(this, ex.getMessage());
         }
     }//GEN-LAST:event_ConnectMenuItemActionPerformed

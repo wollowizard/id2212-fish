@@ -4,9 +4,9 @@
  */
 package fish.client.dir;
 
-import fish.client.Client;
+import fish.client.controller.ClientController;
+import fish.exceptions.NotDirectoryException;
 import java.io.File;
-import java.nio.file.NotDirectoryException;
 
 /**
  *
@@ -14,9 +14,9 @@ import java.nio.file.NotDirectoryException;
  */
 public class FileWalker {
 
-    private Client client;
+    private ClientController client;
 
-    public FileWalker(Client c) {
+    public FileWalker(ClientController c) {
         this.client = c;
     }
 

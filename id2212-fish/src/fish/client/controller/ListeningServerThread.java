@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package fish.client;
+package fish.client.controller;
 
 import fish.client.dir.FileWalker;
 import fish.packets.DownloadRequest;
@@ -14,11 +14,9 @@ import java.io.File;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.RandomAccessFile;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -28,9 +26,9 @@ import java.util.logging.Logger;
  */
 public class ListeningServerThread extends Thread {
 
-    private Client client;
+    private ClientController client;
 
-    public ListeningServerThread(Client c) {
+    public ListeningServerThread(ClientController c) {
         client = c;
     }
 
@@ -120,9 +118,14 @@ public class ListeningServerThread extends Thread {
         
         //System.out.println("abs path"  + file.getAbsolutePath());
         
-        Path path = Paths.get(file.getAbsolutePath());
+       /* Path path = Paths.get(file.getAbsolutePath());
         System.out.println("path" + path);
         byte[] b = Files.readAllBytes(path);
+        */
+        
+        RandomAccessFile f = new RandomAccessFile(file.getAbsolutePath(), "rw");//rw to synchronize
+        byte[] b = new byte[(int)f.length()];
+        f.read(b);
                 
         FileContent fc = new FileContent(file.getName(), b);
 
