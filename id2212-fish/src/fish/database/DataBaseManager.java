@@ -4,12 +4,15 @@
  */
 package fish.database;
 
+import fish.packets.FilenameAndAddress;
+import fish.server.FishFile;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 
 /**
  *
@@ -137,6 +140,13 @@ public class DataBaseManager {
         int NoOfAffectedRows = statement.executeUpdate("DROP TABLE FILES");
         System.out.println();
         System.out.println("Table dropped, " + NoOfAffectedRows + " row(s) affected");
+    }
+
+    public ArrayList<FishFile> searchFiles(String clientName, String parameter) {
+        return null;
+        //returns all the files of matching the parameter (except the ones of the client itself)
+        
+        
     }
     
 }

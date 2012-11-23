@@ -62,8 +62,8 @@ public class ConnectionHandler extends Thread {
                     ArrayList<FishFile> listOfFishFilesToAdd = getListOfFishFilesToAdd(client,fl);
                     ArrayList<FishFile> listOfFishFilesToRemove = getListOfFishFilesToRemove(client,fl);
 
-
                     fs.updateFilesOfClient(listOfFishFilesToAdd, listOfFishFilesToRemove, client);
+                    
                 } else if (fp.getHeader().getType() == PacketType.SEARCH) {
 
                     ParameterToSearch par = (ParameterToSearch) fp.getPayload();

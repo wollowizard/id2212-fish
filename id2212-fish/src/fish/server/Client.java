@@ -20,15 +20,12 @@ public class Client {
     private static final String FILEALREADYINCLIENTLIST="File already in client list!";
     private static final String FILENOTINCLIENTLIST="File not in client list!";
     private Integer listeningServerPort=-1;
-    private String name;
+    
     
     public String getClientName() {
-        return this.name;
+        return this.netResources.getSocket().getRemoteSocketAddress().toString();
     }
     
-    public void setClientName(String name) {
-        this.name = name;
-    }
     
     public Client(ClientNetworkResources nr){
         this.netResources=nr;
@@ -93,11 +90,8 @@ public class Client {
         return this.listeningServerPort;
     }
     
-    
-    
-    
-
    
+ 
     
     
 }

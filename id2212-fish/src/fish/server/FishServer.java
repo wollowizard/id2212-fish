@@ -11,6 +11,7 @@ import fish.packets.Header;
 import fish.packets.PacketType;
 import fish.packets.SearchResult;
 import fish.packets.ServerStatistics;
+import java.net.SocketAddress;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -29,10 +30,10 @@ import java.util.logging.Logger;
  */
 class FishServer {
 
-    //public ArrayList<Client> clients;
+    //public ArrayList<Client> connectedClients;
     //public ArrayList<FishFile> files;
-    Map<FishFile, Client> filesMap = new ConcurrentHashMap<>();
-    List clients = Collections.synchronizedList(new ArrayList());
+    //Map<FishFile, Client> filesMap = new ConcurrentHashMap<>();
+    List connectedClients = Collections.synchronizedList(new ArrayList());
     private static String datasource = "fishdatabase";
     private static String user = "root";
     private static String passwd = "root";
@@ -41,32 +42,39 @@ class FishServer {
     String KeywordToSearch = "";
 
     public void newClientConnected(Client c) {
-        if (!clients.contains(c)) {
-            c.setClientName("c" + numClient);
+        if (!connectedClients.contains(c)) {
+
             numClient++;
-            this.clients.add(c);
+            this.connectedClients.add(c);
         }
     }
 
     public synchronized void clientDisconnected(Client client) {
-        ArrayList<Map.Entry<FishFile, Client>> toberemoved = new ArrayList<>();
-        try {
-            dataBase.deleteClient(client.getClientName());
-        } catch (SQLException ex) {
-            Logger.getLogger(FishServer.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        for (Map.Entry<FishFile, Client> entry : filesMap.entrySet()) {
-            if (entry.getValue().equals(client)) {
-                toberemoved.add(entry);
-            }
-        }
+        dataBase.deleteClient(client.getClientName());
+        dataBase.deleteFilesOf(client.getClientName());
+        connectedClients.remove(client);
 
-        for (Map.Entry<FishFile, Client> f : toberemoved) {
-            filesMap.remove(f.getKey());
-        }
 
-        client.clearFiles();
-        clients.remove(client);
+        /*
+         ArrayList<Map.Entry<FishFile, Client>> toberemoved = new ArrayList<>();
+         try {
+         dataBase.deleteClient(client.getClientName());
+         } catch (SQLException ex) {
+         Logger.getLogger(FishServer.class.getName()).log(Level.SEVERE, null, ex);
+         }
+         for (Map.Entry<FishFile, Client> entry : filesMap.entrySet()) {
+         if (entry.getValue().equals(client)) {
+         toberemoved.add(entry);
+         }
+         }
+
+         for (Map.Entry<FishFile, Client> f : toberemoved) {
+         filesMap.remove(f.getKey());
+         }
+
+         client.clearFiles();
+         connectedClients.remove(client);
+         */
     }
 
     public synchronized void updateFilesOfClient(ArrayList<FishFile> add, ArrayList<FishFile> remove, Client client) {
@@ -85,87 +93,50 @@ class FishServer {
 
     }
 
-    public static int getDifference(String a, String b) {
-        // Minimize the amount of storage needed:
-        if (a.length() > b.length()) {
-            // Swap:
-            String x = a;
-            a = b;
-            b = x;
-        }
-
-        // Store only two rows of the matrix, instead of a big one
-        int[] mat1 = new int[a.length() + 1];
-        int[] mat2 = new int[a.length() + 1];
-
-        int i;
-        int j;
-
-        for (i = 1; i <= a.length(); i++) {
-            mat1[i] = i;
-        }
-
-        mat2[0] = 1;
-
-        for (j = 1; j <= b.length(); j++) {
-            for (i = 1; i <= a.length(); i++) {
-                int c = (a.charAt(i - 1) == b.charAt(j - 1) ? 0 : 1);
-
-                mat2[i] =
-                        Math.min(mat1[i - 1] + c,
-                        Math.min(mat1[i] + 1, mat2[i - 1] + 1));
-            }
-
-            // Swap:
-            int[] x = mat1;
-            mat1 = mat2;
-            mat2 = x;
-
-            mat2[0] = mat1[0] + 1;
-        }
-
-        // It's row #1 because we swap rows at the end of each outer loop,
-        // as we are to return the last number on the lowest row
-        return mat1[a.length()];
-    }
-
     public synchronized FishPacket search(Client c, String parameter) {
+        Header header = null;
+        ArrayList<FishFile> searchFiles = dataBase.searchFiles(c.getClientName(), parameter);
+        ArrayList<FilenameAndAddress> res= new ArrayList<>();
+        for(FishFile ff : searchFiles){
+            res.add(new FilenameAndAddress(user, user, numClient));
+        }
+
+
+
+
+        /*
         this.KeywordToSearch = parameter;
         ArrayList<Map.Entry<FishFile, Client>> results = new ArrayList<>();
         ArrayList<String> word = new ArrayList<>();
         ArrayList<Integer> tmp = new ArrayList<>();
         StringTokenizer st = new StringTokenizer(parameter);
         while (st.hasMoreTokens()) {
-            word.add(st.nextToken());
+        word.add(st.nextToken());
         }
         for (Map.Entry<FishFile, Client> entry : filesMap.entrySet()) {
-            for (String it : word) {
-                if (entry.getKey().getFilename().toLowerCase().contains(it.toLowerCase())
-                        && (!entry.getValue().equals(c)) && !results.contains(entry)) {
-                    results.add(entry);
-                }
-            }
+        for (String it : word) {
+        if (entry.getKey().getFilename().toLowerCase().contains(it.toLowerCase())
+        && (!entry.getValue().equals(c)) && !results.contains(entry)) {
+        results.add(entry);
+        }
+        }
         }
         Collections.sort(results, new SortByName());
         Header header = null;
-
         if (results.isEmpty()) {
-            header = new Header(PacketType.FILENOTFOUND);
+        header = new Header(PacketType.FILENOTFOUND);
         } else {
-            header = new Header(PacketType.FILEFOUND);
+        header = new Header(PacketType.FILEFOUND);
         }
-
-
         SearchResult sr = new SearchResult();
-
-
         for (Map.Entry<FishFile, Client> i : results) {
-            FilenameAndAddress fr = new FilenameAndAddress(i.getKey().getFilename(), i.getValue().getNetResources().getSocket().getInetAddress().getHostAddress(), i.getValue().getListeningServerPort());
-            sr.addFileResource(fr);
+        FilenameAndAddress fr = new FilenameAndAddress(i.getKey().getFilename(), i.getValue().getNetResources().getSocket().getInetAddress().getHostAddress(), i.getValue().getListeningServerPort());
+        sr.addFileResource(fr);
         }
         System.out.println("The server will send: " + sr.printSummary());
         FishPacket fp = new FishPacket(header, sr);
         return fp;
+         */
 
     }
 
@@ -200,7 +171,7 @@ class FishServer {
         } catch (SQLException ex) {
             Logger.getLogger(FishServer.class.getName()).log(Level.SEVERE, null, ex);
         }
-        this.clients.remove(c);
+        this.connectedClients.remove(c);
 
     }
 
@@ -216,7 +187,7 @@ class FishServer {
 
     public synchronized String printSummary() {
         String res = "";
-        for (Object o : clients) {
+        for (Object o : connectedClients) {
             Client c = (Client) o;
             res += c.printSummary() + "\n\n\n";
         }
@@ -226,7 +197,7 @@ class FishServer {
 
     public synchronized FishPacket getStatistics(Client client) {
         return new FishPacket(new Header(PacketType.STATISTICS),
-                new ServerStatistics(clients.size(), filesMap.size()));
+                new ServerStatistics(connectedClients.size(), filesMap.size()));
     }
 
     public void ConnectToDataBase() {
@@ -250,8 +221,8 @@ class FishServer {
 
         @Override
         public int compare(Entry<FishFile, Client> t, Entry<FishFile, Client> t1) {
-            int s1 = getDifference(t.getKey().getFilename().toString(), KeywordToSearch);
-            int s2 = getDifference(t1.getKey().getFilename().toString(), KeywordToSearch);
+            int s1 = Utils.getDifference(t.getKey().getFilename().toString(), KeywordToSearch);
+            int s2 = Utils.getDifference(t1.getKey().getFilename().toString(), KeywordToSearch);
             return s1 - s2;
         }
     }
