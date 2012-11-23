@@ -25,12 +25,6 @@ public class DataBaseManager {
     private String user = "root";
     private String passwd = "root";
     private boolean initialized;
-    private PreparedStatement insertStatement;
-    private PreparedStatement updateStatement;
-    private PreparedStatement selectStatement;
-    private PreparedStatement deleteStatement;
-    private PreparedStatement selectClientStatement;
-    private PreparedStatement deleteClientStatement;
     private PreparedStatement insertFile;
    
     private PreparedStatement selectByAddress;
@@ -47,8 +41,11 @@ public class DataBaseManager {
     public void connectDatabase(String username, String password) throws SQLException, ClassNotFoundException {
         Class.forName("com.mysql.jdbc.Driver");
         conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/" + datasource, user, passwd);
-        statement = conn.createStatement();
-        System.out.println("Connected to database..." + conn.toString());
+
+	statement = conn.createStatement();
+        initialized = true;
+	System.out.println("Connected to database..." + conn.toString());
+
     }
 
     public void close() throws Exception {
@@ -61,16 +58,13 @@ public class DataBaseManager {
 
     public void createTable() throws Exception {
         ResultSet result = conn.getMetaData().getTables(null, null, "FILES", null);
-        if (result.next()) {
-            dropTable();
-        }
-
-        statement.executeUpdate(
+        if (!result.next()) {
+            statement.executeUpdate(
                 "CREATE TABLE FILES (filename VARCHAR(255), "
                 + "ip VARCHAR(255), "
                 + "port INTEGER, "
                 + "CONSTRAINT id PRIMARY KEY (filename,ip,port))");
-        initialized = true;
+        }
         insertFile = conn.prepareStatement("INSERT INTO FILES (filename,ip,port) VALUES (?, ?, ?)");
         //updateStatement = conn.prepareStatement("UPDATE ACCOUNT SET balance=? WHERE name=?");
         
@@ -156,11 +150,25 @@ public class DataBaseManager {
         }
         return tmp;
     }
+    
+
+
+    public ArrayList<FilenameAndAddress> selectAll() throws Exception {
+        ResultSet r = statement.executeQuery(
+                "SELECT * FROM FILES");
+        ArrayList<FilenameAndAddress> tmp = new ArrayList<>();
+        while (r.next()) {
+            tmp.add(new FilenameAndAddress(r.getString("filename"), r.getString("ip"), r.getInt("port")));
+        }
+        return tmp;
+
+    }
 
     public void dropTable() throws Exception {
         int NoOfAffectedRows = statement.executeUpdate("DROP TABLE FILES");
         System.out.println();
         System.out.println("Table dropped, " + NoOfAffectedRows + " row(s) affected");
+
     }
 
     public int getFileCount() throws SQLException {
@@ -170,5 +178,6 @@ public class DataBaseManager {
             count = res.getInt(1);
         }
         return count;
+
     }
 }
