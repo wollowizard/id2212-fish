@@ -35,7 +35,6 @@ import java.util.TimerTask;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-
 /**
  *
  * @author alfredo
@@ -253,9 +252,9 @@ public class ClientController extends Observable {
 
         ListeningServerPortNumber pn = new ListeningServerPortNumber(this.listeningThreadPort);
         FishPacket packet = new FishPacket(h, pn);
-        Sender c = new Sender(packet, out, this);
 
-        c.start();
+        SynchronousSender c = new SynchronousSender(packet, out, this);
+        c.send();
 
     }
 

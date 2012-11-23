@@ -14,11 +14,11 @@ import java.util.ArrayList;
 public class SearchResult extends Payload  implements Serializable{
     
     private ArrayList<FilenameAndAddress> addresses=new ArrayList<>();
-    
-    public setFileResources(ArrayList<FilenameAndAddress> files){
-        this.addresses=files;
-        
+
+    public SearchResult(ArrayList<FilenameAndAddress> results) {
+        this.addresses=results;
     }
+ 
 
     public void addFileResource(FilenameAndAddress fr){
         addresses.add(fr);

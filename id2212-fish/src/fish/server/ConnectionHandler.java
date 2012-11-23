@@ -5,6 +5,7 @@
 package fish.server;
 
 import fish.packets.FileList;
+import fish.packets.FilenameAndAddress;
 import fish.packets.FishPacket;
 import fish.packets.ListeningServerPortNumber;
 import fish.packets.PacketType;
@@ -44,14 +45,8 @@ public class ConnectionHandler extends Thread {
     @Override
     public void run() {
 
-        System.out.println("Summary:\n");
-        System.out.println(fs.printSummary());
-
-
-
+        
         while (running) {
-
-
             try {
 
 
@@ -59,8 +54,8 @@ public class ConnectionHandler extends Thread {
                 System.out.println("FishPacket recived!" + fp.getHeader().getType());
                 if (fp.getHeader().getType() == PacketType.ADDFILE) {
                     FileList fl = (FileList) fp.getPayload();
-                    ArrayList<FishFile> listOfFishFilesToAdd = getListOfFishFilesToAdd(client,fl);
-                    ArrayList<FishFile> listOfFishFilesToRemove = getListOfFishFilesToRemove(client,fl);
+                    ArrayList<FilenameAndAddress> listOfFishFilesToAdd = getListOfFishFilesToAdd(client,fl);
+                    ArrayList<FilenameAndAddress> listOfFishFilesToRemove = getListOfFishFilesToRemove(client,fl);
 
                     fs.updateFilesOfClient(listOfFishFilesToAdd, listOfFishFilesToRemove, client);
                     
@@ -133,23 +128,23 @@ public class ConnectionHandler extends Thread {
 
     }
 
-    public ArrayList<FishFile> getListOfFishFilesToAdd(Client client, FileList fl) {
+    public ArrayList<FilenameAndAddress> getListOfFishFilesToAdd(Client client, FileList fl) {
         ArrayList<String> filesToAdd=fl.getFilesToAdd();
         
-        ArrayList<FishFile> ret = new ArrayList<>();
-        for (String fnwh : filesToAdd) {
-            FishFile ff = new FishFile(fnwh, client);
+        ArrayList<FilenameAndAddress> ret = new ArrayList<>();
+        for (String s : filesToAdd) {
+            FilenameAndAddress ff = new FilenameAndAddress(s, client.getRemoteIpAddress(),client.getListeningServerPort());
             ret.add(ff);
         }
         return ret;
     }
 
-    public ArrayList<FishFile> getListOfFishFilesToRemove(Client client,FileList fl) {
+    public ArrayList<FilenameAndAddress> getListOfFishFilesToRemove(Client client,FileList fl) {
         
         ArrayList<String> filesToRemove=fl.getFilesToRemove();
-        ArrayList<FishFile> ret = new ArrayList<>();
-        for (String fnwh : filesToRemove) {
-            FishFile ff = new FishFile(fnwh, client);
+        ArrayList<FilenameAndAddress> ret = new ArrayList<>();
+        for (String s : filesToRemove) {
+            FilenameAndAddress ff = new FilenameAndAddress(s, client.getRemoteIpAddress(),client.getListeningServerPort());
             ret.add(ff);
         }
         return ret;

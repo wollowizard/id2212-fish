@@ -30,12 +30,12 @@ public class Main {
             System.err.println("Could not listen on port: 1234.");
             System.exit(1);
         }
-        
+        /*
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                 new ServerFrame(fs).setVisible(true);
             }
-        });
+        });*/
         
         while (listening) {
 

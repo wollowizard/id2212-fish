@@ -88,7 +88,7 @@ public class ServerFrame extends javax.swing.JFrame {
         jTextArea2.setText("");
         String command=this.jTextArea1.getText();
         if(command.compareTo("summary")==0){
-            jTextArea2.setText(fs.printSummary());
+            //jTextArea2.setText(fs.printSummary());
         }
         
         
