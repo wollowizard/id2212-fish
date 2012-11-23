@@ -8,8 +8,6 @@ import fish.packets.FishPacket;
 import fish.packets.PacketType;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *

@@ -13,8 +13,6 @@ import java.net.InetSocketAddress;
 public class Client {
     private ClientNetworkResources netResources;
     
-    
-    
     private static final String FILEALREADYINCLIENTLIST="File already in client list!";
     private static final String FILENOTINCLIENTLIST="File not in client list!";
     private Integer listeningServerPort=-1;
