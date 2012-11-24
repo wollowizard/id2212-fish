@@ -1,0 +1,19 @@
+
+There are several servers. One of them is a SuperNode (SN).
+A db table contains the list of all currently active servers. It also says if the server is a SN or not (only one SN at a time).
+
+The SN has connections to all the other servers. When it detects a disconnected server, it updates the db table to remove the crashed server and updates its internal list of active servers. 
+
+When a new server boots up, it searches for the SN in the database. If there is one, it asks the SN to be added to the SN list*. The SN receives the request, adds a row in the table and creates a new connection.
+
+When a server detects that the SN disconnected, the SN election procedure starts.
+
+
+SN election procedure: the server reads the db. If there is no row in the servers table, it adds the row and becomes the SN. If there is only one row (the server itself ), it becomes the SN. If there are several rows, but no SN, the server with the lowest ID becomes the SN. It also updates the db to put itself to the SN state.
+
+
+Details about the SN task: The SN starts a connection (in a separate thread) for each other server. It just reads (waiting for incoming data). The other servers also read. So if the read returns, it means that the connection failed (for example the server crashed or was closed). The SN also starts a thread listening for new servers (see *).
+
+Client applications can periodically ask a fresh server list. Each server should be capable to access the db and return a server list.
+Moreover, when a client boots up, it has a default list of servers on a txt file. It connects to one (randomly) and refreshes the list (also the txt file).
+
