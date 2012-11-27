@@ -33,7 +33,7 @@ public class FishSettings {
     private final static String INVALIDFOLDER = "Invalid folder";
     private final static String INVALIDSERVERLISTFILE = "The list of servers is not a valid file";
     private final static String INVALIDPORT = "Invalid port number";
-    private String folder = "C:\\Users\\alfredo\\Documents\\test\\temp1\\";
+    private String folder = ".\\sharedFolder";
     private Integer port = 1234;
     private String ipAddress = "localhost";
     private Integer connectionTimeout = 1000;
@@ -42,11 +42,13 @@ public class FishSettings {
     private long SHAREFOLDERREFRESHTIME = 2000; //2 SECONDS
     
     private String INVALIDCONNECTIONTIMEOUT = "Invalid Connection timeout. Minimum value: " + MINIMUMCONNECTIONTIMEOUT.toString();
-    private String downloadFolder = "C:\\Users\\alfredo\\Documents\\test\\download1\\";
-    private String serverlistfilepath = "C:\\Users\\alfredo\\Documents\\list.txt";
+    private String downloadFolder = ".\\downloads";
+    private String serverlistfilepath = ".\\list.txt";
     private final static String STARTLINE = "####FISH SERVER LIST FILE####";
     private ArrayList<Server> currentServersList = new ArrayList<>();
-    public Server currentServer;
+    public Server currentConnectedServer;
+    public Server currentConnectingServer;
+    
 
     public FishSettings(ClientController aThis) {
     }

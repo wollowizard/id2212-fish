@@ -24,7 +24,7 @@ public class Connector extends Thread {
     public Connector(ClientController c, Server s) {
 
         this.client = c;
-        server=s;
+        server = s;
 
     }
 
@@ -34,7 +34,7 @@ public class Connector extends Thread {
         try {
             synchronized (client) {
                 System.out.println("\n\nCONNECTOR trying to connect to " + server.getAddress() + ":" + server.getPortForClients() + "\n\n");
-
+                client.getSettings().currentConnectingServer = server;
                 ViewNotifier.invokeLater(new Runnable() {
                     @Override
                     public void run() {
@@ -42,16 +42,16 @@ public class Connector extends Thread {
                     }
                 });
 
-
                 Socket sock = new Socket();
                 sock.connect(new InetSocketAddress(server.getAddress(), server.getPortForClients()), client.getSettings().getConnectionTimeout());
 
                 client.getNetData().setSocket(sock);
+                client.getSettings().currentConnectedServer = server;
                 ObjectOutputStream objOut = new ObjectOutputStream(sock.getOutputStream());
 
                 ObjectInputStream objIn = new ObjectInputStream(sock.getInputStream());
 
-                client.startDownloadFolderWatcher();
+
                 client.getNetData().setInStream(objIn);
                 client.getNetData().setOutStream(objOut);
 

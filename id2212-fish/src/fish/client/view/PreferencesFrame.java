@@ -48,8 +48,6 @@ public class PreferencesFrame extends javax.swing.JFrame {
         SaveButton = new javax.swing.JButton();
         CancelButton = new javax.swing.JButton();
         jLabel3 = new javax.swing.JLabel();
-        jLabel5 = new javax.swing.JLabel();
-        connectionTimeoutTextField = new javax.swing.JTextField();
         jLabel6 = new javax.swing.JLabel();
         DestinationFolderLabel = new javax.swing.JLabel();
         ChangeDestinationFolderButton = new javax.swing.JButton();
@@ -86,10 +84,6 @@ public class PreferencesFrame extends javax.swing.JFrame {
         });
 
         jLabel3.setText("Server File List");
-
-        jLabel5.setText("Connection Timeout (ms)");
-
-        connectionTimeoutTextField.setText("5000");
 
         jLabel6.setText("Destination Folder");
 
@@ -148,11 +142,7 @@ public class PreferencesFrame extends javax.swing.JFrame {
                                         .addGap(60, 60, 60)
                                         .addComponent(intervalTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE))
                                     .addComponent(ChangeFolderButton))
-                                .addGap(0, 0, Short.MAX_VALUE))
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(jLabel5)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(connectionTimeoutTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)))))
+                                .addGap(0, 0, Short.MAX_VALUE)))))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -183,11 +173,7 @@ public class PreferencesFrame extends javax.swing.JFrame {
                     .addComponent(jLabel3)
                     .addComponent(ServerListFileButton)
                     .addComponent(ServerListFileLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(42, 42, 42)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel5)
-                    .addComponent(connectionTimeoutTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 9, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 71, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(SaveButton)
                     .addComponent(CancelButton))
@@ -208,14 +194,12 @@ public class PreferencesFrame extends javax.swing.JFrame {
             client.getSettings().setRefreshInterval(intervalTextField.getText());
             client.getSettings().setFolder(this.FolderLabel.getText());
             client.getSettings().setDownloadFolder(this.DestinationFolderLabel.getText());
-           
-            client.getSettings().setConnectionTimeout(connectionTimeoutTextField.getText());
             client.getSettings().setServerListFile(ServerListFileLabel.getText());
+            client.restartDownloadFolderWatcher();
+            
             this.dispose();
-        } catch (IOException ex) {
+        } catch (IOException | NumberFormatException ex) {
             JOptionPane.showMessageDialog(this, ex.getMessage());
-        } catch (NumberFormatException e) {
-            JOptionPane.showMessageDialog(this, e.getMessage());
         }
 
     }//GEN-LAST:event_SaveButtonActionPerformed
@@ -279,12 +263,10 @@ public class PreferencesFrame extends javax.swing.JFrame {
     private javax.swing.JButton SaveButton;
     private javax.swing.JButton ServerListFileButton;
     private javax.swing.JLabel ServerListFileLabel;
-    private javax.swing.JTextField connectionTimeoutTextField;
     private javax.swing.JTextField intervalTextField;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
-    private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     // End of variables declaration//GEN-END:variables
 }

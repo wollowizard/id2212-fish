@@ -6,11 +6,15 @@ package fish.client.view;
 
 import fish.client.EventEnum;
 import fish.client.controller.ClientController;
-import fish.exceptions.WrongSettingException;
+import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.util.Observable;
 import java.util.Observer;
-import javax.swing.JFrame;
-import javax.swing.JOptionPane;
+import javax.swing.BoxLayout;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.SwingConstants;
+import javax.swing.border.BevelBorder;
 
 /**
  *
@@ -30,16 +34,22 @@ public class FishMainFrame extends javax.swing.JFrame implements Observer {
 
 
         initComponents();
-        
+
         this.panel.disableConnectedPanel();
         client.addObserver(this);
 
-       
+
 
         this.setContentPane(panel);
-        this.disconnectMenuItem.setEnabled(false);
+
+        
+       
+
+        this.pack();
         this.validate();
-        setExtendedState(this.getExtendedState() | JFrame.MAXIMIZED_BOTH);
+        this.setResizable(false);
+
+        //setExtendedState(this.getExtendedState() | JFrame.MAXIMIZED_BOTH);
 
     }
 
@@ -53,33 +63,10 @@ public class FishMainFrame extends javax.swing.JFrame implements Observer {
     private void initComponents() {
 
         jMenuBar1 = new javax.swing.JMenuBar();
-        ConnectMenu = new javax.swing.JMenu();
-        ConnectMenuItem = new javax.swing.JMenuItem();
-        disconnectMenuItem = new javax.swing.JMenuItem();
         jMenu2 = new javax.swing.JMenu();
         PreferencesMenuItem = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-
-        ConnectMenu.setText("File");
-
-        ConnectMenuItem.setText("Connect");
-        ConnectMenuItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                ConnectMenuItemActionPerformed(evt);
-            }
-        });
-        ConnectMenu.add(ConnectMenuItem);
-
-        disconnectMenuItem.setText("Disconnect");
-        disconnectMenuItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                disconnectMenuItemActionPerformed(evt);
-            }
-        });
-        ConnectMenu.add(disconnectMenuItem);
-
-        jMenuBar1.add(ConnectMenu);
 
         jMenu2.setText("Edit");
 
@@ -114,21 +101,6 @@ public class FishMainFrame extends javax.swing.JFrame implements Observer {
         pf.setVisible(true);
 
     }//GEN-LAST:event_PreferencesMenuItemActionPerformed
-
-    private void ConnectMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ConnectMenuItemActionPerformed
-        try {
-            // TODO add your handling code here:
-            this.client.getSettings().validateSettings();
-            client.share();
-        } catch (WrongSettingException ex) {
-            JOptionPane.showMessageDialog(this, ex.getMessage());
-        }
-    }//GEN-LAST:event_ConnectMenuItemActionPerformed
-
-    private void disconnectMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_disconnectMenuItemActionPerformed
-        
-        client.unshare();
-    }//GEN-LAST:event_disconnectMenuItemActionPerformed
 
     /**
      * @param args the command line arguments
@@ -171,10 +143,7 @@ public class FishMainFrame extends javax.swing.JFrame implements Observer {
         });
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JMenu ConnectMenu;
-    private javax.swing.JMenuItem ConnectMenuItem;
     private javax.swing.JMenuItem PreferencesMenuItem;
-    private javax.swing.JMenuItem disconnectMenuItem;
     private javax.swing.JMenu jMenu2;
     private javax.swing.JMenuBar jMenuBar1;
     // End of variables declaration//GEN-END:variables
@@ -183,14 +152,6 @@ public class FishMainFrame extends javax.swing.JFrame implements Observer {
     public void update(Observable o, Object arg) {
         EventEnum event = (EventEnum) arg;
 
-        if (event == EventEnum.CONNECTED) {
-            this.ConnectMenuItem.setEnabled(false);
-            this.disconnectMenuItem.setEnabled(true);
-        }
-        else if(event == EventEnum.DISCONNECT){
-            this.ConnectMenuItem.setEnabled(true);
-            this.disconnectMenuItem.setEnabled(false);
-        }
         this.panel.update(o, arg);
 
 

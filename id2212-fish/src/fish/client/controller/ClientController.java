@@ -37,7 +37,7 @@ import java.util.logging.Logger;
  */
 public class ClientController extends Observable {
 
-    private ClientNetworkData netData=new ClientNetworkData();
+    private ClientNetworkData netData = new ClientNetworkData();
     private ArrayList<File> filesToAdd = new ArrayList<>();
     private ArrayList<File> filesToRemove = new ArrayList<>();
     private int numClients;
@@ -46,11 +46,10 @@ public class ClientController extends Observable {
     private ArrayList<FilenameAndAddress> lastresult;
     private FishSettings settings;
     private String lastError = "";
-    
     private ArrayList<String> downloadFolderContent = new ArrayList<>();
-   
     private ArrayList<Integer> numbers;
     private Integer index;
+    Timer timer;
 
     public void setListeningThreadPort(Integer listeningThreadPort) {
         this.netData.setListeningThreadPort(listeningThreadPort);
@@ -58,6 +57,10 @@ public class ClientController extends Observable {
 
     public ClientController() {
         this.settings = new FishSettings(this);
+        settings.getServerFromFile();
+        this.newListOfServerReceived(settings.getCurrentServersList());
+
+
     }
 
     public boolean isConnected() {
@@ -196,6 +199,7 @@ public class ClientController extends Observable {
             c.start();
 
         } else {
+            this.setChanged();
             notifyObservers(EventEnum.NEWERRORMESSAGE);
         }
 
@@ -337,6 +341,7 @@ public class ClientController extends Observable {
     }
 
     void startDownloadFolderWatcher() {
+        timer = new Timer();
         this.downloadFolderContentChanged();
         TimerTask task = new TimerTask() {
             @Override
@@ -344,12 +349,13 @@ public class ClientController extends Observable {
                 downloadFolderContentChanged();
             }
         };
-        Timer timer = new Timer();
+
         timer.schedule(task, new Date(), getSettings().getDownloadFolderRefreshTime());
 
     }
 
     public void downloadFolderContentChanged() {
+
         File folder = new File(this.getSettings().getDownloadFolder());
 
         File[] listOfFiles = folder.listFiles();
@@ -406,7 +412,7 @@ public class ClientController extends Observable {
         }
     }
 
-    void newListOfServerReceived(ArrayList<Server> servers) {
+    public void newListOfServerReceived(ArrayList<Server> servers) {
         try {
             this.getSettings().updateTextFileListOfServers(servers);
             this.getSettings().getServerFromFile();
@@ -435,7 +441,15 @@ public class ClientController extends Observable {
 
     }
 
-    ClientNetworkData getNetData() {
+    public ClientNetworkData getNetData() {
         return this.netData;
+    }
+
+    public void restartDownloadFolderWatcher() {
+        if (timer != null) {
+            timer.cancel();
+        }
+
+        this.startDownloadFolderWatcher();
     }
 }

@@ -6,15 +6,20 @@ package fish.client.view;
 
 import fish.client.EventEnum;
 import fish.client.controller.ClientController;
+import fish.exceptions.WrongSettingException;
 import fish.packets.FilenameAndAddress;
 import fish.packets.Server;
+import java.awt.Dimension;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Observable;
+import javax.swing.BoxLayout;
 import javax.swing.DefaultListModel;
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
+import javax.swing.SwingConstants;
+import javax.swing.border.BevelBorder;
 import javax.swing.table.DefaultTableModel;
 
 /**
@@ -52,6 +57,12 @@ public class FishMainPanel extends javax.swing.JPanel {
                 }
             }
         });
+        statusPanel.setBorder(new BevelBorder(BevelBorder.LOWERED));
+
+        statusPanel.setPreferredSize(new Dimension(getWidth(), 24));
+        // statusPanel.setLayout(new BoxLayout(statusPanel, BoxLayout.X_AXIS));
+        statisticsTxt.setHorizontalAlignment(SwingConstants.RIGHT);
+
 
 
     }
@@ -65,11 +76,13 @@ public class FishMainPanel extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jPanel4 = new javax.swing.JPanel();
         jTabbedPane1 = new javax.swing.JTabbedPane();
         jPanel5 = new javax.swing.JPanel();
         jScrollPane3 = new javax.swing.JScrollPane();
         serverList = new javax.swing.JList();
         refreshServersButton = new javax.swing.JButton();
+        connectButton = new javax.swing.JButton();
         jPanel1 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         searchTextField = new javax.swing.JTextField();
@@ -79,9 +92,20 @@ public class FishMainPanel extends javax.swing.JPanel {
         jPanel2 = new javax.swing.JPanel();
         jScrollPane2 = new javax.swing.JScrollPane();
         jList1 = new javax.swing.JList();
-        jPanel3 = new javax.swing.JPanel();
-        jPanel4 = new javax.swing.JPanel();
+        statusPanel = new javax.swing.JPanel();
+        ConnectionLabel = new javax.swing.JLabel();
         statisticsTxt = new javax.swing.JLabel();
+
+        javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
+        jPanel4.setLayout(jPanel4Layout);
+        jPanel4Layout.setHorizontalGroup(
+            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 625, Short.MAX_VALUE)
+        );
+        jPanel4Layout.setVerticalGroup(
+            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 520, Short.MAX_VALUE)
+        );
 
         serverList.setModel(new javax.swing.AbstractListModel() {
             String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
@@ -97,6 +121,13 @@ public class FishMainPanel extends javax.swing.JPanel {
             }
         });
 
+        connectButton.setText("Connect");
+        connectButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                connectButtonActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
         jPanel5.setLayout(jPanel5Layout);
         jPanel5Layout.setHorizontalGroup(
@@ -104,16 +135,23 @@ public class FishMainPanel extends javax.swing.JPanel {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel5Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 521, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(refreshServersButton)
-                .addContainerGap())
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(connectButton, javax.swing.GroupLayout.PREFERRED_SIZE, 93, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(refreshServersButton))
+                .addContainerGap(15, Short.MAX_VALUE))
         );
         jPanel5Layout.setVerticalGroup(
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel5Layout.createSequentialGroup()
-                .addComponent(refreshServersButton)
-                .addContainerGap(541, Short.MAX_VALUE))
-            .addComponent(jScrollPane3)
+            .addGroup(jPanel5Layout.createSequentialGroup()
+                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel5Layout.createSequentialGroup()
+                        .addComponent(connectButton)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(refreshServersButton)
+                        .addGap(0, 387, Short.MAX_VALUE))
+                    .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 439, Short.MAX_VALUE))
+                .addContainerGap())
         );
 
         jTabbedPane1.addTab("Servers", jPanel5);
@@ -156,7 +194,7 @@ public class FishMainPanel extends javax.swing.JPanel {
                 .addComponent(searchTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 181, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(61, 61, 61)
                 .addComponent(searchButton)
-                .addContainerGap(154, Short.MAX_VALUE))
+                .addContainerGap(174, Short.MAX_VALUE))
             .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING)
         );
         jPanel1Layout.setVerticalGroup(
@@ -168,7 +206,7 @@ public class FishMainPanel extends javax.swing.JPanel {
                     .addComponent(searchTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(searchButton))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 480, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 366, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -185,61 +223,50 @@ public class FishMainPanel extends javax.swing.JPanel {
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 625, Short.MAX_VALUE)
+            .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 645, Short.MAX_VALUE)
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 564, Short.MAX_VALUE)
+            .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 450, Short.MAX_VALUE)
         );
 
         jTabbedPane1.addTab("Downloads", jPanel2);
 
+        ConnectionLabel.setText("Disconnected");
+
         statisticsTxt.setText("...");
 
-        javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
-        jPanel4.setLayout(jPanel4Layout);
-        jPanel4Layout.setHorizontalGroup(
-            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel4Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(statisticsTxt, javax.swing.GroupLayout.PREFERRED_SIZE, 235, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(538, Short.MAX_VALUE))
+        javax.swing.GroupLayout statusPanelLayout = new javax.swing.GroupLayout(statusPanel);
+        statusPanel.setLayout(statusPanelLayout);
+        statusPanelLayout.setHorizontalGroup(
+            statusPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(statusPanelLayout.createSequentialGroup()
+                .addComponent(ConnectionLabel)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(statisticsTxt, javax.swing.GroupLayout.PREFERRED_SIZE, 235, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
-        jPanel4Layout.setVerticalGroup(
-            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel4Layout.createSequentialGroup()
-                .addGap(39, 39, 39)
-                .addComponent(statisticsTxt, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(496, Short.MAX_VALUE))
+        statusPanelLayout.setVerticalGroup(
+            statusPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, statusPanelLayout.createSequentialGroup()
+                .addGap(0, 16, Short.MAX_VALUE)
+                .addGroup(statusPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(statisticsTxt)
+                    .addComponent(ConnectionLabel)))
         );
-
-        javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
-        jPanel3.setLayout(jPanel3Layout);
-        jPanel3Layout.setHorizontalGroup(
-            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel3Layout.createSequentialGroup()
-                .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, Short.MAX_VALUE))
-        );
-        jPanel3Layout.setVerticalGroup(
-            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-        );
-
-        jTabbedPane1.addTab("Statistics", jPanel3);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jTabbedPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 630, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
+            .addComponent(statusPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(jTabbedPane1)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jTabbedPane1)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addComponent(jTabbedPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 478, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 38, Short.MAX_VALUE)
+                .addComponent(statusPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -248,18 +275,36 @@ public class FishMainPanel extends javax.swing.JPanel {
         client.search(this.searchTextField.getText());
     }//GEN-LAST:event_searchButtonActionPerformed
 
+    private void connectButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_connectButtonActionPerformed
+        // TODO add your handling code here:
+
+        try {
+            // TODO add your handling code here:
+            if (!this.client.isConnected()) {
+                this.client.getSettings().validateSettings();
+                client.share();
+            } else {
+                client.unshare();
+            }
+
+        } catch (WrongSettingException ex) {
+            JOptionPane.showMessageDialog(this, ex.getMessage());
+        }
+    }//GEN-LAST:event_connectButtonActionPerformed
+
     private void refreshServersButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_refreshServersButtonActionPerformed
         // TODO add your handling code here:
 
         client.refreshListOfServers();
     }//GEN-LAST:event_refreshServersButtonActionPerformed
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JLabel ConnectionLabel;
     private javax.swing.JTable ResultTable;
+    private javax.swing.JButton connectButton;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JList jList1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
-    private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
     private javax.swing.JPanel jPanel5;
     private javax.swing.JScrollPane jScrollPane1;
@@ -271,6 +316,7 @@ public class FishMainPanel extends javax.swing.JPanel {
     private javax.swing.JTextField searchTextField;
     private javax.swing.JList serverList;
     private javax.swing.JLabel statisticsTxt;
+    private javax.swing.JPanel statusPanel;
     // End of variables declaration//GEN-END:variables
 
     public void update(Observable o, Object arg) {
@@ -278,17 +324,22 @@ public class FishMainPanel extends javax.swing.JPanel {
         EventEnum event = (EventEnum) arg;
 
         if (event == EventEnum.CONNECTED) {
-
+            client.getSettings().currentConnectingServer = null;
             this.enableConnectedPanel();
-
-
-        } else if (event == EventEnum.CONNECTINGTO) {
-
+            this.connectButton.setText("Disconnect");
+            this.ConnectionLabel.setText("Connected to: " + client.getNetData().getSocket().getRemoteSocketAddress());
             this.refreshListOfServers();
 
+        } else if (event == EventEnum.CONNECTINGTO) {
+            this.refreshListOfServers();
         } else if (event == EventEnum.DISCONNECT) {
-
+            client.getSettings().currentConnectedServer = null;
+            this.connectButton.setText("Connect");
+            this.ConnectionLabel.setText("Disconnected");
             this.disableConnectedPanel();
+            client.getSettings().getServerFromFile();
+            client.newListOfServerReceived(client.getSettings().getCurrentServersList());
+
 
         } else if (event == EventEnum.NEWRESULT) {
 
@@ -314,6 +365,7 @@ public class FishMainPanel extends javax.swing.JPanel {
             this.statisticsTxt.setText("Num Clients: " + client.getNumClients()
                     + " Num Files: " + client.getNumFiles());
         } else if (event == EventEnum.NEWERRORMESSAGE) {
+            
             JOptionPane.showMessageDialog(this, client.getLastErrorMessage());
         } else if (event == EventEnum.DOWNLOADFINISHED) {
 
@@ -328,8 +380,10 @@ public class FishMainPanel extends javax.swing.JPanel {
     }
 
     public void enableConnectedPanel() {
-        searchButton.enable();
-        searchTextField.enable();
+        searchButton.setEnabled(true);
+        searchTextField.setEnabled(true);
+        this.refreshServersButton.setEnabled(true);
+        statisticsTxt.setVisible(true);
         /*
          Component[] components = this.searchPanel.getComponents();
          for (Component c : components) {
@@ -339,8 +393,11 @@ public class FishMainPanel extends javax.swing.JPanel {
 
     public void disableConnectedPanel() {
 
-        searchButton.disable();
-        searchTextField.disable();
+        searchButton.setEnabled(false);
+        searchTextField.setEnabled(false);
+        this.refreshServersButton.setEnabled(false);
+        statisticsTxt.setVisible(false);
+
         /*
          Component[] components = this.searchPanel.getComponents();
          for (Component c : components) {
@@ -353,10 +410,15 @@ public class FishMainPanel extends javax.swing.JPanel {
         ArrayList<Server> currentServers = client.getSettings().getCurrentServersList();
         for (Server s : currentServers) {
             String towrite = s.getAddress() + ":" + s.getPortForClients();
-            Server conn = client.getSettings().currentServer;
-            /*if (s.getAddress().equals(conn.getAddress()) && s.getPortForClients().equals(conn.getPortForClients())) {
-                towrite += "CONNECTING!!!!!!!!!!";
-            }*/
+            Server conn = client.getSettings().currentConnectedServer;
+            if (conn != null && s.getAddress().equals(conn.getAddress()) && s.getPortForClients().equals(conn.getPortForClients())) {
+                towrite += "                  CONNECTED";
+            }
+            Server conn1 = client.getSettings().currentConnectingServer;
+            if (conn1 != null && s.getAddress().equals(conn1.getAddress()) && s.getPortForClients().equals(conn1.getPortForClients())) {
+                towrite += "                  CONNECTING";
+            }
+
             this.serverlistmodel.addElement(towrite);
         }
     }
