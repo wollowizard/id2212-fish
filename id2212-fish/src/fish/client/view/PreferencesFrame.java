@@ -4,10 +4,11 @@
  */
 package fish.client.view;
 
+import fish.client.FishSettings;
 import fish.client.controller.ClientController;
-import fish.exceptions.NotDirectoryException;
 import java.io.File;
 import java.io.IOException;
+import java.util.prefs.Preferences;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 
@@ -196,7 +197,13 @@ public class PreferencesFrame extends javax.swing.JFrame {
             client.getSettings().setDownloadFolder(this.DestinationFolderLabel.getText());
             client.getSettings().setServerListFile(ServerListFileLabel.getText());
             client.restartDownloadFolderWatcher();
+            client.refreshListOfServersFromFile();
             
+            Preferences prefs = Preferences.userNodeForPackage(fish.client.view.FishMainFrame.class);
+            prefs.put(FishSettings.SHARED_FOLDER, this.FolderLabel.getText());
+            prefs.put(FishSettings.DOWNLOAD_FOLDER, this.DestinationFolderLabel.getText());
+            prefs.put(FishSettings.SERVER_FOLDER, ServerListFileLabel.getText());
+
             this.dispose();
         } catch (IOException | NumberFormatException ex) {
             JOptionPane.showMessageDialog(this, ex.getMessage());
@@ -252,7 +259,7 @@ public class PreferencesFrame extends javax.swing.JFrame {
         } else {
             //log.append("Open command cancelled by user." + newline);
         }
-        
+
     }//GEN-LAST:event_ServerListFileButtonActionPerformed
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton CancelButton;

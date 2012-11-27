@@ -9,16 +9,21 @@ import fish.client.controller.ClientController;
 import fish.exceptions.WrongSettingException;
 import fish.packets.FilenameAndAddress;
 import fish.packets.Server;
+import java.awt.Desktop;
 import java.awt.Dimension;
+import java.awt.Point;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Observable;
-import javax.swing.BoxLayout;
 import javax.swing.DefaultListModel;
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
+import javax.swing.ListSelectionModel;
 import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
 import javax.swing.border.BevelBorder;
 import javax.swing.table.DefaultTableModel;
 
@@ -29,7 +34,7 @@ import javax.swing.table.DefaultTableModel;
 public class FishMainPanel extends javax.swing.JPanel {
 
     private ClientController client;
-    private DefaultListModel listmodel = new DefaultListModel();
+    private DefaultTableModel tablemodel;
     private DefaultListModel serverlistmodel = new DefaultListModel();
 
     /**
@@ -37,10 +42,12 @@ public class FishMainPanel extends javax.swing.JPanel {
      */
     public FishMainPanel(ClientController c) {
         initComponents();
+
         client = c;
 
-        this.jList1.setModel(listmodel);
+        tablemodel = (DefaultTableModel) downloadFolderTable.getModel();
         this.serverList.setModel(serverlistmodel);
+
 
         ResultTable.addMouseListener(new MouseAdapter() {
             @Override
@@ -62,7 +69,46 @@ public class FishMainPanel extends javax.swing.JPanel {
         statusPanel.setPreferredSize(new Dimension(getWidth(), 24));
         // statusPanel.setLayout(new BoxLayout(statusPanel, BoxLayout.X_AXIS));
         statisticsTxt.setHorizontalAlignment(SwingConstants.RIGHT);
+        downloadFolderTable.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent evt) {
+                JTable table = (JTable) evt.getSource();
+                if (evt.getClickCount() == 2 && (SwingUtilities.isLeftMouseButton(evt))) {
+                    int index = table.rowAtPoint(evt.getPoint());
+                    String elementAt = (String) table.getModel().getValueAt(index, 0);
+                    Desktop dt = Desktop.getDesktop();
+                    File f = new File(elementAt);
+                    try {
+                        dt.open(f);
+                    } catch (IOException ex) {
+                        JOptionPane.showMessageDialog(null, ex.getMessage());
+                    }
+                }
+            }
+        });
+        this.downloadFolderTable.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
 
+                if (SwingUtilities.isRightMouseButton(e)) {
+                    // get the coordinates of the mouse click
+                    Point p = e.getPoint();
+
+                    // get the row index that contains that coordinate
+                    int rowNumber = downloadFolderTable.rowAtPoint(p);
+
+                    // Get the ListSelectionModel of the JTable
+                    ListSelectionModel model = downloadFolderTable.getSelectionModel();
+
+                    // set the selected interval of rows. Using the "rowNumber"
+                    // variable for the beginning and end selects only that one row.
+                    model.setSelectionInterval(rowNumber, rowNumber);
+                    String fname = (String) downloadFolderTable.getValueAt(rowNumber, 0);
+                    PopUp menu = new PopUp(fname, client);
+                    menu.show(e.getComponent(), e.getX(), e.getY());
+                }
+            }
+        });
 
 
     }
@@ -91,7 +137,7 @@ public class FishMainPanel extends javax.swing.JPanel {
         ResultTable = new javax.swing.JTable();
         jPanel2 = new javax.swing.JPanel();
         jScrollPane2 = new javax.swing.JScrollPane();
-        jList1 = new javax.swing.JList();
+        downloadFolderTable = new javax.swing.JTable();
         statusPanel = new javax.swing.JPanel();
         ConnectionLabel = new javax.swing.JLabel();
         statisticsTxt = new javax.swing.JLabel();
@@ -182,6 +228,9 @@ public class FishMainPanel extends javax.swing.JPanel {
             }
         });
         jScrollPane1.setViewportView(ResultTable);
+        ResultTable.getColumnModel().getColumn(0).setResizable(false);
+        ResultTable.getColumnModel().getColumn(1).setHeaderValue("Client Address");
+        ResultTable.getColumnModel().getColumn(2).setHeaderValue("Client Port");
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -212,12 +261,31 @@ public class FishMainPanel extends javax.swing.JPanel {
 
         jTabbedPane1.addTab("Search", jPanel1);
 
-        jList1.setModel(new javax.swing.AbstractListModel() {
-            String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
-            public int getSize() { return strings.length; }
-            public Object getElementAt(int i) { return strings[i]; }
+        downloadFolderTable.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+                "File"
+            }
+        ) {
+            Class[] types = new Class [] {
+                java.lang.String.class
+            };
+            boolean[] canEdit = new boolean [] {
+                false
+            };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
         });
-        jScrollPane2.setViewportView(jList1);
+        jScrollPane2.setViewportView(downloadFolderTable);
+        downloadFolderTable.getColumnModel().getColumn(0).setResizable(false);
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -276,7 +344,8 @@ public class FishMainPanel extends javax.swing.JPanel {
     }//GEN-LAST:event_searchButtonActionPerformed
 
     private void connectButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_connectButtonActionPerformed
-        // TODO add your handling code here:
+
+
 
         try {
             // TODO add your handling code here:
@@ -291,18 +360,17 @@ public class FishMainPanel extends javax.swing.JPanel {
             JOptionPane.showMessageDialog(this, ex.getMessage());
         }
     }//GEN-LAST:event_connectButtonActionPerformed
-
     private void refreshServersButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_refreshServersButtonActionPerformed
         // TODO add your handling code here:
 
-        client.refreshListOfServers();
+        client.refreshListOfServersRemote();
     }//GEN-LAST:event_refreshServersButtonActionPerformed
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel ConnectionLabel;
     private javax.swing.JTable ResultTable;
     private javax.swing.JButton connectButton;
+    private javax.swing.JTable downloadFolderTable;
     private javax.swing.JLabel jLabel1;
-    private javax.swing.JList jList1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel4;
@@ -365,14 +433,20 @@ public class FishMainPanel extends javax.swing.JPanel {
             this.statisticsTxt.setText("Num Clients: " + client.getNumClients()
                     + " Num Files: " + client.getNumFiles());
         } else if (event == EventEnum.NEWERRORMESSAGE) {
-            
+
             JOptionPane.showMessageDialog(this, client.getLastErrorMessage());
         } else if (event == EventEnum.DOWNLOADFINISHED) {
 
-            this.listmodel.clear();
-            for (String s : client.getDownloadedFiles()) {
-                this.listmodel.addElement(s);
+
+            while (tablemodel.getRowCount() > 0) {
+                tablemodel.removeRow(0);
             }
+            for (String s : client.getDownloadedFiles()) {
+                System.out.println(s);
+                this.tablemodel.addRow(new Object[]{s});
+            }
+
+
         } else if (event == EventEnum.NEWLISTOFSERVERS) {
             refreshListOfServers();
         }

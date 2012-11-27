@@ -5,16 +5,15 @@
 package fish.client.view;
 
 import fish.client.EventEnum;
+import fish.client.FishSettings;
 import fish.client.controller.ClientController;
-import java.awt.BorderLayout;
-import java.awt.Dimension;
+import fish.exceptions.NotDirectoryException;
+import java.io.File;
+import java.io.IOException;
 import java.util.Observable;
 import java.util.Observer;
-import javax.swing.BoxLayout;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.SwingConstants;
-import javax.swing.border.BevelBorder;
+import java.util.prefs.Preferences;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -42,15 +41,35 @@ public class FishMainFrame extends javax.swing.JFrame implements Observer {
 
         this.setContentPane(panel);
 
-        
-       
+
+
 
         this.pack();
         this.validate();
         this.setResizable(false);
 
         //setExtendedState(this.getExtendedState() | JFrame.MAXIMIZED_BOTH);
+        Preferences prefs = Preferences.userNodeForPackage(fish.client.view.FishMainFrame.class);
+        try {
+            client.getSettings().setFolder(prefs.get(FishSettings.SHARED_FOLDER, "C:\\"));
 
+        } catch (NotDirectoryException ex) {
+            JOptionPane.showMessageDialog(this, "Invalid directory");
+        }
+        try {
+            File dir = new File(".");
+            client.getSettings().setDownloadFolder(prefs.get(FishSettings.DOWNLOAD_FOLDER, dir.getAbsolutePath()));
+        } catch (NotDirectoryException ex) {
+            JOptionPane.showMessageDialog(this, "Invalid download directory");
+        }
+
+        try {
+            if (prefs.get(FishSettings.SERVER_FOLDER, null) != null) {
+                client.getSettings().setServerListFile(prefs.get(FishSettings.SERVER_FOLDER, null));
+            }
+        } catch (IOException ex) {
+            JOptionPane.showMessageDialog(this, "Invalid server list file");
+        }
     }
 
     /**

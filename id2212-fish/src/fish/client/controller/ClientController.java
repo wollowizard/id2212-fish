@@ -57,8 +57,8 @@ public class ClientController extends Observable {
 
     public ClientController() {
         this.settings = new FishSettings(this);
-        settings.getServerFromFile();
-        this.newListOfServerReceived(settings.getCurrentServersList());
+        
+        this.refreshListOfServersFromFile();
 
 
     }
@@ -421,7 +421,7 @@ public class ClientController extends Observable {
             ViewNotifier.invokeLater(new Runnable() {
                 @Override
                 public void run() {
-
+                    setChanged();
                     notifyObservers(EventEnum.NEWLISTOFSERVERS);
                 }
             });
@@ -430,7 +430,7 @@ public class ClientController extends Observable {
         }
     }
 
-    public void refreshListOfServers() {
+    public void refreshListOfServersRemote() {
 
         Header h = new Header(PacketType.LISTOFSERVERS);
 
@@ -451,5 +451,10 @@ public class ClientController extends Observable {
         }
 
         this.startDownloadFolderWatcher();
+    }
+
+    public void refreshListOfServersFromFile() {
+        settings.getServerFromFile();
+        this.newListOfServerReceived(settings.getCurrentServersList());
     }
 }

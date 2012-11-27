@@ -40,7 +40,6 @@ public class FishSettings {
     private Integer MINIMUMCONNECTIONTIMEOUT = 1000;
     private long DOWNLOADFOLDERREFRESHTIME = 10000; //10 SECONDS
     private long SHAREFOLDERREFRESHTIME = 2000; //2 SECONDS
-    
     private String INVALIDCONNECTIONTIMEOUT = "Invalid Connection timeout. Minimum value: " + MINIMUMCONNECTIONTIMEOUT.toString();
     private String downloadFolder = ".\\downloads";
     private String serverlistfilepath = ".\\list.txt";
@@ -48,7 +47,9 @@ public class FishSettings {
     private ArrayList<Server> currentServersList = new ArrayList<>();
     public Server currentConnectedServer;
     public Server currentConnectingServer;
-    
+    public final static String SHARED_FOLDER = "SharedFolder";
+    public final static String DOWNLOAD_FOLDER = "DownloadFolder";
+    public final static String SERVER_FOLDER = "ServerFolder";
 
     public FishSettings(ClientController aThis) {
     }
@@ -71,8 +72,6 @@ public class FishSettings {
             throw new NumberFormatException(msg);
         }
     }
-    
-    
 
     public void setConnectionTimeout(String text) {
         try {
