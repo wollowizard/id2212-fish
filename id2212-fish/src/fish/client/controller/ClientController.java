@@ -15,9 +15,11 @@ import fish.packets.FileList;
 import fish.packets.FilenameAndAddress;
 import fish.packets.FishPacket;
 import fish.packets.Header;
+import fish.packets.ListOfServer;
 import fish.packets.ListeningServerPortNumber;
 import fish.packets.PacketType;
 import fish.packets.ParameterToSearch;
+import fish.packets.Server;
 import fish.packets.ServerStatistics;
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -29,6 +31,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.Observable;
 import java.util.Timer;
@@ -57,7 +60,11 @@ public class ClientController extends Observable {
     private ArrayList<String> downloadFolderContent = new ArrayList<>();
     private long DOWNLOADFOLDERREFRESHTIME = 10000; //10 SECONDS
     private long SHAREFOLDERREFRESHTIME = 2000; //2 SECONDS
-
+    
+    private ArrayList<Integer> numbers;
+    private Integer index;
+    
+    
     public void setListeningThreadPort(Integer listeningThreadPort) {
         this.listeningThreadPort = listeningThreadPort;
     }
@@ -194,9 +201,34 @@ public class ClientController extends Observable {
     }
 
     public void share() {
+        getSettings().getServerFromFile();
 
-        Connector c = new Connector(this);
-        c.start();
+        numbers = new ArrayList<>();
+        for (int i = 0; i < getSettings().getCurrentServersList().size(); i++) {
+            numbers.add(i);
+        }
+        Collections.shuffle(numbers);
+        index = 0;
+        tryNextServer();
+
+    }
+
+    public void tryNextServer() {
+        if (index < numbers.size()) {
+
+            Integer i = numbers.get(index);
+
+            Server s = getSettings().getCurrentServersList().get(i);
+            
+            index++;
+
+            Connector c = new Connector(this, s);
+            c.start();
+
+        } else {
+            notifyObservers(EventEnum.NEWERRORMESSAGE);
+        }
+
     }
 
     public void unshare() {
@@ -464,6 +496,7 @@ public class ClientController extends Observable {
         try {
             ServerSocket serverSocket = null;
             serverSocket = new ServerSocket(0);
+
             setListeningThreadPort(serverSocket.getLocalPort());
             sendListeningServerPort();
             waitForListeningServerPortAck();
@@ -474,5 +507,34 @@ public class ClientController extends Observable {
         } catch (ClassNotFoundException | IOException ex) {
             Logger.getLogger(ListeningServerThread.class.getName()).log(Level.SEVERE, null, ex);
         }
+    }
+
+    void newListOfServerReceived(ArrayList<Server> servers) {
+        try {
+            this.getSettings().updateTextFileListOfServers(servers);
+            this.getSettings().getServerFromFile();
+            
+            this.setChanged();
+            ViewNotifier.invokeLater(new Runnable() {
+                @Override
+                public void run() {
+
+                    notifyObservers(EventEnum.NEWLISTOFSERVERS);
+                }
+            });
+        } catch (IOException ex) {
+            Logger.getLogger(ClientController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    public void refreshListOfServers() {
+
+        Header h = new Header(PacketType.LISTOFSERVERS);
+
+        FishPacket packet = new FishPacket(h, new ListOfServer(new ArrayList<Server>()));
+
+        Sender c = new Sender(packet, out, this);
+        c.start();
+
     }
 }

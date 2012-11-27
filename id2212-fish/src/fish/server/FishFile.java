@@ -4,8 +4,6 @@
  */
 package fish.server;
 
-import java.net.SocketAddress;
-
 /**
  *
  * @author alfredo

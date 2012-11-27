@@ -2,9 +2,10 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package fish.database;
+package fish.server.database;
 
 import fish.packets.FilenameAndAddress;
+import fish.packets.Server;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -26,11 +27,16 @@ public class DataBaseManager {
     private String passwd = "root";
     private boolean initialized;
     private PreparedStatement insertFile;
-   
+    private PreparedStatement insertServer;
+    private PreparedStatement deleteServer;
+    private PreparedStatement selectServerByAddress;
+    private PreparedStatement selectServerBySupernode;
+    private PreparedStatement selectAllServers;
     private PreparedStatement selectByAddress;
     private PreparedStatement deleteFile;
     private PreparedStatement deleteUser;
     private PreparedStatement updateUser;
+    private PreparedStatement promoteToSupernode;
 
     public DataBaseManager(String user, String passwd, String datasource) {
         this.user = user;
@@ -42,9 +48,9 @@ public class DataBaseManager {
         Class.forName("com.mysql.jdbc.Driver");
         conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/" + datasource, user, passwd);
 
-	statement = conn.createStatement();
+        statement = conn.createStatement();
         initialized = true;
-	System.out.println("Connected to database..." + conn.toString());
+        System.out.println("Connected to database..." + conn.toString());
 
     }
 
@@ -60,14 +66,34 @@ public class DataBaseManager {
         ResultSet result = conn.getMetaData().getTables(null, null, "FILES", null);
         if (!result.next()) {
             statement.executeUpdate(
-                "CREATE TABLE FILES (filename VARCHAR(255), "
-                + "ip VARCHAR(255), "
-                + "port INTEGER, "
-                + "CONSTRAINT id PRIMARY KEY (filename,ip,port))");
+                    "CREATE TABLE FILES (filename VARCHAR(255), "
+                    + "ip VARCHAR(255), "
+                    + "port INTEGER, "
+                    + "CONSTRAINT id PRIMARY KEY (filename,ip,port))");
         }
+
+        ResultSet result2 = conn.getMetaData().getTables(null, null, "SERVERS", null);
+        if (!result2.next()) {
+            statement.executeUpdate(
+                    "CREATE TABLE SERVERS (id INTEGER AUTO_INCREMENT, "
+                    + "ip VARCHAR(255), "
+                    + "port INTEGER, "
+                    + "supernode INTEGER, "
+                    + "PRIMARY KEY (id)),"
+                    + "CONSTRAINT uc_port_ip UNIQUE (port,ip)");
+        }
+
+        insertServer = conn.prepareStatement("INSERT INTO SERVERS (ip,port,supernode) VALUES ( ?, ?,?)");
+        deleteServer = conn.prepareStatement("DELETE FROM SERVERS WHERE id=?");
+        selectServerByAddress = conn.prepareStatement("SELECT * FROM SERVERS WHERE ip=? AND port=?");
+        selectServerBySupernode = conn.prepareStatement("SELECT * FROM SERVERS WHERE supernode=1");
+        selectAllServers = conn.prepareStatement("SELECT * FROM SERVERS");
         insertFile = conn.prepareStatement("INSERT INTO FILES (filename,ip,port) VALUES (?, ?, ?)");
-        //updateStatement = conn.prepareStatement("UPDATE ACCOUNT SET balance=? WHERE name=?");
-        
+        promoteToSupernode = conn.prepareStatement("UPDATE SERVERS SET supernode=1 WHERE ip=? AND port=?");
+        selectAllServers = conn.prepareStatement("SELECT * FROM SERVERS");
+
+
+
         selectByAddress = conn.prepareStatement(
                 "SELECT * FROM FILES WHERE ip=? AND port=?");
         deleteFile = conn.prepareStatement("DELETE FROM FILES WHERE filename=? AND ip=? AND port=?");
@@ -141,7 +167,7 @@ public class DataBaseManager {
         ps.setString(1, forSql);
         ps.setString(2, ip);
         ps.setString(3, port.toString());
-        
+
         System.out.println(ps.toString());
         ResultSet r = ps.executeQuery();
         ArrayList<FilenameAndAddress> tmp = new ArrayList<>();
@@ -150,8 +176,6 @@ public class DataBaseManager {
         }
         return tmp;
     }
-    
-
 
     public ArrayList<FilenameAndAddress> selectAll() throws Exception {
         ResultSet r = statement.executeQuery(
@@ -178,6 +202,135 @@ public class DataBaseManager {
             count = res.getInt(1);
         }
         return count;
+    }
+
+    public ArrayList<Server> getListOfServers() throws SQLException {
+
+
+        ArrayList<Server> ret = new ArrayList<>();
+        ResultSet r = selectAllServers.executeQuery();
+
+
+        while (r.next()) {
+            Server s = new Server(r.getInt("id"), r.getString("ip"), r.getInt("port"));
+            ret.add(s);
+        }
+
+        return ret;
+
+
+    }
+
+    public void removeServer(Server server) throws SQLException {
+        System.out.println("deleting " + server.getId());
+        deleteServer.setString(1, server.getId().toString());
+
+        int noOfAffectedRows = deleteServer.executeUpdate();
+        System.out.println();
+        System.out.println("server deleted from " + noOfAffectedRows + " row(s)");
+
+    }
+
+    public Server addServer(String ip, Integer port) throws SQLException {
+
+        selectServerByAddress.setString(1, ip);
+        selectServerByAddress.setString(2, port.toString());
+
+        ResultSet r = selectServerByAddress.executeQuery();
+        if (r.next()) {
+        } else {
+            //insert only if not present
+            insertServer.setString(1, ip);
+            insertServer.setString(2, port.toString());
+            insertServer.setInt(3, 0);
+
+
+            int noOfAffectedRows = insertServer.executeUpdate();
+            System.out.println();
+            System.out.println("data inserted in " + noOfAffectedRows + " row(s).");
+
+        }
+
+
+        selectServerByAddress.setString(1, ip);
+        selectServerByAddress.setString(2, port.toString());
+
+        r = selectServerByAddress.executeQuery();
+        Server s = null;
+        while (r.next()) {
+            s = new Server(r.getInt("id"), r.getString("ip"), r.getInt("port"));
+        }
+        return s;
+    }
+
+    public Server getSuperNode() throws SQLException {
+
+        ResultSet r = selectServerBySupernode.executeQuery();
+        Server s = null;
+        while (r.next()) {
+            s = new Server(r.getInt("id"), r.getString("ip"), r.getInt("port"));
+        }
+        return s;
+    }
+
+    public void promoteSupernode(String ip, Integer port) throws SQLException {
+        promoteToSupernode.setString(1, ip);
+        promoteToSupernode.setInt(2, port);
+        promoteToSupernode.executeUpdate();
+
+    }
+
+    public Server getServer(String ip, Integer port) throws SQLException {
+        selectServerByAddress.setString(1, ip);
+        selectServerByAddress.setInt(2, port);
+        ResultSet r = selectServerByAddress.executeQuery();
+        System.out.println(selectServerByAddress);
+
+        Server s = null;
+        while (r.next()) {
+
+            s = new Server(r.getInt("id"), r.getString("ip"), r.getInt("port"));
+        }
+        return s;
+    }
+
+    public Integer getMinId() throws SQLException {
+        Statement stmt = conn.createStatement();
+        String query = "SELECT MIN(id) FROM SERVERS";
+        ResultSet rs = stmt.executeQuery(query);
+        //Extact result from ResultSet rs
+        while (rs.next()) {
+            Integer x = rs.getInt("MIN(id)");
+            System.out.println("MIN was" + x);
+            return x;
+
+        }
+        return -1;
+
+    }
+
+    public void addSupernode(String ip, Integer port) throws SQLException {
+        insertServer.setString(1, ip);
+        insertServer.setString(2, port.toString());
+        insertServer.setInt(3, 1);
+
+
+        int noOfAffectedRows = insertServer.executeUpdate();
+        System.out.println();
+        System.out.println("data inserted in " + noOfAffectedRows + " row(s).");
+    }
+
+    public int getClientsCount() throws SQLException {
+
+        Statement stmt = conn.createStatement();
+        String query = "SELECT COUNT(*) FROM (SELECT DISTINCT ip, port FROM FILES) AS internalQuery";
+        ResultSet rs = stmt.executeQuery(query);
+        //Extact result from ResultSet rs
+        if (rs.next()) {
+            Integer x = rs.getInt(1);
+            return x;
+        }
+        return 0;
 
     }
 }

@@ -8,14 +8,18 @@ import fish.packets.FileList;
 import fish.packets.FilenameAndAddress;
 import fish.packets.FishPacket;
 import fish.packets.Header;
+import fish.packets.ListOfServer;
 import fish.packets.ListeningServerPortNumber;
 import fish.packets.PacketType;
 import fish.packets.ParameterToSearch;
+import fish.packets.Server;
 import fish.packets.ServerStatistics;
+import fish.server.entity.Client;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -46,7 +50,7 @@ public class ConnectionHandler extends Thread {
     @Override
     public void run() {
 
-        
+
         while (running) {
             try {
 
@@ -55,11 +59,11 @@ public class ConnectionHandler extends Thread {
                 System.out.println("FishPacket recived!" + fp.getHeader().getType());
                 if (fp.getHeader().getType() == PacketType.ADDFILE) {
                     FileList fl = (FileList) fp.getPayload();
-                    ArrayList<FilenameAndAddress> listOfFishFilesToAdd = getListOfFishFilesToAdd(client,fl);
-                    ArrayList<FilenameAndAddress> listOfFishFilesToRemove = getListOfFishFilesToRemove(client,fl);
+                    ArrayList<FilenameAndAddress> listOfFishFilesToAdd = getListOfFishFilesToAdd(client, fl);
+                    ArrayList<FilenameAndAddress> listOfFishFilesToRemove = getListOfFishFilesToRemove(client, fl);
 
                     fs.updateFilesOfClient(listOfFishFilesToAdd, listOfFishFilesToRemove, client);
-                    
+
                 } else if (fp.getHeader().getType() == PacketType.SEARCH) {
 
                     ParameterToSearch par = (ParameterToSearch) fp.getPayload();
@@ -78,6 +82,17 @@ public class ConnectionHandler extends Thread {
                     Integer port = pn.port;
                     client.setListeningServerPort(port);
                     sendListeningPortAck();
+                } else if (fp.getHeader().getType() == PacketType.LISTOFSERVERS) {
+
+                    System.out.println(fp.printSummary());
+                    ListOfServer list=new ListOfServer(new ArrayList<Server>());
+                    try {
+                        list = new ListOfServer(fs.getListOfServers());
+                    } catch (SQLException ex) {
+                        Logger.getLogger(ConnectionHandler.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                    FishPacket result = new FishPacket(new Header(PacketType.LISTOFSERVERS), list);
+                    sendResult(result);
                 }
 
             } catch (IOException ex) {
@@ -110,15 +125,15 @@ public class ConnectionHandler extends Thread {
     }
 
     private void sendResult(FishPacket response) {
-
-
+       
+        
         try {
             out.writeObject(response);
 
 
         } catch (IOException ex) {
             //client connection was not ok
-            System.out.println(ex.getMessage());
+            Logger.getLogger(ConnectionHandler.class.getName()).log(Level.SEVERE, null, ex);
             fs.clientDisconnected(client);
             try {
                 closeConnection();
@@ -129,7 +144,7 @@ public class ConnectionHandler extends Thread {
         }
 
     }
-    
+
     private void sendListeningPortAck() {
 
 
@@ -151,22 +166,22 @@ public class ConnectionHandler extends Thread {
     }
 
     public ArrayList<FilenameAndAddress> getListOfFishFilesToAdd(Client client, FileList fl) {
-        ArrayList<String> filesToAdd=fl.getFilesToAdd();
-        
+        ArrayList<String> filesToAdd = fl.getFilesToAdd();
+
         ArrayList<FilenameAndAddress> ret = new ArrayList<>();
         for (String s : filesToAdd) {
-            FilenameAndAddress ff = new FilenameAndAddress(s, client.getRemoteIpAddress(),client.getListeningServerPort());
+            FilenameAndAddress ff = new FilenameAndAddress(s, client.getRemoteIpAddress(), client.getListeningServerPort());
             ret.add(ff);
         }
         return ret;
     }
 
-    public ArrayList<FilenameAndAddress> getListOfFishFilesToRemove(Client client,FileList fl) {
-        
-        ArrayList<String> filesToRemove=fl.getFilesToRemove();
+    public ArrayList<FilenameAndAddress> getListOfFishFilesToRemove(Client client, FileList fl) {
+
+        ArrayList<String> filesToRemove = fl.getFilesToRemove();
         ArrayList<FilenameAndAddress> ret = new ArrayList<>();
         for (String s : filesToRemove) {
-            FilenameAndAddress ff = new FilenameAndAddress(s, client.getRemoteIpAddress(),client.getListeningServerPort());
+            FilenameAndAddress ff = new FilenameAndAddress(s, client.getRemoteIpAddress(), client.getListeningServerPort());
             ret.add(ff);
         }
         return ret;

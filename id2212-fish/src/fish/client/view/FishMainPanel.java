@@ -7,6 +7,7 @@ package fish.client.view;
 import fish.client.EventEnum;
 import fish.client.controller.ClientController;
 import fish.packets.FilenameAndAddress;
+import fish.packets.Server;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
@@ -24,6 +25,7 @@ public class FishMainPanel extends javax.swing.JPanel {
 
     private ClientController client;
     private DefaultListModel listmodel = new DefaultListModel();
+    private DefaultListModel serverlistmodel = new DefaultListModel();
 
     /**
      * Creates new form FishMainPanel
@@ -33,6 +35,7 @@ public class FishMainPanel extends javax.swing.JPanel {
         client = c;
 
         this.jList1.setModel(listmodel);
+        this.serverList.setModel(serverlistmodel);
 
         ResultTable.addMouseListener(new MouseAdapter() {
             @Override
@@ -63,6 +66,10 @@ public class FishMainPanel extends javax.swing.JPanel {
     private void initComponents() {
 
         jTabbedPane1 = new javax.swing.JTabbedPane();
+        jPanel5 = new javax.swing.JPanel();
+        jScrollPane3 = new javax.swing.JScrollPane();
+        serverList = new javax.swing.JList();
+        refreshServersButton = new javax.swing.JButton();
         jPanel1 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         searchTextField = new javax.swing.JTextField();
@@ -75,6 +82,41 @@ public class FishMainPanel extends javax.swing.JPanel {
         jPanel3 = new javax.swing.JPanel();
         jPanel4 = new javax.swing.JPanel();
         statisticsTxt = new javax.swing.JLabel();
+
+        serverList.setModel(new javax.swing.AbstractListModel() {
+            String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
+            public int getSize() { return strings.length; }
+            public Object getElementAt(int i) { return strings[i]; }
+        });
+        jScrollPane3.setViewportView(serverList);
+
+        refreshServersButton.setText("Get fresh list");
+        refreshServersButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                refreshServersButtonActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
+        jPanel5.setLayout(jPanel5Layout);
+        jPanel5Layout.setHorizontalGroup(
+            jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel5Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 521, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(refreshServersButton)
+                .addContainerGap())
+        );
+        jPanel5Layout.setVerticalGroup(
+            jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel5Layout.createSequentialGroup()
+                .addComponent(refreshServersButton)
+                .addContainerGap(541, Short.MAX_VALUE))
+            .addComponent(jScrollPane3)
+        );
+
+        jTabbedPane1.addTab("Servers", jPanel5);
 
         jLabel1.setText("Parameter:");
 
@@ -190,9 +232,10 @@ public class FishMainPanel extends javax.swing.JPanel {
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jTabbedPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 630, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -205,6 +248,11 @@ public class FishMainPanel extends javax.swing.JPanel {
         client.search(this.searchTextField.getText());
     }//GEN-LAST:event_searchButtonActionPerformed
 
+    private void refreshServersButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_refreshServersButtonActionPerformed
+        // TODO add your handling code here:
+
+        client.refreshListOfServers();
+    }//GEN-LAST:event_refreshServersButtonActionPerformed
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTable ResultTable;
     private javax.swing.JLabel jLabel1;
@@ -213,11 +261,15 @@ public class FishMainPanel extends javax.swing.JPanel {
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
+    private javax.swing.JPanel jPanel5;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JTabbedPane jTabbedPane1;
+    private javax.swing.JButton refreshServersButton;
     private javax.swing.JButton searchButton;
     private javax.swing.JTextField searchTextField;
+    private javax.swing.JList serverList;
     private javax.swing.JLabel statisticsTxt;
     // End of variables declaration//GEN-END:variables
 
@@ -229,6 +281,10 @@ public class FishMainPanel extends javax.swing.JPanel {
 
             this.enableConnectedPanel();
 
+
+        } else if (event == EventEnum.CONNECTINGTO) {
+
+            this.refreshListOfServers();
 
         } else if (event == EventEnum.DISCONNECT) {
 
@@ -260,11 +316,13 @@ public class FishMainPanel extends javax.swing.JPanel {
         } else if (event == EventEnum.NEWERRORMESSAGE) {
             JOptionPane.showMessageDialog(this, client.getLastErrorMessage());
         } else if (event == EventEnum.DOWNLOADFINISHED) {
-            
+
             this.listmodel.clear();
             for (String s : client.getDownloadedFiles()) {
                 this.listmodel.addElement(s);
             }
+        } else if (event == EventEnum.NEWLISTOFSERVERS) {
+            refreshListOfServers();
         }
 
     }
@@ -273,20 +331,33 @@ public class FishMainPanel extends javax.swing.JPanel {
         searchButton.enable();
         searchTextField.enable();
         /*
-        Component[] components = this.searchPanel.getComponents();
-        for (Component c : components) {
-            c.setEnabled(true);
-        }*/
+         Component[] components = this.searchPanel.getComponents();
+         for (Component c : components) {
+         c.setEnabled(true);
+         }*/
     }
 
     public void disableConnectedPanel() {
-        
+
         searchButton.disable();
         searchTextField.disable();
         /*
-        Component[] components = this.searchPanel.getComponents();
-        for (Component c : components) {
-            c.setEnabled(false);
-        }*/
+         Component[] components = this.searchPanel.getComponents();
+         for (Component c : components) {
+         c.setEnabled(false);
+         }*/
+    }
+
+    private void refreshListOfServers() {
+        this.serverlistmodel.clear();
+        ArrayList<Server> currentServers = client.getSettings().getCurrentServersList();
+        for (Server s : currentServers) {
+            String towrite = s.getAddress() + ":" + s.getPortForClients();
+            Server conn = client.getSettings().currentServer;
+            /*if (s.getAddress().equals(conn.getAddress()) && s.getPortForClients().equals(conn.getPortForClients())) {
+                towrite += "CONNECTING!!!!!!!!!!";
+            }*/
+            this.serverlistmodel.addElement(towrite);
+        }
     }
 }

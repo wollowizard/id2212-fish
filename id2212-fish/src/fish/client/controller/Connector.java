@@ -5,12 +5,12 @@
 package fish.client.controller;
 
 import fish.client.EventEnum;
+import fish.packets.Server;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.InetSocketAddress;
 import java.net.Socket;
-
 
 /**
  *
@@ -18,15 +18,13 @@ import java.net.Socket;
  */
 public class Connector extends Thread {
 
-    String ip;
-    Integer port;
+    private Server server;
     ClientController client;
 
-    public Connector(ClientController c) {
+    public Connector(ClientController c, Server s) {
 
         this.client = c;
-        this.port = c.getSettings().getPort();
-        this.ip = c.getSettings().getIpAddress();
+        server=s;
 
     }
 
@@ -35,15 +33,23 @@ public class Connector extends Thread {
 
         try {
             synchronized (client) {
-                System.out.println("\n\nCONNECTOR!!\n\n");
+                System.out.println("\n\nCONNECTOR trying to connect to " + server.getAddress() + ":" + server.getPortForClients() + "\n\n");
+
+                ViewNotifier.invokeLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        client.notifyObservers(EventEnum.CONNECTINGTO);
+                    }
+                });
+
+
                 Socket sock = new Socket();
-                sock.connect(new InetSocketAddress(ip, port), client.getSettings().getConnectionTimeout());
+                sock.connect(new InetSocketAddress(server.getAddress(), server.getPortForClients()), client.getSettings().getConnectionTimeout());
 
                 client.setSocket(sock);
                 ObjectOutputStream objOut = new ObjectOutputStream(sock.getOutputStream());
 
                 ObjectInputStream objIn = new ObjectInputStream(sock.getInputStream());
-
 
                 client.startDownloadFolderWatcher();
                 client.setInStream(objIn);
@@ -62,8 +68,9 @@ public class Connector extends Thread {
             ViewNotifier.invokeLater(new Runnable() {
                 @Override
                 public void run() {
-                    
-                    client.notifyObservers(EventEnum.NEWERRORMESSAGE);
+                    client.notifyObservers(EventEnum.CONNECTIONFAILED);
+                    client.tryNextServer();
+
                 }
             });
 

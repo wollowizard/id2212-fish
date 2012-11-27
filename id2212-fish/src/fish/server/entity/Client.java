@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package fish.server;
+package fish.server.entity;
 
 import java.net.InetSocketAddress;
 
@@ -40,11 +40,11 @@ public class Client {
     
    
 
-    void setListeningServerPort(Integer port) {
+    public void setListeningServerPort(Integer port) {
         this.listeningServerPort=port;
     }
 
-    Integer getListeningServerPort() {
+    public Integer getListeningServerPort() {
         return this.listeningServerPort;
     }
     

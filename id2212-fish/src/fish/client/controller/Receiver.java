@@ -6,6 +6,7 @@ package fish.client.controller;
 
 import fish.packets.FilenameAndAddress;
 import fish.packets.FishPacket;
+import fish.packets.ListOfServer;
 import fish.packets.SearchResult;
 import fish.packets.ServerStatistics;
 import java.io.IOException;
@@ -73,6 +74,11 @@ public class Receiver extends Thread {
                 break;
             case FILENOLONGERAVAILABLE:
                 System.out.println("FILE NO LONG AVAILABLE RESPONSE!!!");
+                break;
+            case LISTOFSERVERS:
+                ListOfServer ls=(ListOfServer) received.getPayload();
+                this.client.newListOfServerReceived(ls.servers);
+                System.out.println("received list of servers\n\n" + ls.printSummary());
                 break;
             default:
                 break;
