@@ -46,14 +46,14 @@ public class Connector extends Thread {
                 Socket sock = new Socket();
                 sock.connect(new InetSocketAddress(server.getAddress(), server.getPortForClients()), client.getSettings().getConnectionTimeout());
 
-                client.setSocket(sock);
+                client.getNetData().setSocket(sock);
                 ObjectOutputStream objOut = new ObjectOutputStream(sock.getOutputStream());
 
                 ObjectInputStream objIn = new ObjectInputStream(sock.getInputStream());
 
                 client.startDownloadFolderWatcher();
-                client.setInStream(objIn);
-                client.setOutStream(objOut);
+                client.getNetData().setInStream(objIn);
+                client.getNetData().setOutStream(objOut);
 
                 client.startConnection();
                 objIn.toString();

@@ -38,12 +38,14 @@ public class FishSettings {
     private String ipAddress = "localhost";
     private Integer connectionTimeout = 1000;
     private Integer MINIMUMCONNECTIONTIMEOUT = 1000;
+    private long DOWNLOADFOLDERREFRESHTIME = 10000; //10 SECONDS
+    private long SHAREFOLDERREFRESHTIME = 2000; //2 SECONDS
+    
     private String INVALIDCONNECTIONTIMEOUT = "Invalid Connection timeout. Minimum value: " + MINIMUMCONNECTIONTIMEOUT.toString();
     private String downloadFolder = "C:\\Users\\alfredo\\Documents\\test\\download1\\";
     private String serverlistfilepath = "C:\\Users\\alfredo\\Documents\\list.txt";
     private final static String STARTLINE = "####FISH SERVER LIST FILE####";
-    
-    private ArrayList<Server> currentServersList=new ArrayList<>();
+    private ArrayList<Server> currentServersList = new ArrayList<>();
     public Server currentServer;
 
     public FishSettings(ClientController aThis) {
@@ -67,6 +69,8 @@ public class FishSettings {
             throw new NumberFormatException(msg);
         }
     }
+    
+    
 
     public void setConnectionTimeout(String text) {
         try {
@@ -192,8 +196,8 @@ public class FishSettings {
             Logger.getLogger(FishSettings.class.getName()).log(Level.SEVERE, null, ex);
         }
         System.out.println("servers: ------------------------------");
-        
-        this.currentServersList=servers;
+
+        this.currentServersList = servers;
     }
 
     public String getServerListFilePath() {
@@ -214,5 +218,13 @@ public class FishSettings {
 
     public ArrayList<Server> getCurrentServersList() {
         return this.currentServersList;
+    }
+
+    public long getSharedFolderRefreshTime() {
+        return SHAREFOLDERREFRESHTIME;
+    }
+
+    public long getDownloadFolderRefreshTime() {
+        return DOWNLOADFOLDERREFRESHTIME;
     }
 }
