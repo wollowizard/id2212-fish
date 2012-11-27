@@ -13,6 +13,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  *
@@ -159,7 +161,7 @@ public class DataBaseManager {
         return tmp;
     }
 
-    public ArrayList<FilenameAndAddress> selectByFileName(String filename, String ip, Integer port) throws SQLException {
+    public HashSet <FilenameAndAddress> selectByFileName(String filename, String ip, Integer port) throws SQLException {
         String forSql = "%" + filename + "%";
         String sql = "select * from FILES where (filename like ?) AND (ip, port) NOT IN ( SELECT DISTINCT ip, port from FILES where ip = ? and port= ? )";
 
@@ -172,10 +174,13 @@ public class DataBaseManager {
       
         ResultSet r = ps.executeQuery();
         ArrayList<FilenameAndAddress> tmp = new ArrayList<>();
+        HashSet <FilenameAndAddress> set=new HashSet<>();
+        
         while (r.next()) {
-            tmp.add(new FilenameAndAddress(r.getString("filename"), r.getString("ip"), r.getInt("port")));
+            //tmp.add(new FilenameAndAddress(r.getString("filename"), r.getString("ip"), r.getInt("port")));
+            set.add(new FilenameAndAddress(r.getString("filename"), r.getString("ip"), r.getInt("port")));
         }
-        return tmp;
+        return set;
     }
 
     public ArrayList<FilenameAndAddress> selectAll() throws Exception {

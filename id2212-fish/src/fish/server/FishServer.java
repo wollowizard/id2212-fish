@@ -16,6 +16,7 @@ import fish.server.entity.Client;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -75,9 +76,16 @@ public class FishServer {
     public synchronized FishPacket search(Client c, String parameter) {
         Header header = null;
 
-        ArrayList<FilenameAndAddress> results;
+        HashSet <FilenameAndAddress> results=new HashSet<>();
         try {
-            results = dataBase.selectByFileName(parameter, c.getRemoteIpAddress(), c.getListeningServerPort());
+            String[] split = parameter.split(" ");
+            for (String str : split) {
+                HashSet <FilenameAndAddress> tmp;
+                tmp = dataBase.selectByFileName(str, c.getRemoteIpAddress(), c.getListeningServerPort());
+                results.addAll(tmp);
+            }
+
+
             if (results.isEmpty()) {
                 header = new Header(PacketType.FILENOTFOUND);
             } else {
@@ -86,9 +94,14 @@ public class FishServer {
         } catch (SQLException ex) {
             Logger.getLogger(FishServer.class.getName()).log(Level.SEVERE, null, ex);
             header = new Header(PacketType.FILENOTFOUND);
-            results = new ArrayList<>();
+            results = new HashSet<>();
         }
-        SearchResult sr = new SearchResult(results);
+        
+        ArrayList<FilenameAndAddress> array=new ArrayList<>();
+        array.addAll(results);
+        
+        SearchResult sr = new SearchResult(array);
+        
         FishPacket fp = new FishPacket(header, sr);
         return fp;
 
@@ -192,15 +205,15 @@ public class FishServer {
 
     void searchSuperNode() throws SQLException {
         Server sn = dataBase.getSuperNode();
-        if(sn!=null && sn.getAddress().equals(ip) && sn.getPortForClients().equals(port)){
+        if (sn != null && sn.getAddress().equals(ip) && sn.getPortForClients().equals(port)) {
             //clean if I am the first server to start
             dataBase.truncateServerTable();
-            sn=null;
+            sn = null;
         }
         if (sn == null) {
             //no supernode, I become the supernode!
             System.out.println("supernode not found");
-            
+
             dataBase.addSupernode(ip, port);
 
             NewServerListeningThread nslt = new NewServerListeningThread(FishServer.supernodePort, dataBase);
