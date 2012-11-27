@@ -22,7 +22,7 @@ public class Main {
 
     public static void main(String[] args) throws IOException {
 
-        String port = "1233";
+        String port = "1236";
 
         boolean listening = true;
         ServerSocket serverSocket = null;

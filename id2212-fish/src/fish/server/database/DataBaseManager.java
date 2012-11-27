@@ -37,6 +37,7 @@ public class DataBaseManager {
     private PreparedStatement deleteUser;
     private PreparedStatement updateUser;
     private PreparedStatement promoteToSupernode;
+    private PreparedStatement truncateServer;
 
     public DataBaseManager(String user, String passwd, String datasource) {
         this.user = user;
@@ -91,7 +92,7 @@ public class DataBaseManager {
         insertFile = conn.prepareStatement("INSERT INTO FILES (filename,ip,port) VALUES (?, ?, ?)");
         promoteToSupernode = conn.prepareStatement("UPDATE SERVERS SET supernode=1 WHERE ip=? AND port=?");
         selectAllServers = conn.prepareStatement("SELECT * FROM SERVERS");
-
+        truncateServer = conn.prepareStatement("DELETE FROM SERVERS");
 
 
         selectByAddress = conn.prepareStatement(
@@ -168,7 +169,7 @@ public class DataBaseManager {
         ps.setString(2, ip);
         ps.setString(3, port.toString());
 
-        System.out.println(ps.toString());
+      
         ResultSet r = ps.executeQuery();
         ArrayList<FilenameAndAddress> tmp = new ArrayList<>();
         while (r.next()) {
@@ -270,6 +271,7 @@ public class DataBaseManager {
         while (r.next()) {
             s = new Server(r.getInt("id"), r.getString("ip"), r.getInt("port"));
         }
+        
         return s;
     }
 
@@ -284,7 +286,7 @@ public class DataBaseManager {
         selectServerByAddress.setString(1, ip);
         selectServerByAddress.setInt(2, port);
         ResultSet r = selectServerByAddress.executeQuery();
-        System.out.println(selectServerByAddress);
+
 
         Server s = null;
         while (r.next()) {
@@ -332,5 +334,13 @@ public class DataBaseManager {
         }
         return 0;
 
+    }
+
+    public void truncateServerTable() throws SQLException {
+        System.out.println("truncating server table");
+        
+        int noOfAffectedRows = truncateServer.executeUpdate();
+        System.out.println();
+        
     }
 }

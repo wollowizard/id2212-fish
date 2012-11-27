@@ -4,6 +4,7 @@
  */
 package fish.server.entity;
 
+import java.net.InetAddress;
 import java.net.InetSocketAddress;
 
 /**
@@ -19,8 +20,9 @@ public class Client {
     
     
     public String getRemoteIpAddress(){
-        InetSocketAddress addr = (InetSocketAddress)this.netResources.getSocket().getRemoteSocketAddress();
-        return addr.getHostName();
+        InetAddress addr = this.netResources.getSocket().getInetAddress();
+       
+        return addr.getHostAddress();
         
     }
     

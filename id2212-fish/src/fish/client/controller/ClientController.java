@@ -319,6 +319,8 @@ public class ClientController extends Observable {
         FishPacket packet = new FishPacket(h, p);
         int ppp = Integer.parseInt(port);
         try {
+            
+            System.out.println("Trying to download from" + address +":"+ ppp);
             Socket sock = new Socket(address, ppp);
             ObjectOutputStream out1 = new ObjectOutputStream(sock.getOutputStream());
 

@@ -192,9 +192,15 @@ public class FishServer {
 
     void searchSuperNode() throws SQLException {
         Server sn = dataBase.getSuperNode();
+        if(sn!=null && sn.getAddress().equals(ip) && sn.getPortForClients().equals(port)){
+            //clean if I am the first server to start
+            dataBase.truncateServerTable();
+            sn=null;
+        }
         if (sn == null) {
             //no supernode, I become the supernode!
             System.out.println("supernode not found");
+            
             dataBase.addSupernode(ip, port);
 
             NewServerListeningThread nslt = new NewServerListeningThread(FishServer.supernodePort, dataBase);
