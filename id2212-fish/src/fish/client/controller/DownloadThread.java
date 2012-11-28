@@ -72,7 +72,11 @@ public class DownloadThread extends Thread{
             c.start();
             ObjectInputStream in1 = new ObjectInputStream(sock.getInputStream());
             FishPacket fp = (FishPacket) in1.readObject();
+            in1.close();
+            out1.close();
+            sock.close();
             manageDownloadReceived(fp);
+            
 
         } catch (ClassNotFoundException ex) {
             Logger.getLogger(ClientController.class

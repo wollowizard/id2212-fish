@@ -30,6 +30,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.prefs.Preferences;
 
 /**
  *
@@ -466,7 +467,10 @@ public class ClientController extends Observable {
      */
     public void downloadFolderContentChanged() {
 
-        File folder = new File(this.getSettings().getDownloadFolder());
+        Preferences prefs = Preferences.userNodeForPackage(fish.client.view.FishMainFrame.class);
+        File dir = new File(".");
+        System.out.println(prefs.get(FishSettings.DOWNLOAD_FOLDER, dir.getAbsolutePath()));
+        File folder = new File(prefs.get(FishSettings.DOWNLOAD_FOLDER, dir.getAbsolutePath()));
 
         File[] listOfFiles = folder.listFiles();
         this.downloadFolderContent.clear();

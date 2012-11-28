@@ -83,10 +83,6 @@ public class ListeningServerThread extends Thread {
                         System.out.println("UNRECOGNIZED MESSAGE RECEIVED FROM LISTENING THREAD!");
                     }
 
-                    in.close();
-                    out.close();
-                    clientSocket.close();
-
                 } catch (ClassNotFoundException ex) {
                     Logger.getLogger(ListeningServerThread.class.getName()).log(Level.SEVERE, null, ex);
                 } catch (IOException e) {
