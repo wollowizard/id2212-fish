@@ -353,7 +353,7 @@ public class ClientController extends Observable {
      */
     public void startDownloadThread(final String fname, final String address, final String port) {
 
-
+        
         DownloadThread thread = new DownloadThread(this, fname, address, port);
         thread.start();
     }

@@ -26,7 +26,7 @@ import java.util.logging.Logger;
  *
  * @author alfredo
  */
-public class DownloadThread {
+public class DownloadThread extends Thread{
 
     private ClientController client;
     String fname;
@@ -53,7 +53,8 @@ public class DownloadThread {
     /**
      *
      */
-    public void start() {
+    @Override
+    public void run() {
         Header h = new Header(PacketType.DOWNLOAD);
         DownloadRequest p = new DownloadRequest(fname);
 

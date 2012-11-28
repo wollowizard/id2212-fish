@@ -47,4 +47,4 @@ public enum EventEnum {
     /**
      * fired when trying to connect to some server
      */
-    CONNECTINGTO}
+    CONNECTINGTO, DOWNLOADEDFILE}
