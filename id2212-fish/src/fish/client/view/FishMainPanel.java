@@ -12,6 +12,8 @@ import fish.packets.Server;
 import java.awt.Desktop;
 import java.awt.Dimension;
 import java.awt.Point;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
@@ -109,7 +111,23 @@ public class FishMainPanel extends javax.swing.JPanel {
                 }
             }
         });
+        this.searchTextField.addKeyListener(new KeyListener() {
+            @Override
+            public void keyPressed(KeyEvent e) {
+                if (e.getKeyChar() == KeyEvent.VK_ENTER) {
+                    searchButton.doClick();
+                }
+            }
 
+// unused abstract methods
+            @Override
+            public void keyTyped(KeyEvent e) {
+            }
+
+            @Override
+            public void keyReleased(KeyEvent e) {
+            }
+        });
 
     }
 
@@ -204,6 +222,12 @@ public class FishMainPanel extends javax.swing.JPanel {
 
         jLabel1.setText("Parameter:");
 
+        searchTextField.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                searchTextFieldActionPerformed(evt);
+            }
+        });
+
         searchButton.setText("SEARCH");
         searchButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -228,9 +252,6 @@ public class FishMainPanel extends javax.swing.JPanel {
             }
         });
         jScrollPane1.setViewportView(ResultTable);
-        ResultTable.getColumnModel().getColumn(0).setResizable(false);
-        ResultTable.getColumnModel().getColumn(1).setHeaderValue("Client Address");
-        ResultTable.getColumnModel().getColumn(2).setHeaderValue("Client Port");
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -365,6 +386,10 @@ public class FishMainPanel extends javax.swing.JPanel {
 
         client.refreshListOfServersRemote();
     }//GEN-LAST:event_refreshServersButtonActionPerformed
+
+    private void searchTextFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchTextFieldActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_searchTextFieldActionPerformed
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel ConnectionLabel;
     private javax.swing.JTable ResultTable;
@@ -425,6 +450,8 @@ public class FishMainPanel extends javax.swing.JPanel {
                     model.addRow(new Object[]{f.getFilename(), f.getAddress(), f.getPort()});
                 }
             }
+
+            JTableOptimizer.calcColumnWidths(ResultTable);
 
         } else if (event == EventEnum.NEWSTATISTICS) {
             this.statisticsTxt.setText("Num Clients: " + client.getNumClients()
