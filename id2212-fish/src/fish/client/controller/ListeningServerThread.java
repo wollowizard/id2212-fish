@@ -28,6 +28,7 @@ public class ListeningServerThread extends Thread {
 
     private ClientController client;
     private ServerSocket serverSocket;
+
     /**
      *
      * @param c
@@ -35,14 +36,14 @@ public class ListeningServerThread extends Thread {
      */
     public ListeningServerThread(ClientController c, ServerSocket ss) {
         client = c;
-        serverSocket=ss;
+        serverSocket = ss;
     }
 
     public void run() {
         try {
-            
 
-            
+
+
 
             Socket clientSocket = null;
             System.out.println("Waiting for connection.....");
@@ -76,16 +77,16 @@ public class ListeningServerThread extends Thread {
                         } else {
 
                             sendFile(f, out);
-
+                          
                         }
 
                     } else {
                         System.out.println("UNRECOGNIZED MESSAGE RECEIVED FROM LISTENING THREAD!");
                     }
 
-                    in.close();
-                    out.close();
-                    clientSocket.close();
+                    //in.close();
+                    //out.close();
+                    //clientSocket.close();
 
                 } catch (ClassNotFoundException ex) {
                     Logger.getLogger(ListeningServerThread.class.getName()).log(Level.SEVERE, null, ex);
@@ -101,7 +102,7 @@ public class ListeningServerThread extends Thread {
 
     private void fileNoLongerAvailable(String filename, ObjectOutputStream out) throws IOException {
 
-        
+
         FishPacket fp;
         Header h = new Header(PacketType.FILENOLONGERAVAILABLE);
         fp = new FishPacket(h, null);
@@ -112,30 +113,32 @@ public class ListeningServerThread extends Thread {
     }
 
     private void sendFile(File file, ObjectOutputStream out) throws IOException {
-        
+
         //System.out.println("abs path"  + file.getAbsolutePath());
-        
-       /* Path path = Paths.get(file.getAbsolutePath());
-        System.out.println("path" + path);
-        byte[] b = Files.readAllBytes(path);
-        */
-        
+
+        /* Path path = Paths.get(file.getAbsolutePath());
+         System.out.println("path" + path);
+         byte[] b = Files.readAllBytes(path);
+         */
+
         RandomAccessFile f = new RandomAccessFile(file.getAbsolutePath(), "rw");//rw to synchronize
-        byte[] b = new byte[(int)f.length()];
+        byte[] b = new byte[(int) f.length()];
         f.read(b);
-                
+
         FileContent fc = new FileContent(file.getName(), b);
 
         Header h = new Header(PacketType.FILECONTENT);
 
         FishPacket fp;
         fp = new FishPacket(h, fc);
+        System.out.println("about to send file");
+
 
         out.writeObject(fp);
-
+        System.out.println("file written");
         out.flush();
-
-        out.reset();
+        System.out.println("file flushed");
+        //out.reset();
 
     }
 }

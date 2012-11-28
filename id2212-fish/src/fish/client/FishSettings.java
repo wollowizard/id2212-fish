@@ -34,11 +34,11 @@ public class FishSettings {
     private final static String INVALIDSERVERLISTFILE = "The list of servers is not a valid file";
     private final static String INVALIDPORT = "Invalid port number";
     private String folder = ".\\sharedFolder";
-    private Integer port = 1234;
+  
     private String ipAddress = "localhost";
     private Integer connectionTimeout = 1000;
     private Integer MINIMUMCONNECTIONTIMEOUT = 1000;
-    private long DOWNLOADFOLDERREFRESHTIME = 10000; //10 SECONDS
+    private long DOWNLOADFOLDERREFRESHTIME = 5000; //5 SECONDS
     private long SHAREFOLDERREFRESHTIME = 2000; //2 SECONDS
     private String INVALIDCONNECTIONTIMEOUT = "Invalid Connection timeout. Minimum value: " + MINIMUMCONNECTIONTIMEOUT.toString();
     private String downloadFolder = ".\\downloads";

@@ -134,6 +134,7 @@ public class ConnectionHandler extends Thread {
         
         try {
             out.writeObject(response);
+            out.flush();
 
 
         } catch (IOException ex) {
