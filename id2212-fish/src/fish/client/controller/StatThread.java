@@ -16,6 +16,11 @@ public class StatThread extends Thread {
     ClientController client;
     Integer refreshInterval;
 
+    /**
+     *
+     * @param c
+     * @param refreshInterval
+     */
     public StatThread(ClientController c, Integer refreshInterval) {
         client = c;
         this.refreshInterval = refreshInterval;

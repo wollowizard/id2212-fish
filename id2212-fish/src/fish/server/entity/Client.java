@@ -19,6 +19,10 @@ public class Client {
     private Integer listeningServerPort=-1;
     
     
+    /**
+     *
+     * @return
+     */
     public String getRemoteIpAddress(){
         InetAddress addr = this.netResources.getSocket().getInetAddress();
        
@@ -26,26 +30,46 @@ public class Client {
         
     }
     
+    /**
+     *
+     * @return
+     */
     public Integer getRemotePort(){
         InetSocketAddress addr = (InetSocketAddress)this.netResources.getSocket().getRemoteSocketAddress();
         return addr.getPort();
     }
     
     
+    /**
+     *
+     * @param nr
+     */
     public Client(ClientNetworkResources nr){
         this.netResources=nr;
     }
     
+    /**
+     *
+     * @return
+     */
     public synchronized ClientNetworkResources getNetResources() {
         return netResources;
     }
     
    
 
+    /**
+     *
+     * @param port
+     */
     public void setListeningServerPort(Integer port) {
         this.listeningServerPort=port;
     }
 
+    /**
+     *
+     * @return
+     */
     public Integer getListeningServerPort() {
         return this.listeningServerPort;
     }

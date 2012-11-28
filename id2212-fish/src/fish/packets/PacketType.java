@@ -11,5 +11,51 @@ import java.io.Serializable;
  * @author alfredo
  */
 public enum PacketType  implements Serializable{
-    ADDFILE, SEARCH, SEARCHFILENOTFOUND, FILEFOUND, DOWNLOAD,FILENOTFOUND,STATISTICS,LISTENINGSERVERPORT,
-    LISTENINGSERVERPORTACK,FILENOLONGERAVAILABLE, FILECONTENT,LISTOFSERVERS}
+    /**
+     *
+     */
+    ADDFILE,
+    /**
+     *
+     */
+    SEARCH,
+    /**
+     *
+     */
+    SEARCHFILENOTFOUND,
+    /**
+     *
+     */
+    FILEFOUND,
+    /**
+     *
+     */
+    DOWNLOAD,
+    /**
+     *
+     */
+    FILENOTFOUND,
+    /**
+     *
+     */
+    STATISTICS,
+    /**
+     *
+     */
+    LISTENINGSERVERPORT,
+    /**
+     *
+     */
+    LISTENINGSERVERPORTACK,
+    /**
+     *
+     */
+    FILENOLONGERAVAILABLE,
+    /**
+     *
+     */
+    FILECONTENT,
+    /**
+     *
+     */
+    LISTOFSERVERS}

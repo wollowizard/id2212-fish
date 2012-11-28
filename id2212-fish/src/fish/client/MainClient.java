@@ -13,6 +13,10 @@ import fish.client.view.FishMainFrame;
  */
 public class MainClient {
 
+    /**
+     *
+     * @param args
+     */
     public static void main(String args[]) {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">

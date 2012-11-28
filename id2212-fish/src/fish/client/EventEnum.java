@@ -10,6 +10,41 @@ package fish.client;
  */
 public enum EventEnum {
     
-    CONNECTED,NEWRESULT,NEWSTATISTICS,DISCONNECT, NEWERRORMESSAGE, DOWNLOADFINISHED,NEWLISTOFSERVERS
+    /**
+     * Fired when the client connects
+     */
+    CONNECTED,
+    /**
+     * fired when new results are available, after a search
+     */
+    NEWRESULT,
+    /**
+     * fired when new statistics are received from the server
+     */
+    NEWSTATISTICS,
+    /**
+     * fired when client disconnects (for any reason)
+     */
+    DISCONNECT,
+    /**
+     * fired when a new error message must be displayed
+     */
+    NEWERRORMESSAGE,
+    /**
+     * fired when a download has completed
+     */
+    DOWNLOADFINISHED,
+    /**
+     * fired when a new list of servers is available
+     */
+    NEWLISTOFSERVERS
     
-,    CONNECTIONFAILED,CONNECTINGTO, DOWNLOADEDFILE}
+,
+    /**
+     * fired when a tentative of connection fails
+     */
+    CONNECTIONFAILED,
+    /**
+     * fired when trying to connect to some server
+     */
+    CONNECTINGTO}

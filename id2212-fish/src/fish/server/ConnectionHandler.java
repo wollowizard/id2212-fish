@@ -37,6 +37,11 @@ public class ConnectionHandler extends Thread {
     private Client client;
     private FishServer fs;
 
+    /**
+     *
+     * @param fs
+     * @param cd
+     */
     public ConnectionHandler(FishServer fs, Client cd) {
         this.client = cd;
         this.fs = fs;
@@ -165,6 +170,12 @@ public class ConnectionHandler extends Thread {
 
     }
 
+    /**
+     *
+     * @param client
+     * @param fl
+     * @return
+     */
     public ArrayList<FilenameAndAddress> getListOfFishFilesToAdd(Client client, FileList fl) {
         ArrayList<String> filesToAdd = fl.getFilesToAdd();
 
@@ -176,6 +187,12 @@ public class ConnectionHandler extends Thread {
         return ret;
     }
 
+    /**
+     *
+     * @param client
+     * @param fl
+     * @return
+     */
     public ArrayList<FilenameAndAddress> getListOfFishFilesToRemove(Client client, FileList fl) {
 
         ArrayList<String> filesToRemove = fl.getFilesToRemove();

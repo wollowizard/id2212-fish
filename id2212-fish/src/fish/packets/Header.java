@@ -13,10 +13,18 @@ import java.io.Serializable;
 public class Header implements Serializable{
     private PacketType type;
 
+    /**
+     *
+     * @param payloadType
+     */
     public Header(PacketType payloadType) {
         this.type=payloadType;
     }
 
+    /**
+     *
+     * @return
+     */
     public PacketType getType() {
         return type;
     }

@@ -45,15 +45,39 @@ public class FishSettings {
     private String serverlistfilepath = ".\\list.txt";
     private final static String STARTLINE = "####FISH SERVER LIST FILE####";
     private ArrayList<Server> currentServersList = new ArrayList<>();
+    /**
+     *
+     */
     public Server currentConnectedServer;
+    /**
+     *
+     */
     public Server currentConnectingServer;
+    /**
+     *
+     */
     public final static String SHARED_FOLDER = "SharedFolder";
+    /**
+     *
+     */
     public final static String DOWNLOAD_FOLDER = "DownloadFolder";
+    /**
+     *
+     */
     public final static String SERVER_FOLDER = "ServerFolder";
 
+    /**
+     *
+     * @param aThis
+     */
     public FishSettings(ClientController aThis) {
     }
 
+    /**
+     *
+     * @param s
+     * @throws NumberFormatException
+     */
     public void setRefreshInterval(String s) throws NumberFormatException {
         try {
             Integer refrInt = Integer.parseInt(s);
@@ -73,6 +97,10 @@ public class FishSettings {
         }
     }
 
+    /**
+     *
+     * @param text
+     */
     public void setConnectionTimeout(String text) {
         try {
             Integer p = Integer.parseInt(text);
@@ -88,14 +116,27 @@ public class FishSettings {
         }
     }
 
+    /**
+     *
+     * @return
+     */
     public Integer getConnectionTimeout() {
         return this.connectionTimeout;
     }
 
+    /**
+     *
+     * @return
+     */
     public String getIpAddress() {
         return this.ipAddress;
     }
 
+    /**
+     *
+     * @param text
+     * @throws NotDirectoryException
+     */
     public void setFolder(String text) throws NotDirectoryException {
         try {
             File f = new File(text);
@@ -114,10 +155,19 @@ public class FishSettings {
 
     }
 
+    /**
+     *
+     * @return
+     */
     public String getFolder() {
         return this.folder;
     }
 
+    /**
+     *
+     * @param text
+     * @throws NotDirectoryException
+     */
     public void setDownloadFolder(String text) throws NotDirectoryException {
         try {
             File f = new File(text);
@@ -136,14 +186,26 @@ public class FishSettings {
 
     }
 
+    /**
+     *
+     * @return
+     */
     public String getDownloadFolder() {
         return this.downloadFolder;
     }
 
+    /**
+     *
+     * @return
+     */
     public Integer getRefreshInterval() {
         return this.refreshInterval;
     }
 
+    /**
+     *
+     * @throws WrongSettingException
+     */
     public void validateSettings() throws WrongSettingException {
         try {
             setRefreshInterval(refreshInterval.toString());
@@ -156,6 +218,13 @@ public class FishSettings {
         }
     }
 
+    /**
+     *
+     * @param text
+     * @throws NotServerListFileException
+     * @throws FileNotFoundException
+     * @throws IOException
+     */
     public void setServerListFile(String text) throws NotServerListFileException, FileNotFoundException, IOException {
 
         File f = new File(text);
@@ -177,6 +246,9 @@ public class FishSettings {
         }
     }
 
+    /**
+     *
+     */
     public void getServerFromFile() {
         ArrayList<Server> servers = new ArrayList<>();
         try {
@@ -201,10 +273,19 @@ public class FishSettings {
         this.currentServersList = servers;
     }
 
+    /**
+     *
+     * @return
+     */
     public String getServerListFilePath() {
         return this.serverlistfilepath;
     }
 
+    /**
+     *
+     * @param servers
+     * @throws IOException
+     */
     public void updateTextFileListOfServers(ArrayList<Server> servers) throws IOException {
         FileWriter fstream = new FileWriter(this.serverlistfilepath);
         BufferedWriter x = new BufferedWriter(fstream);
@@ -217,14 +298,26 @@ public class FishSettings {
         x.close();
     }
 
+    /**
+     *
+     * @return
+     */
     public ArrayList<Server> getCurrentServersList() {
         return this.currentServersList;
     }
 
+    /**
+     *
+     * @return
+     */
     public long getSharedFolderRefreshTime() {
         return SHAREFOLDERREFRESHTIME;
     }
 
+    /**
+     *
+     * @return
+     */
     public long getDownloadFolderRefreshTime() {
         return DOWNLOADFOLDERREFRESHTIME;
     }

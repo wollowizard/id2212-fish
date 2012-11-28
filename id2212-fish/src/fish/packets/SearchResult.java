@@ -15,20 +15,36 @@ public class SearchResult extends Payload  implements Serializable{
     
     private ArrayList<FilenameAndAddress> addresses=new ArrayList<>();
 
+    /**
+     *
+     * @param results
+     */
     public SearchResult(ArrayList<FilenameAndAddress> results) {
         this.addresses=results;
     }
  
 
+    /**
+     *
+     * @param fr
+     */
     public void addFileResource(FilenameAndAddress fr){
         addresses.add(fr);
     }
     
+    /**
+     *
+     * @return
+     */
     public ArrayList<FilenameAndAddress> getFileNamesandAddresses(){
         return this.addresses;
     }
    
 
+    /**
+     *
+     * @return
+     */
     @Override
     public String printSummary() {
         String res="File Found in client(s): ";

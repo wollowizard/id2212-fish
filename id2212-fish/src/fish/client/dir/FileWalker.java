@@ -16,10 +16,19 @@ public class FileWalker {
 
     private ClientController client;
 
+    /**
+     *
+     * @param c
+     */
     public FileWalker(ClientController c) {
         this.client = c;
     }
 
+    /**
+     *
+     * @param path
+     * @throws NotDirectoryException
+     */
     public void walk(String path) throws NotDirectoryException {
 
         try {
@@ -45,6 +54,13 @@ public class FileWalker {
         }
     }
 
+    /**
+     *
+     * @param filename
+     * @param rootDir
+     * @return
+     * @throws NotDirectoryException
+     */
     public static File findFile(String filename, String rootDir) throws NotDirectoryException {
 
         try {

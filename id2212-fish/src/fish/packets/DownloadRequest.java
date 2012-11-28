@@ -14,20 +14,36 @@ public class DownloadRequest extends Payload implements Serializable{
 
     private String filename;
 
+    /**
+     *
+     * @param filename
+     */
     public DownloadRequest(String filename) {
         this.filename = filename;
     }
 
+    /**
+     *
+     * @return
+     */
     public String getFilename() {
         return filename;
     }
 
+    /**
+     *
+     * @param filename
+     */
     public void setFilename(String filename) {
         this.filename = filename;
     }
     
     
     
+    /**
+     *
+     * @return
+     */
     @Override
     public String printSummary() {
         return this.filename;

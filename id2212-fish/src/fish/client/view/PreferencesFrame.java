@@ -22,6 +22,7 @@ public class PreferencesFrame extends javax.swing.JFrame {
     private Preferences prefs;
     /**
      * Creates new form PreferencesFrame
+     * @param c 
      */
     public PreferencesFrame(ClientController c) {
         initComponents();

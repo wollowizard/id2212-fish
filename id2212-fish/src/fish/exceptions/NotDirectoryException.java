@@ -12,6 +12,10 @@ import java.io.IOException;
  */
 public class NotDirectoryException extends IOException{
 
+    /**
+     *
+     * @param message
+     */
     public NotDirectoryException(String message) {
         super(message);
     }

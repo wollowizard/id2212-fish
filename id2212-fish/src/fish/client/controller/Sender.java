@@ -20,6 +20,12 @@ public class Sender extends Thread {
     private ObjectOutputStream out;
     private ClientController client;
 
+    /**
+     *
+     * @param p
+     * @param out
+     * @param client
+     */
     public Sender(FishPacket p, ObjectOutputStream out, ClientController client) {
 
         this.packet = p;

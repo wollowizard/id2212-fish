@@ -12,6 +12,10 @@ import java.io.Serializable;
  */
 public abstract class Payload  implements Serializable{
     
+    /**
+     *
+     * @return
+     */
     public abstract String printSummary();
     
 }

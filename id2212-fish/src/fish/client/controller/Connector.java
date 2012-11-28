@@ -21,6 +21,11 @@ public class Connector extends Thread {
     private Server server;
     ClientController client;
 
+    /**
+     *
+     * @param c
+     * @param s
+     */
     public Connector(ClientController c, Server s) {
 
         this.client = c;

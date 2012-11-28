@@ -3,6 +3,10 @@ package fish.client.dir;
 import java.io.*;
 import java.util.*;
 
+/**
+ *
+ * @author alfredo
+ */
 public abstract class DirWatcher extends TimerTask {
 
     private String path;
@@ -10,6 +14,11 @@ public abstract class DirWatcher extends TimerTask {
     private HashMap dir = new HashMap();
     private DirFilterWatcher dfw;
 
+    /**
+     *
+     * @param path
+     * @param filter
+     */
     public DirWatcher(String path, String filter) {
 
         this.path = path;
@@ -60,5 +69,10 @@ public abstract class DirWatcher extends TimerTask {
         }
     }
 
+    /**
+     *
+     * @param file
+     * @param action
+     */
     protected abstract void onChange(File file, String action);
 }

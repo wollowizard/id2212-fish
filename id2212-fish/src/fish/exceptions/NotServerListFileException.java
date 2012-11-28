@@ -12,6 +12,10 @@ import java.io.IOException;
  */
 public class NotServerListFileException extends IOException {
 
+    /**
+     *
+     * @param msg
+     */
     public NotServerListFileException(String msg) {
         super(msg);
         

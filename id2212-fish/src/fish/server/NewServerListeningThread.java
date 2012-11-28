@@ -20,6 +20,11 @@ public class NewServerListeningThread extends Thread {
     private Integer port;
     private DataBaseManager db;
 
+    /**
+     *
+     * @param listport
+     * @param d
+     */
     public NewServerListeningThread(Integer listport, DataBaseManager d) {
         this.port = listport;
         db = d;
