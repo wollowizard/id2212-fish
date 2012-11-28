@@ -19,7 +19,7 @@ import javax.swing.JOptionPane;
 public class PreferencesFrame extends javax.swing.JFrame {
 
     private ClientController client;
-
+    private Preferences prefs;
     /**
      * Creates new form PreferencesFrame
      */
@@ -56,6 +56,7 @@ public class PreferencesFrame extends javax.swing.JFrame {
         ServerListFileLabel = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setPreferredSize(new java.awt.Dimension(500, 400));
 
         jLabel1.setText("Statistics refresh time (ms)");
 
@@ -122,7 +123,7 @@ public class PreferencesFrame extends javax.swing.JFrame {
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(jLabel2)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                 .addComponent(FolderLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(jLabel3)
@@ -199,7 +200,7 @@ public class PreferencesFrame extends javax.swing.JFrame {
             client.restartDownloadFolderWatcher();
             client.refreshListOfServersFromFile();
             
-            Preferences prefs = Preferences.userNodeForPackage(fish.client.view.FishMainFrame.class);
+            prefs = Preferences.userNodeForPackage(fish.client.view.FishMainFrame.class);
             prefs.put(FishSettings.SHARED_FOLDER, this.FolderLabel.getText());
             prefs.put(FishSettings.DOWNLOAD_FOLDER, this.DestinationFolderLabel.getText());
             prefs.put(FishSettings.SERVER_FOLDER, ServerListFileLabel.getText());
@@ -213,10 +214,10 @@ public class PreferencesFrame extends javax.swing.JFrame {
 
     private void ChangeFolderButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ChangeFolderButtonActionPerformed
         // TODO add your handling code here:
-        final JFileChooser fc = new JFileChooser();
+        prefs = Preferences.userNodeForPackage(fish.client.view.FishMainFrame.class);
+        final JFileChooser fc = new JFileChooser(prefs.get(FishSettings.SHARED_FOLDER, ""));
 
         fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-
         int returnVal = fc.showOpenDialog(this);
         if (returnVal == JFileChooser.APPROVE_OPTION) {
             File file = fc.getSelectedFile();
@@ -230,7 +231,8 @@ public class PreferencesFrame extends javax.swing.JFrame {
 
     private void ChangeDestinationFolderButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ChangeDestinationFolderButtonActionPerformed
 
-        final JFileChooser fc = new JFileChooser();
+        prefs = Preferences.userNodeForPackage(fish.client.view.FishMainFrame.class);
+        final JFileChooser fc = new JFileChooser(prefs.get(FishSettings.DOWNLOAD_FOLDER, ""));
 
         fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 
@@ -247,7 +249,8 @@ public class PreferencesFrame extends javax.swing.JFrame {
     private void ServerListFileButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ServerListFileButtonActionPerformed
         // TODO add your handling code here:
 
-        final JFileChooser fc = new JFileChooser();
+        prefs = Preferences.userNodeForPackage(fish.client.view.FishMainFrame.class);
+        final JFileChooser fc = new JFileChooser(prefs.get(FishSettings.SERVER_FOLDER, ""));
 
         fc.setFileSelectionMode(JFileChooser.FILES_ONLY);
 

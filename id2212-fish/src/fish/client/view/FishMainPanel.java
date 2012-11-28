@@ -9,6 +9,7 @@ import fish.client.controller.ClientController;
 import fish.exceptions.WrongSettingException;
 import fish.packets.FilenameAndAddress;
 import fish.packets.Server;
+import java.awt.Cursor;
 import java.awt.Desktop;
 import java.awt.Dimension;
 import java.awt.Point;
@@ -59,8 +60,8 @@ public class FishMainPanel extends javax.swing.JPanel {
                     String fname = (String) (ResultTable.getModel().getValueAt(row, 0)).toString();
                     String address = (String) (ResultTable.getModel().getValueAt(row, 1)).toString();
                     String port = (String) (ResultTable.getModel().getValueAt(row, 2)).toString();
+                    setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
                     client.startDownloadThread(fname, address, port);
-
                 }
             }
         });
@@ -350,6 +351,7 @@ public class FishMainPanel extends javax.swing.JPanel {
         try {
             // TODO add your handling code here:
             if (!this.client.isConnected()) {
+                setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
                 this.client.getSettings().validateSettings();
                 client.share();
             } else {
@@ -397,6 +399,7 @@ public class FishMainPanel extends javax.swing.JPanel {
             this.connectButton.setText("Disconnect");
             this.ConnectionLabel.setText("Connected to: " + client.getNetData().getSocket().getRemoteSocketAddress());
             this.refreshListOfServers();
+            setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
 
         } else if (event == EventEnum.CONNECTINGTO) {
             this.refreshListOfServers();
@@ -412,6 +415,7 @@ public class FishMainPanel extends javax.swing.JPanel {
         } else if (event == EventEnum.NEWRESULT) {
 
             DefaultTableModel model = (DefaultTableModel) this.ResultTable.getModel();
+            
             while (model.getRowCount() > 0) {
                 model.removeRow(0);
             }
@@ -436,8 +440,6 @@ public class FishMainPanel extends javax.swing.JPanel {
 
             JOptionPane.showMessageDialog(this, client.getLastErrorMessage());
         } else if (event == EventEnum.DOWNLOADFINISHED) {
-
-
             while (tablemodel.getRowCount() > 0) {
                 tablemodel.removeRow(0);
             }
@@ -449,6 +451,10 @@ public class FishMainPanel extends javax.swing.JPanel {
 
         } else if (event == EventEnum.NEWLISTOFSERVERS) {
             refreshListOfServers();
+        } else if (event == EventEnum.DOWNLOADEDFILE) {
+            System.out.println("downloaded file");
+            setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+            JOptionPane.showMessageDialog(this, "Download finished");
         }
 
     }

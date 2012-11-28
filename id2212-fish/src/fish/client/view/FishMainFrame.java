@@ -170,7 +170,6 @@ public class FishMainFrame extends javax.swing.JFrame implements Observer {
     @Override
     public void update(Observable o, Object arg) {
         EventEnum event = (EventEnum) arg;
-
         this.panel.update(o, arg);
 
 

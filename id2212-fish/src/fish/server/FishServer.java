@@ -248,7 +248,6 @@ public class FishServer {
                 IAMTHESUPERNODE = true;
                 NewServerListeningThread nslt = new NewServerListeningThread(FishServer.supernodePort, dataBase);
                 nslt.start();
-
             }
         }
         if (!IAMTHESUPERNODE) {

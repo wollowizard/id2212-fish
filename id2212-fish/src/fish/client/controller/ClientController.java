@@ -63,6 +63,11 @@ public class ClientController extends Observable {
 
     }
 
+    public void forceChange() {
+        this.setChanged();
+        notifyObservers(EventEnum.DOWNLOADEDFILE);
+    }
+    
     public boolean isConnected() {
         synchronized (this) {
             return connected;

@@ -4,6 +4,7 @@
  */
 package fish.client.controller;
 
+import fish.client.EventEnum;
 import fish.packets.DownloadRequest;
 import fish.packets.FileContent;
 import fish.packets.FishPacket;
@@ -17,6 +18,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.util.Observable;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -110,5 +112,7 @@ public class DownloadThread {
         } else {
             System.out.println("Unrecognized packet received as download");
         }
+        
+        client.forceChange();
     }
 }

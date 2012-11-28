@@ -82,8 +82,7 @@ public class DataBaseManager {
                     + "ip VARCHAR(255), "
                     + "port INTEGER, "
                     + "supernode INTEGER, "
-                    + "PRIMARY KEY (id)),"
-                    + "CONSTRAINT uc_port_ip UNIQUE (port,ip)");
+                    + "PRIMARY KEY (id))");
         }
 
         insertServer = conn.prepareStatement("INSERT INTO SERVERS (ip,port,supernode) VALUES ( ?, ?,?)");
