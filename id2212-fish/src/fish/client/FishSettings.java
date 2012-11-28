@@ -268,7 +268,7 @@ public class FishSettings {
         } catch (IOException ex) {
             Logger.getLogger(FishSettings.class.getName()).log(Level.SEVERE, null, ex);
         }
-        System.out.println("servers: ------------------------------");
+        
 
         this.currentServersList = servers;
     }

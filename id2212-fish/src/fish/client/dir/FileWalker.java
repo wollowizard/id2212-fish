@@ -80,7 +80,7 @@ public class FileWalker {
                 } else {
                     System.out.println("File:" + f.getAbsoluteFile());
                     if (filename.compareTo(f.getName()) == 0) {
-                        System.out.println("found ------------------:" + f.getAbsoluteFile());
+                        System.out.println("found :" + f.getAbsoluteFile());
                         return f;
                     }
 
