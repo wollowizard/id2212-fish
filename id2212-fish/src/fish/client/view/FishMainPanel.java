@@ -41,6 +41,7 @@ public class FishMainPanel extends javax.swing.JPanel {
 
     /**
      * Creates new form FishMainPanel
+     * @param c 
      */
     public FishMainPanel(ClientController c) {
         initComponents();
@@ -412,6 +413,11 @@ public class FishMainPanel extends javax.swing.JPanel {
     private javax.swing.JPanel statusPanel;
     // End of variables declaration//GEN-END:variables
 
+    /**
+     *
+     * @param o
+     * @param arg
+     */
     public void update(Observable o, Object arg) {
 
         EventEnum event = (EventEnum) arg;
@@ -480,6 +486,9 @@ public class FishMainPanel extends javax.swing.JPanel {
 
     }
 
+    /**
+     *
+     */
     public void enableConnectedPanel() {
         searchButton.setEnabled(true);
         searchTextField.setEnabled(true);
@@ -492,6 +501,9 @@ public class FishMainPanel extends javax.swing.JPanel {
          }*/
     }
 
+    /**
+     *
+     */
     public void disableConnectedPanel() {
 
         searchButton.setEnabled(false);

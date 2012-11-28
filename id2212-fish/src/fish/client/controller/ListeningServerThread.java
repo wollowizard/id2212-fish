@@ -28,6 +28,11 @@ public class ListeningServerThread extends Thread {
 
     private ClientController client;
     private ServerSocket serverSocket;
+    /**
+     *
+     * @param c
+     * @param ss
+     */
     public ListeningServerThread(ClientController c, ServerSocket ss) {
         client = c;
         serverSocket=ss;

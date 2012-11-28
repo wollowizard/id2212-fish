@@ -9,7 +9,13 @@ package fish.server;
  * @author alfredo
  */
 public class Utils {
-     public static int getDifference(String a, String b) {
+     /**
+     *
+     * @param a
+     * @param b
+     * @return
+     */
+    public static int getDifference(String a, String b) {
         // Minimize the amount of storage needed:
         if (a.length() > b.length()) {
             // Swap:

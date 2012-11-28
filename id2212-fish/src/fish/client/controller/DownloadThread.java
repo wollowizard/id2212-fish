@@ -31,6 +31,13 @@ public class DownloadThread {
     String address;
     String port;
 
+    /**
+     *
+     * @param c
+     * @param filename
+     * @param address
+     * @param port
+     */
     public DownloadThread(ClientController c, String filename, String address, String port) {
         this.client = c;
         this.fname = filename;
@@ -41,6 +48,9 @@ public class DownloadThread {
     
     
 
+    /**
+     *
+     */
     public void start() {
         Header h = new Header(PacketType.DOWNLOAD);
         DownloadRequest p = new DownloadRequest(fname);
@@ -73,6 +83,10 @@ public class DownloadThread {
         }
     }
 
+    /**
+     *
+     * @param fp
+     */
     public void manageDownloadReceived(FishPacket fp) {
 
         if (fp.getHeader().getType() == PacketType.FILENOLONGERAVAILABLE) {

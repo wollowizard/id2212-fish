@@ -20,6 +20,11 @@ import java.util.logging.Logger;
  */
 public class Main {
 
+    /**
+     *
+     * @param args
+     * @throws IOException
+     */
     public static void main(String[] args) throws IOException {
 
         String port = "1237";

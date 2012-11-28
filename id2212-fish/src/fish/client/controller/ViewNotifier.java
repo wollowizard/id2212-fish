@@ -10,6 +10,10 @@ public class ViewNotifier {
     
     // for android, get somehow the handler and call handler.post(r)
     
+    /**
+     *
+     * @param r
+     */
     public static void invokeLater(Runnable r){
         SwingUtilities.invokeLater(r);
     }

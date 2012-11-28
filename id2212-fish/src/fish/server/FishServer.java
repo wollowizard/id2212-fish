@@ -33,6 +33,9 @@ public class FishServer {
     List connectedClients = Collections.synchronizedList(new ArrayList());
     private String ip;
     private Integer port;
+    /**
+     *
+     */
     public static final Integer supernodePort = 4321;
     private static String datasource = "fishdatabase";
     private static String user = "root";
@@ -42,6 +45,10 @@ public class FishServer {
     String KeywordToSearch = "";
     private Server myServer = new Server(-1, "", -1);
 
+    /**
+     *
+     * @param c
+     */
     public void newClientConnected(Client c) {
         if (!connectedClients.contains(c)) {
 
@@ -50,6 +57,10 @@ public class FishServer {
         }
     }
 
+    /**
+     *
+     * @param client
+     */
     public synchronized void clientDisconnected(Client client) {
         try {
             dataBase.deleteUser(client.getRemoteIpAddress(), client.getListeningServerPort());
@@ -59,6 +70,12 @@ public class FishServer {
         }
     }
 
+    /**
+     *
+     * @param add
+     * @param remove
+     * @param client
+     */
     public synchronized void updateFilesOfClient(ArrayList<FilenameAndAddress> add, ArrayList<FilenameAndAddress> remove, Client client) {
 
 
@@ -73,6 +90,12 @@ public class FishServer {
 
     }
 
+    /**
+     *
+     * @param c
+     * @param parameter
+     * @return
+     */
     public synchronized FishPacket search(Client c, String parameter) {
         Header header = null;
 
@@ -159,6 +182,11 @@ public class FishServer {
         }
     }
 
+    /**
+     *
+     * @param client
+     * @return
+     */
     public synchronized FishPacket getStatistics(Client client) {
 
         ServerStatistics ss;
@@ -173,6 +201,9 @@ public class FishServer {
 
     }
 
+    /**
+     *
+     */
     public void ConnectToDataBase() {
         dataBase = new DataBaseManager(user, passwd, datasource);
 
@@ -199,6 +230,11 @@ public class FishServer {
      return s1 - s2;
      }
      }*/
+    /**
+     *
+     * @return
+     * @throws SQLException
+     */
     public synchronized ArrayList<Server> getListOfServers() throws SQLException {
         return dataBase.getListOfServers();
     }

@@ -26,6 +26,11 @@ public class Receiver extends Thread {
     private ClientController client;
     private Boolean running = true;
 
+    /**
+     *
+     * @param in
+     * @param client
+     */
     public Receiver(ObjectInputStream in, ClientController client) {
 
 

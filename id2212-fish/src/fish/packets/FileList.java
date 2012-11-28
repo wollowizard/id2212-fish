@@ -25,6 +25,11 @@ public class FileList extends Payload implements Serializable {
     private ArrayList<String> filesToAdd = new ArrayList<>();
     private ArrayList<String> filesToRemove = new ArrayList<>();
 
+    /**
+     *
+     * @param add
+     * @param remove
+     */
     public FileList(ArrayList<File> add, ArrayList<File> remove) {
         for (File f : add) {
 
@@ -35,14 +40,26 @@ public class FileList extends Payload implements Serializable {
         }
     }
 
+    /**
+     *
+     * @return
+     */
     public ArrayList<String> getFilesToAdd() {
         return filesToAdd;
     }
 
+    /**
+     *
+     * @return
+     */
     public ArrayList<String> getFilesToRemove() {
         return filesToRemove;
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public String printSummary() {
         String res = "Files to add: ";
@@ -59,6 +76,11 @@ public class FileList extends Payload implements Serializable {
         return res;
     }
 
+    /**
+     *
+     * @param file
+     * @return
+     */
     public String calculateMd5(File file) {
         InputStream is = null;
         String res="";

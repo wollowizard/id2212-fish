@@ -15,19 +15,36 @@ public class ServerStatistics extends Payload implements Serializable {
     private int numClients;
     private int numFiles;
 
+    /**
+     *
+     * @param nClient
+     * @param nFiles
+     */
     public ServerStatistics(int nClient, int nFiles) {
         this.numClients = nClient;
         this.numFiles = nFiles;
     }
 
+    /**
+     *
+     * @return
+     */
     public int getNumClients() {
         return this.numClients;
     }
 
+    /**
+     *
+     * @return
+     */
     public int getNumFiles() {
         return this.numFiles;
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public String printSummary() {
         return "";

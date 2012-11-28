@@ -13,12 +13,23 @@ import java.util.ArrayList;
  */
 public class ListOfServer extends Payload implements Serializable {
     
+    /**
+     *
+     */
     public ArrayList<Server> servers;
     
+    /**
+     *
+     * @param arr
+     */
     public ListOfServer(ArrayList<Server> arr){
         this.servers=arr;
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public String printSummary() {
         String res="List of servers: \n";

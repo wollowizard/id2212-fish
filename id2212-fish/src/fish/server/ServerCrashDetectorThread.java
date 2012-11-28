@@ -23,6 +23,11 @@ public class ServerCrashDetectorThread extends Thread {
     private Socket socket;
     private DataBaseManager db;
 
+    /**
+     *
+     * @param s
+     * @param d
+     */
     public ServerCrashDetectorThread(Socket s, DataBaseManager d) {
         this.socket = s;
         this.db = d;

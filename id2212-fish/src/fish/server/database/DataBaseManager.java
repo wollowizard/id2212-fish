@@ -41,12 +41,25 @@ public class DataBaseManager {
     private PreparedStatement promoteToSupernode;
     private PreparedStatement truncateServer;
 
+    /**
+     *
+     * @param user
+     * @param passwd
+     * @param datasource
+     */
     public DataBaseManager(String user, String passwd, String datasource) {
         this.user = user;
         this.passwd = passwd;
         this.datasource = datasource;
     }
 
+    /**
+     *
+     * @param username
+     * @param password
+     * @throws SQLException
+     * @throws ClassNotFoundException
+     */
     public void connectDatabase(String username, String password) throws SQLException, ClassNotFoundException {
         Class.forName("com.mysql.jdbc.Driver");
         conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/" + datasource, user, passwd);
@@ -57,6 +70,10 @@ public class DataBaseManager {
 
     }
 
+    /**
+     *
+     * @throws Exception
+     */
     public void close() throws Exception {
         if (initialized) {
             conn.close();
@@ -65,6 +82,10 @@ public class DataBaseManager {
         System.out.println("Connection closed...");
     }
 
+    /**
+     *
+     * @throws Exception
+     */
     public void createTable() throws Exception {
         ResultSet result = conn.getMetaData().getTables(null, null, "FILES", null);
         if (!result.next()) {
@@ -107,6 +128,13 @@ public class DataBaseManager {
         System.out.println("table created...");
     }
 
+    /**
+     *
+     * @param filename
+     * @param ip
+     * @param port
+     * @throws Exception
+     */
     public void insertFile(String filename, String ip, int port) throws Exception {
         insertFile.setString(1, filename);
         insertFile.setString(2, ip);
@@ -117,6 +145,12 @@ public class DataBaseManager {
         System.out.println("data inserted in " + noOfAffectedRows + " row(s).");
     }
 
+    /**
+     *
+     * @param ip
+     * @param port
+     * @throws Exception
+     */
     public void updateUser(String ip, int port) throws Exception {
         updateUser.setString(1, ip);
         updateUser.setInt(2, port);
@@ -130,6 +164,12 @@ public class DataBaseManager {
         System.out.println("data updated in " + noOfAffectedRows + " row(s)");
     }
 
+    /**
+     *
+     * @param ip
+     * @param port
+     * @throws SQLException
+     */
     public void deleteUser(String ip, int port) throws SQLException {
         deleteUser.setString(1, ip);
         deleteUser.setInt(2, port);
@@ -141,6 +181,13 @@ public class DataBaseManager {
         System.out.println("client deleted from " + noOfAffectedRows + " row(s)");
     }
 
+    /**
+     *
+     * @param filename
+     * @param ip
+     * @param port
+     * @throws Exception
+     */
     public void deleteFile(String filename, String ip, int port) throws Exception {
         deleteFile.setString(1, filename);
         deleteFile.setString(2, ip);
@@ -150,6 +197,13 @@ public class DataBaseManager {
         System.out.println("file deleted from " + noOfAffectedRows + " row(s)");
     }
 
+    /**
+     *
+     * @param ip
+     * @param port
+     * @return
+     * @throws SQLException
+     */
     public ArrayList<FilenameAndAddress> selectByAdrress(String ip, int port) throws SQLException {
         selectByAddress.setString(1, ip);
         selectByAddress.setInt(2, port);
@@ -161,6 +215,14 @@ public class DataBaseManager {
         return tmp;
     }
 
+    /**
+     *
+     * @param filename
+     * @param ip
+     * @param port
+     * @return
+     * @throws SQLException
+     */
     public HashSet <FilenameAndAddress> selectByFileName(String filename, String ip, Integer port) throws SQLException {
         String forSql = "%" + filename + "%";
         String sql = "select * from FILES where (filename like ?) AND (ip, port) NOT IN ( SELECT DISTINCT ip, port from FILES where ip = ? and port= ? )";
@@ -183,6 +245,11 @@ public class DataBaseManager {
         return set;
     }
 
+    /**
+     *
+     * @return
+     * @throws Exception
+     */
     public ArrayList<FilenameAndAddress> selectAll() throws Exception {
         ResultSet r = statement.executeQuery(
                 "SELECT * FROM FILES");
@@ -194,6 +261,10 @@ public class DataBaseManager {
 
     }
 
+    /**
+     *
+     * @throws Exception
+     */
     public void dropTable() throws Exception {
         int NoOfAffectedRows = statement.executeUpdate("DROP TABLE FILES");
         System.out.println();
@@ -201,6 +272,11 @@ public class DataBaseManager {
 
     }
 
+    /**
+     *
+     * @return
+     * @throws SQLException
+     */
     public int getFileCount() throws SQLException {
         Integer count = 0;
         ResultSet res = statement.executeQuery("SELECT COUNT(*) FROM FILES");
@@ -210,6 +286,11 @@ public class DataBaseManager {
         return count;
     }
 
+    /**
+     *
+     * @return
+     * @throws SQLException
+     */
     public ArrayList<Server> getListOfServers() throws SQLException {
 
 
@@ -227,6 +308,11 @@ public class DataBaseManager {
 
     }
 
+    /**
+     *
+     * @param server
+     * @throws SQLException
+     */
     public void removeServer(Server server) throws SQLException {
         System.out.println("deleting " + server.getId());
         deleteServer.setString(1, server.getId().toString());
@@ -237,6 +323,13 @@ public class DataBaseManager {
 
     }
 
+    /**
+     *
+     * @param ip
+     * @param port
+     * @return
+     * @throws SQLException
+     */
     public Server addServer(String ip, Integer port) throws SQLException {
 
         selectServerByAddress.setString(1, ip);
@@ -269,6 +362,11 @@ public class DataBaseManager {
         return s;
     }
 
+    /**
+     *
+     * @return
+     * @throws SQLException
+     */
     public Server getSuperNode() throws SQLException {
 
         ResultSet r = selectServerBySupernode.executeQuery();
@@ -280,6 +378,12 @@ public class DataBaseManager {
         return s;
     }
 
+    /**
+     *
+     * @param ip
+     * @param port
+     * @throws SQLException
+     */
     public void promoteSupernode(String ip, Integer port) throws SQLException {
         promoteToSupernode.setString(1, ip);
         promoteToSupernode.setInt(2, port);
@@ -287,6 +391,13 @@ public class DataBaseManager {
 
     }
 
+    /**
+     *
+     * @param ip
+     * @param port
+     * @return
+     * @throws SQLException
+     */
     public Server getServer(String ip, Integer port) throws SQLException {
         selectServerByAddress.setString(1, ip);
         selectServerByAddress.setInt(2, port);
@@ -301,6 +412,11 @@ public class DataBaseManager {
         return s;
     }
 
+    /**
+     *
+     * @return
+     * @throws SQLException
+     */
     public Integer getMinId() throws SQLException {
         Statement stmt = conn.createStatement();
         String query = "SELECT MIN(id) FROM SERVERS";
@@ -316,6 +432,12 @@ public class DataBaseManager {
 
     }
 
+    /**
+     *
+     * @param ip
+     * @param port
+     * @throws SQLException
+     */
     public void addSupernode(String ip, Integer port) throws SQLException {
         insertServer.setString(1, ip);
         insertServer.setString(2, port.toString());
@@ -327,6 +449,11 @@ public class DataBaseManager {
         System.out.println("data inserted in " + noOfAffectedRows + " row(s).");
     }
 
+    /**
+     *
+     * @return
+     * @throws SQLException
+     */
     public int getClientsCount() throws SQLException {
 
         Statement stmt = conn.createStatement();
@@ -341,6 +468,10 @@ public class DataBaseManager {
 
     }
 
+    /**
+     *
+     * @throws SQLException
+     */
     public void truncateServerTable() throws SQLException {
         System.out.println("truncating server table");
         

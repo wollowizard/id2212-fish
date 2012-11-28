@@ -10,6 +10,10 @@ package fish.exceptions;
  */
 public class WrongSettingException extends Exception {
 
+    /**
+     *
+     * @param msg
+     */
     public WrongSettingException(String msg) {
         super(msg);
     }

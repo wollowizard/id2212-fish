@@ -51,10 +51,17 @@ public class ClientController extends Observable {
     private Integer index;
     Timer timer;
 
+    /**
+     *
+     * @param listeningThreadPort
+     */
     public void setListeningThreadPort(Integer listeningThreadPort) {
         this.netData.setListeningThreadPort(listeningThreadPort);
     }
 
+    /**
+     *
+     */
     public ClientController() {
         this.settings = new FishSettings(this);
         
@@ -63,12 +70,19 @@ public class ClientController extends Observable {
 
     }
 
+    /**
+     *
+     * @return
+     */
     public boolean isConnected() {
         synchronized (this) {
             return connected;
         }
     }
 
+    /**
+     *
+     */
     public void startConnection() {
         setConnected();
         sendServerPortAndStartServer();
@@ -91,6 +105,9 @@ public class ClientController extends Observable {
         }
     }
 
+    /**
+     *
+     */
     public void setConnected() {
 
         synchronized (this) {
@@ -107,6 +124,9 @@ public class ClientController extends Observable {
 
     }
 
+    /**
+     *
+     */
     public void setDisconnected() {
         synchronized (this) {
             this.connected = false;
@@ -122,10 +142,18 @@ public class ClientController extends Observable {
         });
     }
 
+    /**
+     *
+     * @return
+     */
     public ArrayList<FilenameAndAddress> getLastresult() {
         return lastresult;
     }
 
+    /**
+     *
+     * @param lastresult
+     */
     public void setLastresult(ArrayList<FilenameAndAddress> lastresult) {
 
 
@@ -139,29 +167,47 @@ public class ClientController extends Observable {
         });
     }
 
+    /**
+     *
+     * @param f
+     */
     public void addFile(File f) {
 
         this.filesToAdd.add(f);
 
     }
 
+    /**
+     *
+     * @param f
+     */
     public void removeFile(File f) {
 
         this.filesToRemove.add(f);
 
     }
 
+    /**
+     *
+     */
     public void clearFilesToAdd() {
 
         this.filesToAdd.clear();
     }
 
+    /**
+     *
+     */
     public void clearFilesToRemove() {
 
         this.filesToRemove.clear();
 
     }
 
+    /**
+     *
+     * @throws NotDirectoryException
+     */
     public void submitInitialFileList() throws NotDirectoryException {
 
 
@@ -173,6 +219,9 @@ public class ClientController extends Observable {
 
     }
 
+    /**
+     *
+     */
     public void share() {
         getSettings().getServerFromFile();
 
@@ -186,6 +235,9 @@ public class ClientController extends Observable {
 
     }
 
+    /**
+     *
+     */
     public void tryNextServer() {
         if (index < numbers.size()) {
 
@@ -205,6 +257,9 @@ public class ClientController extends Observable {
 
     }
 
+    /**
+     *
+     */
     public void unshare() {
         try {
             this.netData.getSocket().close();
@@ -221,6 +276,10 @@ public class ClientController extends Observable {
         }
     }
 
+    /**
+     *
+     * @param folderPath
+     */
     public void addWatcher(String folderPath) {
         TimerTask task = new DirWatcher(folderPath, "*") {
             @Override
@@ -244,12 +303,19 @@ public class ClientController extends Observable {
 
     }
 
+    /**
+     *
+     * @param ss
+     */
     public void startListeningServerThread(ServerSocket ss) {
         ListeningServerThread thread = new ListeningServerThread(this, ss);
         thread.start();
 
     }
 
+    /**
+     *
+     */
     public void sendFileList() {
 
 
@@ -262,6 +328,10 @@ public class ClientController extends Observable {
         c.start();
     }
 
+    /**
+     *
+     * @param file
+     */
     public void search(String file) {
         Header h = new Header(PacketType.SEARCH);
 
@@ -274,6 +344,12 @@ public class ClientController extends Observable {
 
     }
 
+    /**
+     *
+     * @param fname
+     * @param address
+     * @param port
+     */
     public void startDownloadThread(final String fname, final String address, final String port) {
 
 
@@ -281,12 +357,18 @@ public class ClientController extends Observable {
         thread.start();
     }
 
+    /**
+     *
+     */
     public void startStatisticsThread() {
         StatThread st = new StatThread(this, this.settings.getRefreshInterval());
         st.start();
 
     }
 
+    /**
+     *
+     */
     public void getStatistics() {
         Header h = new Header(PacketType.STATISTICS);
 
@@ -314,28 +396,52 @@ public class ClientController extends Observable {
         });
     }
 
+    /**
+     *
+     * @return
+     */
     public int getNumClients() {
         return this.numClients;
     }
 
+    /**
+     *
+     * @return
+     */
     public int getNumFiles() {
         return this.numFiles;
     }
 
+    /**
+     *
+     * @param message
+     */
     public void setErrorMessage(String message) {
         this.setChanged();
         this.lastError = message;
 
     }
 
+    /**
+     *
+     * @return
+     */
     public String getLastErrorMessage() {
         return this.lastError;
     }
 
+    /**
+     *
+     * @return
+     */
     public FishSettings getSettings() {
         return this.settings;
     }
 
+    /**
+     *
+     * @return
+     */
     public ArrayList<String> getDownloadedFiles() {
         return this.downloadFolderContent;
     }
@@ -354,6 +460,9 @@ public class ClientController extends Observable {
 
     }
 
+    /**
+     *
+     */
     public void downloadFolderContentChanged() {
 
         File folder = new File(this.getSettings().getDownloadFolder());
@@ -375,6 +484,9 @@ public class ClientController extends Observable {
 
     }
 
+    /**
+     *
+     */
     public void sendListeningServerPort() {
         Header h = new Header(PacketType.LISTENINGSERVERPORT);
 
@@ -412,6 +524,10 @@ public class ClientController extends Observable {
         }
     }
 
+    /**
+     *
+     * @param servers
+     */
     public void newListOfServerReceived(ArrayList<Server> servers) {
         try {
             this.getSettings().updateTextFileListOfServers(servers);
@@ -430,6 +546,9 @@ public class ClientController extends Observable {
         }
     }
 
+    /**
+     *
+     */
     public void refreshListOfServersRemote() {
 
         Header h = new Header(PacketType.LISTOFSERVERS);
@@ -441,10 +560,17 @@ public class ClientController extends Observable {
 
     }
 
+    /**
+     *
+     * @return
+     */
     public ClientNetworkData getNetData() {
         return this.netData;
     }
 
+    /**
+     *
+     */
     public void restartDownloadFolderWatcher() {
         if (timer != null) {
             timer.cancel();
@@ -453,6 +579,9 @@ public class ClientController extends Observable {
         this.startDownloadFolderWatcher();
     }
 
+    /**
+     *
+     */
     public void refreshListOfServersFromFile() {
         settings.getServerFromFile();
         this.newListOfServerReceived(settings.getCurrentServersList());

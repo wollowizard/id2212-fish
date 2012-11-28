@@ -14,20 +14,36 @@ public class ParameterToSearch extends Payload implements Serializable{
 
     private String parameter;
 
+    /**
+     *
+     * @param parameter
+     */
     public ParameterToSearch(String parameter) {
         this.parameter = parameter;
     }
 
+    /**
+     *
+     * @return
+     */
     public String getParameter() {
         return parameter;
     }
 
+    /**
+     *
+     * @param parameter
+     */
     public void setParameter(String parameter) {
         this.parameter = parameter;
     }
     
     
     
+    /**
+     *
+     * @return
+     */
     @Override
     public String printSummary() {
         String res="Search: ";

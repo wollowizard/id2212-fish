@@ -12,17 +12,32 @@ import java.io.Serializable;
  */
 public class ListeningServerPortNumber extends Payload implements Serializable {
 
+    /**
+     *
+     */
     public Integer port;
 
+    /**
+     *
+     * @param p
+     */
     public ListeningServerPortNumber(Integer p) {
         this.port = p;
     }
 
+    /**
+     *
+     * @return
+     */
     public Integer getPortNumber() {
 
         return this.port;
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public String printSummary() {
         return "ListeningServerPortNumber: " + port;

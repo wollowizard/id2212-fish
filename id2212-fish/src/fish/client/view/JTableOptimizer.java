@@ -19,6 +19,10 @@ import javax.swing.table.TableModel;
  */
 public class JTableOptimizer {
 
+    /**
+     *
+     * @param table
+     */
     public static void calcColumnWidths(JTable table) {
         JTableHeader header = table.getTableHeader();
 
