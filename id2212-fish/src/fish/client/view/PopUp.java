@@ -4,21 +4,18 @@ package fish.client.view;
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-import fish.client.EventEnum;
 import fish.client.controller.ClientController;
 import java.awt.Desktop;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
 
 /**
- *
+ * The popup menu to delete, download and open folder
  * @author alfredo
  */
 class PopUp extends JPopupMenu {
@@ -29,6 +26,7 @@ class PopUp extends JPopupMenu {
     private String filename;
     private ClientController client;
 
+    
     public PopUp(final String file, ClientController c) {
 
         filename = file;

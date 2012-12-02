@@ -17,7 +17,10 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- *
+ * contains to array of files, one for files to add (already in the 
+ * client but not yet in the server) and one for the files to remove (removed 
+ * by the client but still present in the server). Used to sync the list of
+ * files in client and server
  * @author alfredo
  */
 public class FileList extends Payload implements Serializable {
@@ -26,9 +29,9 @@ public class FileList extends Payload implements Serializable {
     private ArrayList<String> filesToRemove = new ArrayList<>();
 
     /**
-     *
-     * @param add
-     * @param remove
+     * constructor
+     * @param add list of files to add to the server list
+     * @param remove list of files to remove from the server list
      */
     public FileList(ArrayList<File> add, ArrayList<File> remove) {
         for (File f : add) {
@@ -41,7 +44,7 @@ public class FileList extends Payload implements Serializable {
     }
 
     /**
-     *
+     * 
      * @return
      */
     public ArrayList<String> getFilesToAdd() {
@@ -57,8 +60,8 @@ public class FileList extends Payload implements Serializable {
     }
 
     /**
-     *
-     * @return
+     * prints all the files
+     * @return all the file names as strings
      */
     @Override
     public String printSummary() {
@@ -76,38 +79,5 @@ public class FileList extends Payload implements Serializable {
         return res;
     }
 
-    /**
-     *
-     * @param file
-     * @return
-     */
-    public String calculateMd5(File file) {
-        InputStream is = null;
-        String res="";
-        try {
-            is = new FileInputStream(file);
-            MessageDigest md5 = MessageDigest.getInstance("MD5");
-            byte[] buffer = new byte[1024]; // or any other size
-            int len;
-            while ((len = is.read(buffer)) != -1) {
-                md5.update(buffer, 0, len); // only update with the just read bytes  
-            }
-            byte[] result = md5.digest(); // finish up
-            BigInteger bi = new BigInteger(1, result);
-            is.close();
-            res=String.format("%0" + (result.length << 1) + "X", bi);
-        } catch (IOException ex) {
-            Logger.getLogger(FileList.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (NoSuchAlgorithmException ex) {
-            Logger.getLogger(FileList.class.getName()).log(Level.SEVERE, null, ex);
-        } finally {
-            try {
-                is.close();
-            } catch (IOException ex) {
-                Logger.getLogger(FileList.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        }
-        return res;
-    }
 
 }

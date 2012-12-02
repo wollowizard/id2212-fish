@@ -9,7 +9,7 @@ import fish.exceptions.NotDirectoryException;
 import java.io.File;
 
 /**
- *
+ * This class walks through a directory tree
  * @author alfredo
  */
 public class FileWalker {
@@ -17,15 +17,15 @@ public class FileWalker {
     private ClientController client;
 
     /**
-     *
-     * @param c
+     * Constructor
+     * @param c the client controller
      */
     public FileWalker(ClientController c) {
         this.client = c;
     }
 
     /**
-     *
+     * The main method, walks thorugh the directory tree and adds other watchers to directories, and adds or removes files
      * @param path
      * @throws NotDirectoryException
      */
@@ -55,11 +55,11 @@ public class FileWalker {
     }
 
     /**
-     *
-     * @param filename
-     * @param rootDir
-     * @return
-     * @throws NotDirectoryException
+     * Returns a file given its exact name. Looks into subfolders. it returns the first file
+     * @param filename the exact file name
+     * @param rootDir The folder to inspect
+     * @return The file found or null
+     * @throws NotDirectoryException if a non valid directory is given
      */
     public static File findFile(String filename, String rootDir) throws NotDirectoryException {
 

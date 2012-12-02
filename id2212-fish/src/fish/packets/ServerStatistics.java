@@ -7,7 +7,7 @@ package fish.packets;
 import java.io.Serializable;
 
 /**
- *
+ * This payload is used to communicate statistics to the client
  * @author Marcel
  */
 public class ServerStatistics extends Payload implements Serializable {
@@ -16,9 +16,9 @@ public class ServerStatistics extends Payload implements Serializable {
     private int numFiles;
 
     /**
-     *
-     * @param nClient
-     * @param nFiles
+     *Constructor
+     * @param nClient the number of clients currently connected
+     * @param nFiles the number of files in the db now
      */
     public ServerStatistics(int nClient, int nFiles) {
         this.numClients = nClient;
@@ -26,16 +26,16 @@ public class ServerStatistics extends Payload implements Serializable {
     }
 
     /**
-     *
-     * @return
+     * gets the number of clients currently connected
+     * @return the number of clients currently connected
      */
     public int getNumClients() {
         return this.numClients;
     }
 
     /**
-     *
-     * @return
+     * gets the number of files
+     * @return the number of files
      */
     public int getNumFiles() {
         return this.numFiles;

@@ -7,7 +7,7 @@ package fish.packets;
 import java.io.Serializable;
 
 /**
- *
+ * exchanged when a client searches a file
  * @author alfredo
  */
 public class ParameterToSearch extends Payload implements Serializable{
@@ -15,8 +15,8 @@ public class ParameterToSearch extends Payload implements Serializable{
     private String parameter;
 
     /**
-     *
-     * @param parameter
+     * constructor
+     * @param parameter the parameter to search
      */
     public ParameterToSearch(String parameter) {
         this.parameter = parameter;

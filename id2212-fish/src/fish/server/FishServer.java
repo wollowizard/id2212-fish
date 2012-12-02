@@ -22,7 +22,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- *
+ * The most important class on the server. it handles all the server side logic
  * @author alfredo
  */
 public class FishServer {
@@ -34,36 +34,37 @@ public class FishServer {
     private String ip;
     private Integer port;
     /**
-     *
+     * the port the supernode is accepting connections on (from other servers). The value is 4321
      */
     public static final Integer supernodePort = 4321;
     private static String datasource = "fishdatabase";
     private static String user = "root";
     private static String passwd = "root";
     DataBaseManager dataBase;
-    private int numClient = 0;
+    
     String KeywordToSearch = "";
     private Server myServer = new Server(-1, "", -1);
 
     /**
-     *
+     * when a new client is connected, it is added to a list of connected 
+     * clients
      * @param c
      */
     public void newClientConnected(Client c) {
         if (!connectedClients.contains(c)) {
 
-            numClient++;
             this.connectedClients.add(c);
         }
     }
 
     /**
-     *
+     * when a client disconnects (or crashes), its files are deleted from the db 
+     * and the client is removed from the list of connected clients
      * @param client
      */
     public synchronized void clientDisconnected(Client client) {
         try {
-            dataBase.deleteUser(client.getRemoteIpAddress(), client.getListeningServerPort());
+            dataBase.deleteClient(client.getRemoteIpAddress(), client.getListeningServerPort());
             connectedClients.remove(client);
         } catch (SQLException ex) {
             Logger.getLogger(FishServer.class.getName()).log(Level.SEVERE, null, ex);
@@ -71,10 +72,10 @@ public class FishServer {
     }
 
     /**
-     *
-     * @param add
-     * @param remove
-     * @param client
+     * Adds and removes files of a client
+     * @param add the files to add
+     * @param remove the files to remove
+     * @param client the client performing the operation
      */
     public synchronized void updateFilesOfClient(ArrayList<FilenameAndAddress> add, ArrayList<FilenameAndAddress> remove, Client client) {
 
@@ -91,10 +92,12 @@ public class FishServer {
     }
 
     /**
-     *
-     * @param c
-     * @param parameter
-     * @return
+     * Searches for a file on the db given a parameter. it supports multiple keywords
+     * with multiple searches. multiple results are displayed once (the results
+     * are merged without repetitions)
+     * @param c the client that is searching the file
+     * @param parameter the parameter to search
+     * @return a fishPacket containing the search result
      */
     public synchronized FishPacket search(Client c, String parameter) {
         Header header = null;
@@ -129,43 +132,6 @@ public class FishServer {
         return fp;
 
 
-
-
-
-        /*
-         this.KeywordToSearch = parameter;
-         ArrayList<Map.Entry<FishFile, Client>> results = new ArrayList<>();
-         ArrayList<String> word = new ArrayList<>();
-         ArrayList<Integer> tmp = new ArrayList<>();
-         StringTokenizer st = new StringTokenizer(parameter);
-         while (st.hasMoreTokens()) {
-         word.add(st.nextToken());
-         }
-         for (Map.Entry<FishFile, Client> entry : filesMap.entrySet()) {
-         for (String it : word) {
-         if (entry.getKey().getFilename().toLowerCase().contains(it.toLowerCase())
-         && (!entry.getValue().equals(c)) && !results.contains(entry)) {
-         results.add(entry);
-         }
-         }
-         }
-         Collections.sort(results, new SortByName());
-         Header header = null;
-         if (results.isEmpty()) {
-         header = new Header(PacketType.FILENOTFOUND);
-         } else {
-         header = new Header(PacketType.FILEFOUND);
-         }
-         SearchResult sr = new SearchResult();
-         for (Map.Entry<FishFile, Client> i : results) {
-         FilenameAndAddress fr = new FilenameAndAddress(i.getKey().getFilename(), i.getValue().getNetResources().getSocket().getInetAddress().getHostAddress(), i.getValue().getListeningServerPort());
-         sr.addFileResource(fr);
-         }
-         System.out.println("The server will send: " + sr.printSummary());
-         FishPacket fp = new FishPacket(header, sr);
-         return fp;
-         */
-
     }
 
     private synchronized void addFile(FilenameAndAddress file) {
@@ -183,9 +149,9 @@ public class FishServer {
     }
 
     /**
-     *
-     * @param client
-     * @return
+     * Gets a fishpacket with the statistics
+     * @param client the client requesting the statistics
+     * @return a fishpacket with the statistics
      */
     public synchronized FishPacket getStatistics(Client client) {
 
@@ -202,7 +168,7 @@ public class FishServer {
     }
 
     /**
-     *
+     * connects to the db
      */
     public void ConnectToDataBase() {
         dataBase = new DataBaseManager(user, passwd, datasource);
@@ -221,25 +187,24 @@ public class FishServer {
         }
     }
 
-    /*public class SortByName implements Comparator<FilenameAndAddress> {
-
-     @Override
-     public int compare(FilenameAndAddress t, FilenameAndAddress t1) {
-     int s1 = Utils.getDifference(t.getKey().getFilename().toString(), KeywordToSearch);
-     int s2 = Utils.getDifference(t1.getKey().getFilename().toString(), KeywordToSearch);
-     return s1 - s2;
-     }
-     }*/
+   
     /**
-     *
-     * @return
-     * @throws SQLException
+     * gets the list of active servers
+     * @return the list of active servers
+     * @throws SQLException if something goes wrong in the db interaction
      */
     public synchronized ArrayList<Server> getListOfServers() throws SQLException {
         return dataBase.getListOfServers();
     }
 
-    void searchSuperNode() throws SQLException {
+    
+    /**
+     * searches the SN in the db. if no other servers found, it becomes the 
+     * supernode, starting a NewServerListeningThread. if found, connects to the SN 
+     * @throws SQLException 
+     */
+    
+    public void searchSuperNode() throws SQLException {
         Server sn = dataBase.getSuperNode();
         if (sn != null && sn.getAddress().equals(ip) && sn.getPortForClients().equals(port)) {
             //clean if I am the first server to start
@@ -263,7 +228,12 @@ public class FishServer {
 
     }
 
-    void supernodeCrashed(Server supernode) {
+    /**
+     * when a remote SN crashes, this method is called to remove it from the db 
+     * and start the super node election phase
+     * @param supernode 
+     */
+    public void supernodeCrashed(Server supernode) {
         try {
             dataBase.removeServer(supernode);
             this.SuperNodeElection();

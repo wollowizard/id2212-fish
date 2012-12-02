@@ -13,7 +13,7 @@ import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 
 /**
- *
+ * The gui frame to edit the preferences
  * @author alfredo
  */
 public class PreferencesFrame extends javax.swing.JFrame {
@@ -22,7 +22,7 @@ public class PreferencesFrame extends javax.swing.JFrame {
     private Preferences prefs;
     /**
      * Creates new form PreferencesFrame
-     * @param c 
+     * @param c  the client controller
      */
     public PreferencesFrame(ClientController c) {
         initComponents();
@@ -186,11 +186,20 @@ public class PreferencesFrame extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    /**
+     * close without saving
+     * @param evt 
+     */
     private void CancelButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_CancelButtonActionPerformed
 
         this.dispose();
     }//GEN-LAST:event_CancelButtonActionPerformed
 
+    
+    /**
+     * closes and saves the new preferences
+     * @param evt 
+     */
     private void SaveButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_SaveButtonActionPerformed
         // TODO add your handling code here:
         try {
@@ -213,6 +222,11 @@ public class PreferencesFrame extends javax.swing.JFrame {
 
     }//GEN-LAST:event_SaveButtonActionPerformed
 
+    
+    /**
+     * shows the selection for the folder to share
+     * @param evt 
+     */
     private void ChangeFolderButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ChangeFolderButtonActionPerformed
         // TODO add your handling code here:
         prefs = Preferences.userNodeForPackage(fish.client.view.FishMainFrame.class);
@@ -230,6 +244,11 @@ public class PreferencesFrame extends javax.swing.JFrame {
 
     }//GEN-LAST:event_ChangeFolderButtonActionPerformed
 
+    
+    /**
+     * shows the selection for the folder to download to
+     * @param evt 
+     */
     private void ChangeDestinationFolderButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ChangeDestinationFolderButtonActionPerformed
 
         prefs = Preferences.userNodeForPackage(fish.client.view.FishMainFrame.class);
@@ -247,6 +266,11 @@ public class PreferencesFrame extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_ChangeDestinationFolderButtonActionPerformed
 
+    
+    /**
+     * shows the selection for the file containing the list of servers
+     * @param evt 
+     */
     private void ServerListFileButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ServerListFileButtonActionPerformed
         // TODO add your handling code here:
 

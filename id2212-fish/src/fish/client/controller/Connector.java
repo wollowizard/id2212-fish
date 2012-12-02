@@ -13,7 +13,7 @@ import java.net.InetSocketAddress;
 import java.net.Socket;
 
 /**
- *
+ * The tread that performs a connection to the server
  * @author alfredo
  */
 public class Connector extends Thread {
@@ -22,9 +22,9 @@ public class Connector extends Thread {
     ClientController client;
 
     /**
-     *
-     * @param c
-     * @param s
+     * Constructor
+     * @param c the client controller
+     * @param s the server to connect to
      */
     public Connector(ClientController c, Server s) {
 

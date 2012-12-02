@@ -7,14 +7,14 @@ package fish.exceptions;
 import java.io.IOException;
 
 /**
- *
+ *  An exception thrown if an invalid directory was detected
  * @author alfredo
  */
 public class NotDirectoryException extends IOException{
 
     /**
-     *
-     * @param message
+     * Constructor
+     * @param message the message
      */
     public NotDirectoryException(String message) {
         super(message);

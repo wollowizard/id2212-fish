@@ -7,14 +7,14 @@ package fish.exceptions;
 import java.io.IOException;
 
 /**
- *
+ * An exception thrown if an invalid file for server list was selected
  * @author alfredo
  */
 public class NotServerListFileException extends IOException {
 
     /**
-     *
-     * @param msg
+     *constructor
+     * @param msg the message
      */
     public NotServerListFileException(String msg) {
         super(msg);

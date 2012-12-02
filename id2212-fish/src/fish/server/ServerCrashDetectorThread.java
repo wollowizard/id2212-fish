@@ -15,7 +15,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- *
+ * a thread with an active connection to all the other servers (started by the SN).
+ * 
  * @author alfredo
  */
 public class ServerCrashDetectorThread extends Thread {

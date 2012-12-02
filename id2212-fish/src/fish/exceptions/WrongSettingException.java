@@ -5,14 +5,14 @@
 package fish.exceptions;
 
 /**
- *
+ * An exception thrown if wrong settings are selected
  * @author alfredo
  */
 public class WrongSettingException extends Exception {
 
     /**
-     *
-     * @param msg
+     * Constructor
+     * @param msg the message
      */
     public WrongSettingException(String msg) {
         super(msg);

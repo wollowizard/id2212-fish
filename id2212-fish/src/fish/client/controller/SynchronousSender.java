@@ -10,7 +10,7 @@ import java.io.IOException;
 import java.io.ObjectOutputStream;
 
 /**
- *
+ * A synchronous sender (not a thread) 
  * @author alfredo
  */
 class SynchronousSender {
@@ -19,6 +19,13 @@ class SynchronousSender {
     private ObjectOutputStream out;
     private ClientController client;
 
+    
+    /**
+     * The constructor
+     * @param p the packet to send
+     * @param out the output stream of the socket
+     * @param client the client controller
+     */
     public SynchronousSender(FishPacket p, ObjectOutputStream out, ClientController client) {
 
         this.packet = p;
@@ -27,6 +34,9 @@ class SynchronousSender {
         this.client = client;
     }
 
+    /**
+     * the method starts the send operation
+     */
     public void send() {
         synchronized (client) {
             try {

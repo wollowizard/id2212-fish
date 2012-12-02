@@ -15,7 +15,9 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- *
+ * this thread makes a connection to the supernode thread and then reads. If
+ * the read returns, it means the supernode crashed and so the supernode election
+ * procedure is started
  * @author alfredo
  */
 class ConnectionToSuperNodeThread extends Thread {

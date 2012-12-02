@@ -16,7 +16,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- *
+ * The thread that receives packets
  * @author alfredo
  */
 public class Receiver extends Thread {
@@ -27,9 +27,9 @@ public class Receiver extends Thread {
     private Boolean running = true;
 
     /**
-     *
-     * @param in
-     * @param client
+     * Constructor
+     * @param in the input stream to receive from
+     * @param client the client controller
      */
     public Receiver(ObjectInputStream in, ClientController client) {
 

@@ -46,37 +46,37 @@ public class FishSettings {
     private final static String STARTLINE = "####FISH SERVER LIST FILE####";
     private ArrayList<Server> currentServersList = new ArrayList<>();
     /**
-     *
+     * The current server the client is connected to
      */
     public Server currentConnectedServer;
     /**
-     *
+     * The current server the client is connecting to
      */
     public Server currentConnectingServer;
     /**
-     *
+     * The path of the folder containing the files to share
      */
     public final static String SHARED_FOLDER = "SharedFolder";
     /**
-     *
+     * The path of the folder where to download the files
      */
     public final static String DOWNLOAD_FOLDER = "DownloadFolder";
     /**
-     *
+     *  The path of the folder where the list of servers is
      */
     public final static String SERVER_FOLDER = "ServerFolder";
 
     /**
      *
-     * @param aThis
+     * The constructor.
      */
-    public FishSettings(ClientController aThis) {
+    public FishSettings() {
     }
 
     /**
-     *
-     * @param s
-     * @throws NumberFormatException
+     *Sets the refresh interval
+     * @param s The interval in ms (String)
+     * @throws NumberFormatException if the string cannot be parsed to an Integer
      */
     public void setRefreshInterval(String s) throws NumberFormatException {
         try {
@@ -96,10 +96,19 @@ public class FishSettings {
             throw new NumberFormatException(msg);
         }
     }
+    
+    /**
+     * 
+     * @return the refresh interval
+     */
+    public Integer getRefreshInterval() {
+        return this.refreshInterval;
+    }
+
 
     /**
-     *
-     * @param text
+     * Sets the timeout for the connection
+     * @param text the timeout (String)
      */
     public void setConnectionTimeout(String text) {
         try {
@@ -117,25 +126,25 @@ public class FishSettings {
     }
 
     /**
-     *
-     * @return
+     *  Returns the timeout for the connection
+     * @return the timeout of the connection
      */
     public Integer getConnectionTimeout() {
         return this.connectionTimeout;
     }
 
     /**
-     *
-     * @return
+     * Returns the ip address of the client (used to communicate to the server)
+     * @return the ip address as a string
      */
     public String getIpAddress() {
         return this.ipAddress;
     }
 
     /**
-     *
-     * @param text
-     * @throws NotDirectoryException
+     * Sets the folder with the files to share
+     * @param text the folder that contains the files to share
+     * @throws NotDirectoryException if it is not a folder
      */
     public void setFolder(String text) throws NotDirectoryException {
         try {
@@ -156,17 +165,17 @@ public class FishSettings {
     }
 
     /**
-     *
-     * @return
+     * Returns the folder with the files to share. An absolute path
+     * @return the path of the folder with the files to share
      */
     public String getFolder() {
         return this.folder;
     }
 
     /**
-     *
-     * @param text
-     * @throws NotDirectoryException
+     * Sets the folder where to download the files
+     * @param text the absolute path 
+     * @throws NotDirectoryException If not a valid folder is given
      */
     public void setDownloadFolder(String text) throws NotDirectoryException {
         try {
@@ -187,21 +196,14 @@ public class FishSettings {
     }
 
     /**
-     *
-     * @return
+     * returns the absolute path of the folder where the files are downloaded
+     * @return the folder where the downloads are put
      */
     public String getDownloadFolder() {
         return this.downloadFolder;
     }
 
-    /**
-     *
-     * @return
-     */
-    public Integer getRefreshInterval() {
-        return this.refreshInterval;
-    }
-
+    
     /**
      *
      * @throws WrongSettingException
@@ -247,7 +249,7 @@ public class FishSettings {
     }
 
     /**
-     *
+     * it updates the currentServersList variable which contains a list of the available servers, reading from a local file
      */
     public void getServerFromFile() {
         ArrayList<Server> servers = new ArrayList<>();
@@ -274,17 +276,17 @@ public class FishSettings {
     }
 
     /**
-     *
-     * @return
+     * it returns the absolute path of the file that contains the list of servers
+     * @return the path of the file that contains the list of servers
      */
     public String getServerListFilePath() {
         return this.serverlistfilepath;
     }
 
     /**
-     *
-     * @param servers
-     * @throws IOException
+     * It writes on the file a list of servers
+     * @param servers the list of servers
+     * @throws IOException if the write operation cannot be done
      */
     public void updateTextFileListOfServers(ArrayList<Server> servers) throws IOException {
         FileWriter fstream = new FileWriter(this.serverlistfilepath);
@@ -299,24 +301,24 @@ public class FishSettings {
     }
 
     /**
-     *
-     * @return
+     * It gives a list of servers (taking it from memory)
+     * @return the current list of servers
      */
     public ArrayList<Server> getCurrentServersList() {
         return this.currentServersList;
     }
 
     /**
-     *
-     * @return
+     * It returns the refresh time of the folder containing the files to share (there is a periodical check of the folder)
+     * @return the refresh time of the shared folder 
      */
     public long getSharedFolderRefreshTime() {
         return SHAREFOLDERREFRESHTIME;
     }
 
     /**
-     *
-     * @return
+     *It returns the refresh time of the folder containing the downloaded files (there is a periodical check of the folder)
+     * @return the refresh time of the folder  with the downloads
      */
     public long getDownloadFolderRefreshTime() {
         return DOWNLOADFOLDERREFRESHTIME;

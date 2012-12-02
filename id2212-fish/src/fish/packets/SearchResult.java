@@ -8,7 +8,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
- *
+ * this payload is exchanged when a server responds to a request of search of a file
  * @author alfredo
  */
 public class SearchResult extends Payload  implements Serializable{
@@ -16,8 +16,8 @@ public class SearchResult extends Payload  implements Serializable{
     private ArrayList<FilenameAndAddress> addresses=new ArrayList<>();
 
     /**
-     *
-     * @param results
+     *Constructor
+     * @param results the list of files found (FilenameAndAddress objects)
      */
     public SearchResult(ArrayList<FilenameAndAddress> results) {
         this.addresses=results;
@@ -25,16 +25,16 @@ public class SearchResult extends Payload  implements Serializable{
  
 
     /**
-     *
-     * @param fr
+     * to add a new file to the list
+     * @param fr the file to add with its location
      */
     public void addFileResource(FilenameAndAddress fr){
         addresses.add(fr);
     }
     
     /**
-     *
-     * @return
+     * to get all the files
+     * @return the list of files
      */
     public ArrayList<FilenameAndAddress> getFileNamesandAddresses(){
         return this.addresses;

@@ -9,7 +9,7 @@ import java.io.ObjectOutputStream;
 import java.net.Socket;
 
 /**
- *
+ * It contains the network resources of the client, like the socket, the streams and the number of the port the client will accept downloads on
  * @author alfredo
  */
 public class ClientNetworkData {
@@ -20,64 +20,64 @@ public class ClientNetworkData {
     private Integer listeningThreadPort = -2;
 
     /**
-     *
-     * @return
+     * Returns the socket
+     * @return the socket
      */
     public Socket getSocket() {
         return socket;
     }
 
     /**
-     *
-     * @return
+     * returns the input stream associated to the socket
+     * @return the input stream
      */
     public ObjectInputStream getInStream() {
         return in;
     }
 
     /**
-     *
-     * @return
+     * returns the output stream associated to the socket
+     * @return the output stream
      */
     public ObjectOutputStream getOutStream() {
         return out;
     }
 
     /**
-     *
-     * @return
+     * returns the number of the port the client will accept downloads on
+     * @return the port number of the listening thread
      */
     public Integer getListeningThreadPort() {
         return listeningThreadPort;
     }
 
     /**
-     *
-     * @param socket
+     * Sets the socket
+     * @param socket the socket to be set
      */
     public void setSocket(Socket socket) {
         this.socket = socket;
     }
 
     /**
-     *
-     * @param in
+     * Sets the input stream
+     * @param in the input stream to be set
      */
     public void setInStream(ObjectInputStream in) {
         this.in = in;
     }
 
     /**
-     *
-     * @param out
+     * sets the output stream
+     * @param out the iutput stream to be set
      */
     public void setOutStream(ObjectOutputStream out) {
         this.out = out;
     }
 
     /**
-     *
-     * @param listeningThreadPort
+     * Sets the port the client will accept downloads on
+     * @param listeningThreadPort the port number
      */
     public void setListeningThreadPort(Integer listeningThreadPort) {
         this.listeningThreadPort = listeningThreadPort;

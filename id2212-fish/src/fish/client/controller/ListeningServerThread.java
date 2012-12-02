@@ -21,7 +21,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- *
+ * The thread that accepts downloads from the server
  * @author alfredo
  */
 public class ListeningServerThread extends Thread {
@@ -31,8 +31,8 @@ public class ListeningServerThread extends Thread {
 
     /**
      *
-     * @param c
-     * @param ss
+     * @param c the client controller
+     * @param ss the server socket to listen on
      */
     public ListeningServerThread(ClientController c, ServerSocket ss) {
         client = c;
@@ -83,10 +83,6 @@ public class ListeningServerThread extends Thread {
                     } else {
                         System.out.println("UNRECOGNIZED MESSAGE RECEIVED FROM LISTENING THREAD!");
                     }
-
-                    //in.close();
-                    //out.close();
-                    //clientSocket.close();
 
                 } catch (ClassNotFoundException ex) {
                     Logger.getLogger(ListeningServerThread.class.getName()).log(Level.SEVERE, null, ex);

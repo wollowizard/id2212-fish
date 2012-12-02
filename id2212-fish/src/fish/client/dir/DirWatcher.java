@@ -4,7 +4,7 @@ import java.io.*;
 import java.util.*;
 
 /**
- *
+ * Implements a TimerTask, it watches a folder to look for modifications at its files
  * @author alfredo
  */
 public abstract class DirWatcher extends TimerTask {
@@ -15,9 +15,9 @@ public abstract class DirWatcher extends TimerTask {
     private DirFilterWatcher dfw;
 
     /**
-     *
-     * @param path
-     * @param filter
+     * Constructor
+     * @param path the folder to watch
+     * @param filter the filter to exclude some files
      */
     public DirWatcher(String path, String filter) {
 

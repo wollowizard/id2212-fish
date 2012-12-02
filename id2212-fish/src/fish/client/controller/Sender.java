@@ -10,7 +10,7 @@ import java.io.IOException;
 import java.io.ObjectOutputStream;
 
 /**
- *
+ * The thread in charge to send packets
  * @author alfredo
  */
 public class Sender extends Thread {
@@ -22,9 +22,9 @@ public class Sender extends Thread {
 
     /**
      *
-     * @param p
-     * @param out
-     * @param client
+     * @param p the packet to send
+     * @param out the output stream
+     * @param client the client controller
      */
     public Sender(FishPacket p, ObjectOutputStream out, ClientController client) {
 

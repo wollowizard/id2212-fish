@@ -14,10 +14,9 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.Set;
 
 /**
- *
+ * Performs the operations with the db
  * @author Marcel
  */
 public class DataBaseManager {
@@ -42,10 +41,10 @@ public class DataBaseManager {
     private PreparedStatement truncateServer;
 
     /**
-     *
-     * @param user
-     * @param passwd
-     * @param datasource
+     * Constructor
+     * @param user the username
+     * @param passwd the password
+     * @param datasource the db name
      */
     public DataBaseManager(String user, String passwd, String datasource) {
         this.user = user;
@@ -54,9 +53,9 @@ public class DataBaseManager {
     }
 
     /**
-     *
-     * @param username
-     * @param password
+     * connects to the db
+     * @param username the username
+     * @param password the password
      * @throws SQLException
      * @throws ClassNotFoundException
      */
@@ -71,10 +70,10 @@ public class DataBaseManager {
     }
 
     /**
-     *
-     * @throws Exception
+     * closes the connection to the db
+     * @throws SQLException
      */
-    public void close() throws Exception {
+    public void close() throws SQLException  {
         if (initialized) {
             conn.close();
         }
@@ -83,10 +82,10 @@ public class DataBaseManager {
     }
 
     /**
-     *
+     * creates the tables in the db
      * @throws Exception
      */
-    public void createTable() throws Exception {
+    public void createTable() throws SQLException {
         ResultSet result = conn.getMetaData().getTables(null, null, "FILES", null);
         if (!result.next()) {
             statement.executeUpdate(
@@ -128,13 +127,13 @@ public class DataBaseManager {
     }
 
     /**
-     *
-     * @param filename
-     * @param ip
-     * @param port
-     * @throws Exception
+     * Inserts a file in the db
+     * @param filename the file name
+     * @param ip the ip of the client uploading the file
+     * @param port the port of the client uploading the file
+     * @throws SQLException
      */
-    public void insertFile(String filename, String ip, int port) throws Exception {
+    public void insertFile(String filename, String ip, int port) throws SQLException  {
         insertFile.setString(1, filename);
         insertFile.setString(2, ip);
         insertFile.setInt(3, port);
@@ -148,9 +147,9 @@ public class DataBaseManager {
      *
      * @param ip
      * @param port
-     * @throws Exception
+     * @throws SQLException
      */
-    public void updateUser(String ip, int port) throws Exception {
+    private void updateUser(String ip, int port) throws SQLException{
         updateUser.setString(1, ip);
         updateUser.setInt(2, port);
         updateUser.setString(3, ip);
@@ -164,12 +163,12 @@ public class DataBaseManager {
     }
 
     /**
-     *
-     * @param ip
-     * @param port
+     * deletes all files of a client from the db
+     * @param ip the ip of the client
+     * @param port the port
      * @throws SQLException
      */
-    public void deleteUser(String ip, int port) throws SQLException {
+    public void deleteClient(String ip, int port) throws SQLException {
         deleteUser.setString(1, ip);
         deleteUser.setInt(2, port);
         int noOfAffectedRows = deleteUser.executeUpdate();
@@ -181,13 +180,13 @@ public class DataBaseManager {
     }
 
     /**
-     *
-     * @param filename
-     * @param ip
-     * @param port
-     * @throws Exception
+     * delete a file given its name and uploader
+     * @param filename the name
+     * @param ip the ip of the uploader
+     * @param port the port of the uploader
+     * @throws SQLException
      */
-    public void deleteFile(String filename, String ip, int port) throws Exception {
+    public void deleteFile(String filename, String ip, int port) throws SQLException  {
         deleteFile.setString(1, filename);
         deleteFile.setString(2, ip);
         deleteFile.setInt(3, port);
@@ -197,10 +196,10 @@ public class DataBaseManager {
     }
 
     /**
-     *
-     * @param ip
-     * @param port
-     * @return
+     * Gives all the files given a client
+     * @param ip the ip of the client
+     * @param port the port of the client
+     * @return an array of files 
      * @throws SQLException
      */
     public ArrayList<FilenameAndAddress> selectByAdrress(String ip, int port) throws SQLException {
@@ -215,10 +214,10 @@ public class DataBaseManager {
     }
 
     /**
-     *
-     * @param filename
-     * @param ip
-     * @param port
+     * Gives a hashset of files, given a parameter
+     * @param filename the parameter to search
+     * @param ip the ip of the client searching for the file
+     * @param port the port of the client searching for the file
      * @return
      * @throws SQLException
      */
@@ -244,27 +243,9 @@ public class DataBaseManager {
         return set;
     }
 
-    /**
-     *
-     * @return
-     * @throws Exception
-     */
-    public ArrayList<FilenameAndAddress> selectAll() throws Exception {
-        ResultSet r = statement.executeQuery(
-                "SELECT * FROM FILES");
-        ArrayList<FilenameAndAddress> tmp = new ArrayList<>();
-        while (r.next()) {
-            tmp.add(new FilenameAndAddress(r.getString("filename"), r.getString("ip"), r.getInt("port")));
-        }
-        return tmp;
+  
 
-    }
-
-    /**
-     *
-     * @throws Exception
-     */
-    public void dropTable() throws Exception {
+    private void dropTable() throws SQLException  {
         int NoOfAffectedRows = statement.executeUpdate("DROP TABLE FILES");
         System.out.println();
         System.out.println("Table dropped, " + NoOfAffectedRows + " row(s) affected");
@@ -272,8 +253,8 @@ public class DataBaseManager {
     }
 
     /**
-     *
-     * @return
+     * gets the number of files in the db
+     * @return the number of files of the db
      * @throws SQLException
      */
     public int getFileCount() throws SQLException {
@@ -286,8 +267,8 @@ public class DataBaseManager {
     }
 
     /**
-     *
-     * @return
+     * returns all the current servers
+     * @return an arry with all the currently active servers
      * @throws SQLException
      */
     public ArrayList<Server> getListOfServers() throws SQLException {
@@ -308,8 +289,8 @@ public class DataBaseManager {
     }
 
     /**
-     *
-     * @param server
+     * removes a server from the d
+     * @param server the server to delete
      * @throws SQLException
      */
     public void removeServer(Server server) throws SQLException {
@@ -323,10 +304,10 @@ public class DataBaseManager {
     }
 
     /**
-     *
-     * @param ip
-     * @param port
-     * @return
+     * Adds a server into the table
+     * @param ip the ip of the server
+     * @param port the port of the server
+     * @return the server added, with its id
      * @throws SQLException
      */
     public Server addServer(String ip, Integer port) throws SQLException {
@@ -361,9 +342,11 @@ public class DataBaseManager {
         return s;
     }
 
+    
+    
     /**
-     *
-     * @return
+     * returns the supernode server
+     * @return the SN
      * @throws SQLException
      */
     public Server getSuperNode() throws SQLException {
@@ -377,10 +360,11 @@ public class DataBaseManager {
         return s;
     }
 
+    
     /**
-     *
-     * @param ip
-     * @param port
+     * makes the server a SN
+     * @param ip the ip of the server that has to become a SN
+     * @param port the port of the server that has to become a SN
      * @throws SQLException
      */
     public void promoteSupernode(String ip, Integer port) throws SQLException {
@@ -391,10 +375,10 @@ public class DataBaseManager {
     }
 
     /**
-     *
-     * @param ip
-     * @param port
-     * @return
+     * gets a server given its ip and port
+     * @param ip the ip of the server to get
+     * @param port the port of the server to get
+     * @return a server given its ip and port
      * @throws SQLException
      */
     public Server getServer(String ip, Integer port) throws SQLException {
@@ -411,9 +395,11 @@ public class DataBaseManager {
         return s;
     }
 
+    
+    
     /**
-     *
-     * @return
+     * gets the mimimum id in the table
+     * @return the mimimum id in the table
      * @throws SQLException
      */
     public Integer getMinId() throws SQLException {
@@ -432,9 +418,9 @@ public class DataBaseManager {
     }
 
     /**
-     *
-     * @param ip
-     * @param port
+     * adds a server as supernode
+     * @param ip the ip of the server
+     * @param port the port of the server
      * @throws SQLException
      */
     public void addSupernode(String ip, Integer port) throws SQLException {
@@ -449,8 +435,8 @@ public class DataBaseManager {
     }
 
     /**
-     *
-     * @return
+     * gets the number of clients in the db
+     * @return the number of clients in the db
      * @throws SQLException
      */
     public int getClientsCount() throws SQLException {
@@ -468,7 +454,7 @@ public class DataBaseManager {
     }
 
     /**
-     *
+     * deletes all the servers
      * @throws SQLException
      */
     public void truncateServerTable() throws SQLException {

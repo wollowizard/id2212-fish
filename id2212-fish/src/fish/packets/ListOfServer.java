@@ -8,18 +8,18 @@ import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
- *
+ * The list of currently active server
  * @author alfredo
  */
 public class ListOfServer extends Payload implements Serializable {
     
     /**
-     *
+     * the active servers
      */
     public ArrayList<Server> servers;
     
     /**
-     *
+     * constructor
      * @param arr
      */
     public ListOfServer(ArrayList<Server> arr){

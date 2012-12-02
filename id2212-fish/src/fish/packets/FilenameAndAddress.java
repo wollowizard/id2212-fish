@@ -7,7 +7,8 @@ package fish.packets;
 import java.io.Serializable;
 
 /**
- *
+ * Contains a file name and the location where the client can retrieve it
+ * (so the address of the other peer and the port that peer is accepting on)
  * @author alfredo
  */
 public class FilenameAndAddress implements Serializable{
@@ -17,10 +18,10 @@ public class FilenameAndAddress implements Serializable{
     private Integer port;
 
     /**
-     *
-     * @param filename
-     * @param address
-     * @param port
+     * Constructor
+     * @param filename the name of the file
+     * @param address the ip address of the peer
+     * @param port the port the peer is listening on
      */
     public FilenameAndAddress(String filename, String address,Integer port) {
         this.ipaddress = address;

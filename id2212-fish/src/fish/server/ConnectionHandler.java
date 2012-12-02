@@ -25,7 +25,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- *
+ * The class on charge of handling the interaction with the client. its run in a 
+ * separate thread. it receives packets, analyzes them and performs the correct operation
  * @author Marcel
  */
 public class ConnectionHandler extends Thread {
@@ -38,9 +39,9 @@ public class ConnectionHandler extends Thread {
     private FishServer fs;
 
     /**
-     *
-     * @param fs
-     * @param cd
+     * Constructor
+     * @param fs the Fish Server
+     * @param cd the client 
      */
     public ConnectionHandler(FishServer fs, Client cd) {
         this.client = cd;
@@ -171,13 +172,8 @@ public class ConnectionHandler extends Thread {
 
     }
 
-    /**
-     *
-     * @param client
-     * @param fl
-     * @return
-     */
-    public ArrayList<FilenameAndAddress> getListOfFishFilesToAdd(Client client, FileList fl) {
+    
+    private ArrayList<FilenameAndAddress> getListOfFishFilesToAdd(Client client, FileList fl) {
         ArrayList<String> filesToAdd = fl.getFilesToAdd();
 
         ArrayList<FilenameAndAddress> ret = new ArrayList<>();
@@ -188,13 +184,7 @@ public class ConnectionHandler extends Thread {
         return ret;
     }
 
-    /**
-     *
-     * @param client
-     * @param fl
-     * @return
-     */
-    public ArrayList<FilenameAndAddress> getListOfFishFilesToRemove(Client client, FileList fl) {
+    private ArrayList<FilenameAndAddress> getListOfFishFilesToRemove(Client client, FileList fl) {
 
         ArrayList<String> filesToRemove = fl.getFilesToRemove();
         ArrayList<FilenameAndAddress> ret = new ArrayList<>();

@@ -7,7 +7,7 @@ package fish.packets;
 import java.io.Serializable;
 
 /**
- *
+ * Enumeration of type of payloads
  * @author alfredo
  */
 public enum PacketType  implements Serializable{

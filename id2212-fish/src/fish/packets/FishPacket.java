@@ -7,7 +7,8 @@ package fish.packets;
 import java.io.Serializable;
 
 /**
- *
+ * All the packets exchanged are of the type FishPacket. A fish packet contains
+ * a header class (Header) and a payload (class Payload).
  * @author alfredo
  */
 public class FishPacket implements Serializable{
@@ -15,9 +16,9 @@ public class FishPacket implements Serializable{
     private Payload payload;
 
     /**
-     *
-     * @param h
-     * @param fl
+     * Constructor
+     * @param h the header
+     * @param fl the payload
      */
     public FishPacket(Header h, Payload fl) {
         this.header=h;

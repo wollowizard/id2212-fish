@@ -4,7 +4,6 @@
  */
 package fish.client.controller;
 
-import fish.client.EventEnum;
 import fish.packets.DownloadRequest;
 import fish.packets.FileContent;
 import fish.packets.FishPacket;
@@ -18,12 +17,11 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.net.UnknownHostException;
-import java.util.Observable;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- *
+ *  The thread to download a file from another peer
  * @author alfredo
  */
 public class DownloadThread extends Thread{
@@ -35,10 +33,10 @@ public class DownloadThread extends Thread{
 
     /**
      *
-     * @param c
-     * @param filename
-     * @param address
-     * @param port
+     * @param c the client controller 
+     * @param filename the file name of the file to download
+     * @param address the address of the other peer
+     * @param port the port the other peer is listening on to accept download
      */
     public DownloadThread(ClientController c, String filename, String address, String port) {
         this.client = c;
@@ -76,6 +74,7 @@ public class DownloadThread extends Thread{
             out1.close();
             sock.close();
             manageDownloadReceived(fp);
+            
 
         } catch (ClassNotFoundException ex) {
             Logger.getLogger(ClientController.class

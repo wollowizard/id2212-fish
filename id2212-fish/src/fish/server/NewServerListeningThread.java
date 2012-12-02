@@ -12,7 +12,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- *
+ * a thread listening for incoming connection from other serers (started by a SN)
  * @author alfredo
  */
 public class NewServerListeningThread extends Thread {
@@ -21,9 +21,9 @@ public class NewServerListeningThread extends Thread {
     private DataBaseManager db;
 
     /**
-     *
-     * @param listport
-     * @param d
+     * constructor
+     * @param listport the port to listen on
+     * @param d the DB manager
      */
     public NewServerListeningThread(Integer listport, DataBaseManager d) {
         this.port = listport;

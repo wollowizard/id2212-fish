@@ -14,13 +14,13 @@ import javax.swing.table.TableColumnModel;
 import javax.swing.table.TableModel;
 
 /**
- *
+ * Simply formats the table in a good way
  * @author alfredo
  */
 public class JTableOptimizer {
 
     /**
-     *
+     * Formats the table, resizing the columns
      * @param table
      */
     public static void calcColumnWidths(JTable table) {

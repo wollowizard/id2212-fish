@@ -8,7 +8,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- *
+ * The thread that periodically asks for statistics
  * @author alfredo
  */
 public class StatThread extends Thread {
@@ -18,8 +18,8 @@ public class StatThread extends Thread {
 
     /**
      *
-     * @param c
-     * @param refreshInterval
+     * @param c the client controller
+     * @param refreshInterval the refresh interval to ask statistics
      */
     public StatThread(ClientController c, Integer refreshInterval) {
         client = c;

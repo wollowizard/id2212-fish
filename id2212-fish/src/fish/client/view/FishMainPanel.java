@@ -42,7 +42,8 @@ public class FishMainPanel extends javax.swing.JPanel {
 
     /**
      * Creates new form FishMainPanel
-     * @param c 
+     *
+     * @param c
      */
     public FishMainPanel(ClientController c) {
         initComponents();
@@ -361,11 +362,21 @@ public class FishMainPanel extends javax.swing.JPanel {
         );
     }// </editor-fold>//GEN-END:initComponents
 
+    /**
+     * calls the search function
+     *
+     * @param evt
+     */
     private void searchButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchButtonActionPerformed
 
         client.search(this.searchTextField.getText());
     }//GEN-LAST:event_searchButtonActionPerformed
 
+    /**
+     * calls the connect function.
+     *
+     * @param evt
+     */
     private void connectButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_connectButtonActionPerformed
 
 
@@ -383,13 +394,17 @@ public class FishMainPanel extends javax.swing.JPanel {
         } catch (WrongSettingException ex) {
             JOptionPane.showMessageDialog(this, ex.getMessage());
         }
+
     }//GEN-LAST:event_connectButtonActionPerformed
     private void refreshServersButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_refreshServersButtonActionPerformed
         // TODO add your handling code here:
 
         client.refreshListOfServersRemote();
     }//GEN-LAST:event_refreshServersButtonActionPerformed
-
+    /**
+     * calls the search function
+     * @param evt
+     */
     private void searchTextFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchTextFieldActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_searchTextFieldActionPerformed
@@ -416,9 +431,9 @@ public class FishMainPanel extends javax.swing.JPanel {
     // End of variables declaration//GEN-END:variables
 
     /**
-     *
-     * @param o
-     * @param arg
+     * Updates the view after receiving some event
+     * @param o The observable object that changed
+     * @param arg the event
      */
     public void update(Observable o, Object arg) {
 
@@ -446,7 +461,7 @@ public class FishMainPanel extends javax.swing.JPanel {
         } else if (event == EventEnum.NEWRESULT) {
 
             DefaultTableModel model = (DefaultTableModel) this.ResultTable.getModel();
-            
+
             while (model.getRowCount() > 0) {
                 model.removeRow(0);
             }
@@ -493,7 +508,7 @@ public class FishMainPanel extends javax.swing.JPanel {
     }
 
     /**
-     *
+     * enables the widgets after connected
      */
     public void enableConnectedPanel() {
         searchButton.setEnabled(true);
@@ -508,7 +523,7 @@ public class FishMainPanel extends javax.swing.JPanel {
     }
 
     /**
-     *
+     * enables the widgets after disconnected
      */
     public void disableConnectedPanel() {
 
@@ -524,6 +539,9 @@ public class FishMainPanel extends javax.swing.JPanel {
          }*/
     }
 
+    /**
+     * calls the function to refresh the view of the servers
+     */
     private void refreshListOfServers() {
         this.serverlistmodel.clear();
         ArrayList<Server> currentServers = client.getSettings().getCurrentServersList();
