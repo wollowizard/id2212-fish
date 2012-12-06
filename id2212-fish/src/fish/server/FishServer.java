@@ -45,6 +45,12 @@ public class FishServer {
     String KeywordToSearch = "";
     private Server myServer = new Server(-1, "", -1);
 
+    
+    public FishServer(String dbname, String dbuser, String dbpassword){
+        datasource=dbname;
+        user=dbuser;
+        passwd=dbpassword;
+    }
     /**
      * when a new client is connected, it is added to a list of connected 
      * clients

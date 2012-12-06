@@ -20,19 +20,39 @@ import java.util.logging.Logger;
  */
 public class Main {
 
-    /**
-     *
-     * @param args
-     * @throws IOException
-     */
+    private static final String USAGE="nothing or port or port+dbname+dbusername+dbpassword";
     public static void main(String[] args) throws IOException {
 
+        String datasource = "fishdatabase";
+        String user = "root";
+        String passwd = "root";
         String port = "1238";
+        
+        if (!(args.length ==4 || args.length ==1 ||  args.length ==0)) {
+            System.out.println("You inserted " + args.length + " parameters" );
+            System.out.println(USAGE);
+            System.exit(1);
+        }
+        if (args.length == 1) {
+            port=args[0];
+        }
+        else if (args.length == 4) {
+            port=args[0];
+            datasource=args[1];
+            user=args[2];
+            passwd=args[3];
+            
+        }
+
 
         boolean listening = true;
         ServerSocket serverSocket = null;
-        final FishServer fs = new FishServer();
+
+        final FishServer fs = new FishServer(datasource, user, passwd);
+
         fs.ConnectToDataBase();
+
+
         try {
             serverSocket = new ServerSocket(Integer.parseInt(port));
         } catch (IOException e) {
@@ -40,6 +60,7 @@ public class Main {
             System.exit(1);
         }
         InetAddress thisIp = InetAddress.getLocalHost();
+
         fs.setIp(thisIp.getHostAddress().toString());
         fs.setPort(Integer.parseInt(port));
 
@@ -48,7 +69,6 @@ public class Main {
         } catch (SQLException ex) {
             Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
         }
-
         while (listening) {
 
             Socket clientSocket = serverSocket.accept();
@@ -60,8 +80,7 @@ public class Main {
             (new ConnectionHandler(fs, cd)).start();
 
         }
+
         serverSocket.close();
-
-
     }
 }
