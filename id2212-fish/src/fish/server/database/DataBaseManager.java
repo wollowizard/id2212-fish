@@ -39,6 +39,7 @@ public class DataBaseManager {
     private PreparedStatement updateUser;
     private PreparedStatement promoteToSupernode;
     private PreparedStatement truncateServer;
+    private final String host;
 
     /**
      * Constructor
@@ -46,7 +47,8 @@ public class DataBaseManager {
      * @param passwd the password
      * @param datasource the db name
      */
-    public DataBaseManager(String user, String passwd, String datasource) {
+    public DataBaseManager(String h, String user, String passwd, String datasource) {
+        this.host=h;
         this.user = user;
         this.passwd = passwd;
         this.datasource = datasource;
@@ -59,9 +61,9 @@ public class DataBaseManager {
      * @throws SQLException
      * @throws ClassNotFoundException
      */
-    public void connectDatabase(String username, String password) throws SQLException, ClassNotFoundException {
+    public void connectDatabase() throws SQLException, ClassNotFoundException {
         Class.forName("com.mysql.jdbc.Driver");
-        conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/" + datasource, user, passwd);
+        conn = DriverManager.getConnection("jdbc:mysql://" + host + ":3306/" + datasource, user, passwd);
 
         statement = conn.createStatement();
         initialized = true;

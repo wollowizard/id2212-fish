@@ -37,6 +37,7 @@ public class FishServer {
      * the port the supernode is accepting connections on (from other servers). The value is 4321
      */
     public static final Integer supernodePort = 4321;
+    private static String host = "localhost";
     private static String datasource = "fishdatabase";
     private static String user = "root";
     private static String passwd = "root";
@@ -46,7 +47,8 @@ public class FishServer {
     private Server myServer = new Server(-1, "", -1);
 
     
-    public FishServer(String dbname, String dbuser, String dbpassword){
+    public FishServer(String dbHost, String dbname, String dbuser, String dbpassword){
+        host=dbHost;
         datasource=dbname;
         user=dbuser;
         passwd=dbpassword;
@@ -177,10 +179,10 @@ public class FishServer {
      * connects to the db
      */
     public void ConnectToDataBase() {
-        dataBase = new DataBaseManager(user, passwd, datasource);
+        dataBase = new DataBaseManager(host,user, passwd, datasource);
 
         try {
-            dataBase.connectDatabase(user, passwd);
+            dataBase.connectDatabase();
             try {
                 dataBase.createTable();
             } catch (Exception ex) {

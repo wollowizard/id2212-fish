@@ -20,35 +20,36 @@ import java.util.logging.Logger;
  */
 public class Main {
 
-    private static final String USAGE="nothing or port or port+dbname+dbusername+dbpassword";
-    public static void main(String[] args) throws IOException {
+    private static final String USAGE = "nothing or port or port+dbname+dbusername+dbpassword";
 
+    public static void main(String[] args) throws IOException {
+        String dbhost = "192.168.1.15";
         String datasource = "fishdatabase";
         String user = "root";
         String passwd = "root";
         String port = "1238";
-        
-        if (!(args.length ==4 || args.length ==1 ||  args.length ==0)) {
-            System.out.println("You inserted " + args.length + " parameters" );
+
+        if (!(args.length == 5 || args.length == 1 || args.length == 0)) {
+            System.out.println("You inserted " + args.length + " parameters");
             System.out.println(USAGE);
             System.exit(1);
         }
         if (args.length == 1) {
-            port=args[0];
-        }
-        else if (args.length == 4) {
-            port=args[0];
-            datasource=args[1];
-            user=args[2];
-            passwd=args[3];
-            
+            port = args[0];
+        } else if (args.length == 5) {
+            port = args[0];
+            dbhost = args[1];
+            datasource = args[2];
+            user = args[3];
+            passwd = args[4];
+
         }
 
 
         boolean listening = true;
         ServerSocket serverSocket = null;
 
-        final FishServer fs = new FishServer(datasource, user, passwd);
+        final FishServer fs = new FishServer(dbhost, datasource, user, passwd);
 
         fs.ConnectToDataBase();
 
