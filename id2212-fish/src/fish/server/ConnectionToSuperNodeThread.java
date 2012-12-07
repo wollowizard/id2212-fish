@@ -39,7 +39,7 @@ class ConnectionToSuperNodeThread extends Thread {
     public void run() {
         try {
             System.out.println("Connection to supernode thread started");
-            Socket requestSocket = new Socket("localhost", FishServer.supernodePort);
+            Socket requestSocket = new Socket(sn.getAddress(), FishServer.supernodePort);
             ObjectOutputStream out = new ObjectOutputStream(requestSocket.getOutputStream());
             ObjectInputStream in = new ObjectInputStream(requestSocket.getInputStream());
 

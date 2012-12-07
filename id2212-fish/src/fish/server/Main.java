@@ -23,7 +23,7 @@ public class Main {
     private static final String USAGE = "nothing or port or port+dbname+dbusername+dbpassword";
 
     public static void main(String[] args) throws IOException {
-        String dbhost = "192.168.1.15";
+        String dbhost = "130.229.155.52";
         String datasource = "fishdatabase";
         String user = "root";
         String passwd = "root";
